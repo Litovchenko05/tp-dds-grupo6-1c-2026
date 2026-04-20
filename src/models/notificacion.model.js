@@ -1,5 +1,7 @@
 export class Notificacion {
 
+    static ultimoId = 0;
+
     #id
     #destinatario
     #remitente
@@ -8,9 +10,9 @@ export class Notificacion {
     #fechaHoraLeida
     #leida
 
-    constructor({ id, destinatario, remitente, mensaje}){
+    constructor({ destinatario, remitente, mensaje}){
 
-        this.#id = id
+        this.#id = Notificacion.ultimoId++;
         this.#destinatario = destinatario
         this.#remitente = remitente
         this.#mensaje = mensaje
@@ -23,4 +25,5 @@ export class Notificacion {
         this.#leida = true
         this.#fechaHoraLeida = new Date()
     }
+
 }
