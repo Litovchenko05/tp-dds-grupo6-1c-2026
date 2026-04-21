@@ -2,12 +2,14 @@ import { especialidadSchema } from '../schemas/especialidad.schema.js'
 
 export class Especialidad {
 
-    constructor(data){
-        const result = especialidadSchema.parse(data)
-        
-        this.id = result.id;
-        this.nombre = result.nombre;
-        this.duracionTurnoEnMins = result.duracionTurnoEnMins;
-        this.costoConsulta = result.costoConsulta;
+    constructor(id, nombre, duracionTurnoEnMins, costoConsulta){
+        this.id = id;
+        this.nombre = nombre;
+        this.duracionTurnoEnMins = duracionTurnoEnMins;
+        this.costoConsulta = costoConsulta;
+    }
+
+    get costo(){
+        return this.costoConsulta; // para usar servicio y practica de forma polimorfica en turno
     }
 }

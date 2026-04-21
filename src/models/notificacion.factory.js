@@ -1,53 +1,68 @@
 import { Agenda } from "./ageda.js";
 import { Notificacion } from "./notificacion.model.js";
+import { Turno } from "./turno.js";
+
+//notificacionFactory-->Singleton
 export class FactoryNotificacion {
 
-   
-  
     static crearSegunEstadoTurno(turno){
-        
+        switch(turno.estado){
+            case RESERVADO:
+                return this.crearNotificacionParaTurnoReservado(turno);
+            case ACEPTADO:
+                return this.crearNotificacionParaTurnoAceptado(turno);
+            case CANCELADO:
+                return this.crearNotificacionParaTurnoCancelado(turno);
+        }
     }
 
   
-    static crearNotificacionParaTurnoReservado(turno, nombreDeServicio){
+    static crearNotificacionParaTurnoReservado(turno){
         
         const notificacion = new Notificacion({
-            destinatario: turno.medico,           
+            destinatario: turno.medico.usuario,           
             remitente:"Sweet Medical - Plataforma de Seguro de la Salud", 
-            mensaje: "Se ha reservado un turno, con el paciente " + turno.paciente.nombre + "y con el medico " + turno.medico.nombre + "para el servicio de " + nombreDeServicio,
+            mensaje: "Se ha reservado el turno #"+turno.id+" con horario "+turno.fechaHora.toLocaleDateString()+" por el paciente " + turno.paciente.nombre + "para el servicio/practica: " + turno.practica.nombre,
         }); 
 
         return notificacion;
     }
 
     static crearNotificacionParaTurnoAceptado(turno){
-
         const notificacion = new Notificacion({
-            destinatario: turno.paciente,           
+            destinatario: turno.paciente.usuario,           
             remitente:"Sweet Medical - Plataforma de Seguro de la Salud", 
-            mensaje: "Querido paciente " + turno.paciente.nombre + "tu turno ha sido aceptado",
+            mensaje: "Querido paciente " + turno.paciente.nombre + "tu turno #" + turno.id + " ha sido aceptado",
         });
 
         return notificacion;
     }
 
 
-    static crearNotificacionParaTurnoCancelado(turno, nombreDeDestinatario){
-        
-        const notificacion = new Notificacion({
-            destinatario: nombreDeDestinatario,           
-            remitente:"Sweet Medical - Plataforma de Seguro de la Salud", 
-            mensaje: "Querido usuario " + nombreDeDestinatario + "tu turno ha sido cancelado",
-        });
-
-        return notificacion;
+    static crearNotificacionParaTurnoCancelado(turno){
+        let usuarioQueCancela = turno.ultimoCambioEstado.usuario;
+        if(usuarioQueCancela.id === turno.paciente.usuario.id){
+            const notificacion = new Notificacion({
+                destinatario: turno.medico.usuario,           
+                remitente:"Sweet Medical - Plataforma de Seguro de la Salud", 
+                mensaje: "El paciente " + turno.paciente.nombre + " cancelo el turno #" + turno.id,
+            });
+            return notificacion;
+        }else{
+            const notificacion = new Notificacion({
+                destinatario: turno.paciente.usuario,           
+                remitente:"Sweet Medical - Plataforma de Seguro de la Salud",
+                mensaje: "El medico " + turno.medico.nombre + " cancelo el turno #" + turno.id,
+            });
+            return notificacion;
+        }
     }
 
-    static crearNotificacionParaRecordatorioDeTurno(turno, nombreDeDestinatario){
+    static crearNotificacionParaRecordatorioDeTurno(turno, usuarioDestinatario){
         const notificacion = new Notificacion({
-            destinatario: nombreDeDestinatario,
+            destinatario: usuarioDestinatario,
             remitente: "Sweet Medical - Plataforma de Seguro de la Salud",
-            mensaje: "Querido paciente " + nombreDeDestinatario + " te recordamos que tenes un turno programado para el día " + turno.fechaHora.toLocaleDateString(),
+            mensaje: "Recordatorio de turno #"+turno.id+" programado para mañana: " + turno.fechaHora.toLocaleDateString(),
         });
 
         return notificacion;
