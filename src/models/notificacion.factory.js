@@ -1,4 +1,4 @@
-import { Agenda } from "./ageda.js";
+import { Agenda } from "./agenda.js";
 import { Notificacion } from "./notificacion.model.js";
 import { Turno } from "./turno.js";
 

@@ -1,5 +1,5 @@
 //import { turnoSchema } from '../schemas/turno.schema.js'
-import { Agenda } from './ageda.js';
+import { Agenda } from './agenda.js';
 import { FactoryNotificacion } from './notificacion.factory.js';
 import { EstadoTurno } from './estadoTurno.enum.js';
   export class Turno {
