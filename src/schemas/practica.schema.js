@@ -1,6 +1,6 @@
 import { z } from "zod"; 
 
-const practicaSchema = z.object({
+export const practicaSchema = z.object({
     id: z.number().nonnegative(),
     codigo: z.string(),
     nombre: z.string(),

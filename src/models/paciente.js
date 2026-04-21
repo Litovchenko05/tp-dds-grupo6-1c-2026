@@ -5,6 +5,6 @@ export class Paciente {
     this.dni = dni;
     this.nombre = nombre;
     this.obraSocial = obraSocial; // es necesario que los pacientes tengan obra social? puede atender a particulares?
-    this.plan = plan;
+    this.plan = plan; // cada obraSocial tiene un plan?
   }
 }
