@@ -1,5 +1,5 @@
 import {Sede} from './sede.js'
-import { DisponibilidadHoraria } from './disponibilidadHoraria.js';
+import { DisponibilidadHoraria } from './DisponibilidadHoraria.js';
 
 export class Medico{
     constructor(idMedico, usuarioMedico, matriculaMedica, nombreMedico, especialidadesMedico, practicasMedico, sedesMedico){
