@@ -47,11 +47,10 @@ import { EstadoTurno } from './estadoTurno.enum.js';
         this.actualizarEstado(EstadoTurno.RESERVADO,paciente.usuario,'El paciente ha reservado el turno');
     }
 
-   esManiana(fechaManiana) { // 'YYYY-MM-DD'
-    const fechaTurno = this.fechaHora.toISOString().split('T')[0];
-    if(fechaTurno === fechaManiana && this.estado === EstadoTurno.ACEPTADO){
-        this.recordarTurno = true;
-        return true;
+   esManiana() { // 'YYYY-MM-DD'
+        if(Agenda.buscarTurnoParaGenerarNotificacionesDeRecordatorio(this)){
+            this.recordarTurno = true;
+            return true;
         }
     }
 

@@ -4,6 +4,7 @@ import { Turno} from  './turno.js';
 import { EstadoTurno } from "./estadoTurno.enum.js";
 import { Medico } from "./Medico.js";
 export class Agenda {
+
   
    static generarTurnosPara(especialidad, medico){
         // agarro al medico y compruebo que tiene es especialidad
@@ -88,8 +89,14 @@ export class Agenda {
 
         /*Aca tendrian que traerse todos los turnos del medico, que esten con estado disponible y 
         con fecha posterior a la actual, de la base de datos y modificarlos segun  la nueva disponilidad del medico*/
-         
-        const turnosAsignados = []; //estos son turnos que ya corresponden al medico y que fueron asignados con los antiguos horarios
+
+
+        const turno1 = new Turno(1, medico, new Date() , null, null);
+        const turno2 = new Turno(2, medico, new Date(), null, null);
+        const turno3 = new Turno(3, medico, new Date(), null, null);
+
+        const turnosAsignados = [turno1, turno2, turno3];
+
 
         medico.disponibilidades.forEach(unaDisponibilidad => {
 
@@ -112,4 +119,26 @@ export class Agenda {
         });
        
     }
+
+
+    static buscarTurnoParaGenerarNotificacionesDeRecordatorio(unTurno){
+
+        const fechaManiana = new Date();
+        fechaManiana.setDate(fechaManiana.getDate() + 1);
+
+        const medico = new Medico(1, 'usuarioMedico', 'matriculaMedica', 'nombreMedico', [], [], []);
+
+        const turno1 = new Turno(1, medico, new Date() , null, null);
+        const turno2 = new Turno(2, medico, fechaManiana, null, null);
+        const turno3 = new Turno(3, medico, new Date(), null, null);
+
+        const turnos = [turno1, turno2, turno3];
+
+    
+        let resultado = turnos.some(turno => turno.fechaHora.toDateString() === fechaManiana.toDateString() && unTurno.estadoActual === EstadoTurno.ACEPTADO && unTurno.id === turno.id);
+
+        return resultado;
+    
+    }
+
 }
