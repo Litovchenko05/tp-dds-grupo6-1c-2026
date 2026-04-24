@@ -26,6 +26,8 @@ export class Agenda {
                     null,
                     fechaTurno,
                     null,
+                    especialidad,
+                    null,
                      [],
                     especialidad.costoConsulta
                 );
@@ -33,7 +35,7 @@ export class Agenda {
                 turno.actualizarEstado(
                     EstadoTurno.RESERVADO,
                     medico.usuario,
-                    'Turno generado automáticamente por el agenda'
+                    'Turno generado automáticamente por el sistema'
                 );
 
                 nuevosTurnos.push(turno);
@@ -59,11 +61,12 @@ export class Agenda {
              let fechaTurno = disponibilidad.obtenerFecha();
 
              let turno = new Turno(
-                 medico,
+                medico,
                 null,
                 fechaTurno,
                 null,
                 practica,
+                null,
                 [],
                 practica.costo,
             );
@@ -71,7 +74,7 @@ export class Agenda {
              turno.actualizarEstado(
                 EstadoTurno.RESERVADO,
                 medico.usuario,
-                'Turno generado automáticamente por el agenda'
+                'Turno generado automáticamente por el sistema'
             );
 
             nuevosTurnos.push(turno);
@@ -86,7 +89,7 @@ export class Agenda {
         /*Aca tendrian que traerse todos los turnos del medico, que esten con estado disponible y 
         con fecha posterior a la actual, de la base de datos y modificarlos segun  la nueva disponilidad del medico*/
          
-        const turnosAsignados = []; //estos son turnos que ya corresponde al medico
+        const turnosAsignados = []; //estos son turnos que ya corresponden al medico y que fueron asignados con los antiguos horarios
 
         medico.disponibilidades.forEach(unaDisponibilidad => {
 
@@ -100,7 +103,7 @@ export class Agenda {
                             turno.actualizarEstado(
                                 EstadoTurno.RESERVADO,
                                 medico.usuario,
-                                'Turno generado automáticamente por el agenda'
+                                'Turno generado automáticamente por el sistema'
                             );    
                         }});
                
