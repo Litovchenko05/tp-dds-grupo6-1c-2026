@@ -3,16 +3,26 @@ import { Agenda } from './agenda.js';
 import { FactoryNotificacion } from './notificacion.factory.js';
 import { EstadoTurno } from './estadoTurno.enum.js';
   export class Turno {
+    #id
+    #medico
+    #paciente
+    #fechaHora
+    #sede
+    #practica
+    #estado
+    #historialEstados
+    #costo
+
     constructor(idTurno, medico, fechaHora, sede, practica) {
-        this.id = idTurno;
-        this.medico = medico;
-        this.paciente = null; // Inicialmente sin paciente asignado
-        this.fechaHora = fechaHora; //date
-        this.sede = sede;
-        this.practica = practica; //practica o servicio asociado al turno
-        this.estado = EstadoTurno.DISPONIBLE; // Estado inicial
-        this.historialEstados = [];
-        this.costo = practica.costo; 
+        this.#id = idTurno;
+        this.#medico = medico;
+        this.#paciente = null; // Inicialmente sin paciente asignado
+        this.#fechaHora = fechaHora; //date
+        this.#sede = sede;
+        this.#practica = practica; //practica o servicio asociado al turno
+        this.#estado = EstadoTurno.DISPONIBLE; // Estado inicial
+        this.#historialEstados = [];
+        this.#costo = practica.costo; 
     }
 
     actualizarEstado(nuevoEstado,quien,motivo){

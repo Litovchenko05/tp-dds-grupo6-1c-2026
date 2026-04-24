@@ -1,13 +1,17 @@
 import { CoberturaEspecialidad} from "./coberturaEspecialidad";
 import { CoberturaPractica } from "./coberturaPractica";
 export class Plan{
- 
+    #id
+    #nombre
+    #coberturasEspecialidad
+    #coberturasPractica
+
     constructor(data){
         const { id, nombre, coberturasEspecialidad,coberturasPractica} = planSchema.parse(data);
-        this.id = id;
-        this.nombre = nombre;
-        this.coberturasEspecialidad = coberturasEspecialidad;
-        this.coberturasPractica =coberturasPractica;   
+        this.#id = id;
+        this.#nombre = nombre;
+        this.#coberturasEspecialidad = coberturasEspecialidad;
+        this.#coberturasPractica =coberturasPractica;   
     }
     obtenerCoberturaEspecialidad(especialidadBuscada){
         const cobertura = this.coberturasEspecialidad.find(

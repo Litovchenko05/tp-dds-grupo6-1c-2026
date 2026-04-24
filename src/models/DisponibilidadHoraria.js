@@ -1,10 +1,15 @@
 import {DiasSemana} from './dia-semana.enum.js'
 export class DisponibilidadHoraria{
+  #diaSemana
+  #horaDesde
+  #horaHasta
+  #fueModificada
+
   constructor(diaSemana, horaDesde, horaHasta){
-    this.diaSemana = diaSemana;
-    this.horaDesde = horaDesde;
-    this.horaHasta = horaHasta;
-    this.fueModificada = false;
+    this.#diaSemana = diaSemana;
+    this.#horaDesde = horaDesde;
+    this.#horaHasta = horaHasta;
+    this.#fueModificada = false;
   }
 
   get getFueModificada(){

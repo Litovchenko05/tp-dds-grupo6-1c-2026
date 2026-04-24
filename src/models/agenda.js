@@ -7,51 +7,30 @@ export class Agenda {
 
   
    static generarTurnosPara(especialidad, medico){
-        // agarro al medico y compruebo que tiene es especialidad
-        const tieneEspecialidad = medico.especialidades.some(especialidadMedico => especialidadMedico.id === especialidad.id);
-     
-     
-        if (!tieneEspecialidad){
+        
+        if (!medico.tieneEspecialidad(especialidad)){
             throw new Error(`El médico ${medico.nombre} no tiene la especialidad ${especialidad.nombre}`);
-        }
-                    
-            //lista de nuevos turnos a generar
-            const nuevosTurnos = [];
+        }       
 
-            medico.disponibilidades.forEach((disponibilidad) => {
-
-                let fechaTurno = disponibilidad.obtenerFecha();
-
-                let turno = new Turno(
-                    medico,
-                    null,
-                    fechaTurno,
-                    null,
-                    especialidad,
-                    null,
-                     [],
-                    especialidad.costoConsulta
-                );
-
-                turno.actualizarEstado(
-                    EstadoTurno.RESERVADO,
-                    medico.usuario,
-                    'Turno generado automáticamente por el sistema'
-                );
-
-                nuevosTurnos.push(turno);
-            });
-                 
-            return nuevosTurnos;
+        const nuevosTurnos = [];
+        medico.disponibilidades.forEach((disponibilidad) => {
+            const fechaTurno = disponibilidad.obtenerFecha();
+            const turno = new Turno(
+                1, //PROVISIONAL, modificar segun la estrategia de asignacion de IDs que adoptemos
+                medico,
+                fechaTurno,
+                medico.sedes[0],
+                especialidad
+            );
+            nuevosTurnos.push(turno);
+        });
+        return nuevosTurnos;
     }
    
 
    static generarTurnosPara(practica, medico){
-
-       // agarro al medico y compruebo que tiene esa practica
-        const tienePractica = medico.practicas.some(practicaMedico => practicaMedico.id === practica.id);
      
-        if (!tienePractica){
+        if (!medico.tieneEspecialidad(especialidad)){
               throw new Error(`El médico ${medico.nombre} no tiene la practica ${practica.nombre}`);
         }
 
@@ -59,27 +38,17 @@ export class Agenda {
 
         medico.disponibilidades.forEach((disponibilidad) => {
 
-             let fechaTurno = disponibilidad.obtenerFecha();
+             const fechaTurno = disponibilidad.obtenerFecha();
 
-             let turno = new Turno(
+             const turno = new Turno(
+                1, //PROVISIONAL, modificar segun la estrategia de asignacion de IDs que adoptemos
                 medico,
-                null,
                 fechaTurno,
-                null,
-                practica,
-                null,
-                [],
-                practica.costo,
-            );
-
-             turno.actualizarEstado(
-                EstadoTurno.RESERVADO,
-                medico.usuario,
-                'Turno generado automáticamente por el sistema'
+                medico.sedes[0],
+                practica
             );
 
             nuevosTurnos.push(turno);
-
         });
           
         return nuevosTurnos;
