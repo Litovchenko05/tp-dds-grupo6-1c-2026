@@ -1,9 +1,9 @@
 export const DiasSemana = Object.freeze({
-    LUNES: 'lunes',
-    MARTES: 'martes',
-    MIERCOLES: 'miercoles',
-    JUEVES: 'jueves',
-    VIERNES: 'viernes',
-    SABADO: 'sabado',
-    DOMINGO: 'domingo'
+    DOMINGO: 0,
+    LUNES: 1,
+    MARTES: 2,
+    MIERCOLES: 3,
+    JUEVES: 4,
+    VIERNES: 5,
+    SABADO: 6
 });

@@ -29,8 +29,17 @@ import { EstadoTurno } from './estadoTurno.enum.js';
 
  
     }
+
+    get fechaTurno(){
+        return this.fechaHora;
+    }
+
     get ultimoCambioEstado() {
         return this.historialEstados.at(-1); 
+    }
+
+    get estadoActual() {
+        return this.estado;
     }
 
     reservar(paciente){
