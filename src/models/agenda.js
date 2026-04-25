@@ -6,42 +6,30 @@ import { Medico } from "./Medico.js";
 export class Agenda {
 
   
-   static generarTurnosPara(especialidad, medico){
-        
-        if (!medico.tieneEspecialidad(especialidad)){
-            throw new Error(`El médico ${medico.nombre} no tiene la especialidad ${especialidad.nombre}`);
-        }       
+   static generarTurnosPara(servicio, medico){
+        if (servicio instanceof Practica) {
+            return this.#generarPorPractica(servicio, medico);
+        }
 
-        const nuevosTurnos = [];
-        medico.disponibilidades.forEach((disponibilidad) => {
-            const fechaTurno = disponibilidad.obtenerFecha();
-            const turno = new Turno(
-                1, //PROVISIONAL, modificar segun la estrategia de asignacion de IDs que adoptemos
-                medico,
-                fechaTurno,
-                medico.sedes[0],
-                especialidad
-            );
-            nuevosTurnos.push(turno);
-        });
-        return nuevosTurnos;
+        if (servicio instanceof Especialidad) {
+            return this.#generarPorEspecialidad(servicio, medico);
+        }
+
+        throw new Error('Tipo de servicio no soportado para generar turnos');
     }
-   
 
-   static generarTurnosPara(practica, medico){
-     
-        if (!medico.tieneEspecialidad(especialidad)){
+    static #generarPorPractica(practica, medico){
+        if (!medico.tieneTipoTurno(practica)){
               throw new Error(`El médico ${medico.nombre} no tiene la practica ${practica.nombre}`);
         }
 
         const nuevosTurnos = [];
 
         medico.disponibilidades.forEach((disponibilidad) => {
+            const fechaTurno = disponibilidad.obtenerFecha();
 
-             const fechaTurno = disponibilidad.obtenerFecha();
-
-             const turno = new Turno(
-                1, //PROVISIONAL, modificar segun la estrategia de asignacion de IDs que adoptemos
+            const turno = new Turno(
+                null,
                 medico,
                 fechaTurno,
                 medico.sedes[0],
@@ -50,7 +38,31 @@ export class Agenda {
 
             nuevosTurnos.push(turno);
         });
-          
+
+        return nuevosTurnos;
+    }
+
+    static #generarPorEspecialidad(especialidad, medico){
+        if (!medico.tieneTipoTurno(especialidad)){
+            throw new Error(`El médico ${medico.nombre} no tiene la especialidad ${especialidad.nombre}`);
+        }
+
+        const nuevosTurnos = [];
+
+        medico.disponibilidades.forEach((disponibilidad) => {
+            const fechaTurno = disponibilidad.obtenerFecha();
+
+            const turno = new Turno(
+                null,
+                medico,
+                fechaTurno,
+                medico.sedes[0],
+                especialidad
+            );
+
+            nuevosTurnos.push(turno);
+        });
+
         return nuevosTurnos;
     }
 
@@ -58,7 +70,6 @@ export class Agenda {
 
         /*Aca tendrian que traerse todos los turnos del medico, que esten con estado disponible y 
         con fecha posterior a la actual, de la base de datos y modificarlos segun  la nueva disponilidad del medico*/
-
 
         const turno1 = new Turno(1, medico, new Date() , null, null);
         const turno2 = new Turno(2, medico, new Date(), null, null);
@@ -70,20 +81,16 @@ export class Agenda {
         medico.disponibilidades.forEach(unaDisponibilidad => {
 
             if (unaDisponibilidad.getFueModificada() === true){
-
-                    turnosAsignados.forEach(turno => {
-                        if(turno.estadoActual == EstadoTurno.DISPONIBLE && turno.fechaTurno < unaDisponibilidad.obtenerFecha()){
-                              
-                            turno.fechaHora = unaDisponibilidad.obtenerFecha();
-
-                            turno.actualizarEstado(
-                                EstadoTurno.RESERVADO,
-                                medico.usuario,
-                                'Turno generado automáticamente por el sistema'
-                            );    
-                        }});
-               
-                    
+            
+                turnosAsignados.forEach(turno => {
+                    if(turno.estadoActual == EstadoTurno.DISPONIBLE && turno.fechaTurno < unaDisponibilidad.obtenerFecha()){                          
+                        turno.fechaHora = unaDisponibilidad.obtenerFecha();
+                        turno.actualizarEstado(
+                            EstadoTurno.RESERVADO,
+                            medico.usuario,
+                            'Turno generado automáticamente por el sistema'
+                        );    
+                    }});
             }
         });
        
@@ -109,5 +116,4 @@ export class Agenda {
         return resultado;
     
     }
-
 }

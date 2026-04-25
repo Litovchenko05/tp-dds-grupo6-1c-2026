@@ -27,9 +27,9 @@ import { EstadoTurno } from './estadoTurno.enum.js';
 
     actualizarEstado(nuevoEstado,quien,motivo){
 
-        this.estado = nuevoEstado;
+        this.#estado = nuevoEstado;
 
-        this.historialEstados.push({
+        this.#historialEstados.push({
             fechaHoraIngreso: new Date(),
             estado: nuevoEstado,
             turno: this,

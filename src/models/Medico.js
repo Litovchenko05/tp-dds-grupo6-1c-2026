@@ -1,5 +1,7 @@
 import {Sede} from './sede.js'
 import { DisponibilidadHoraria } from './DisponibilidadHoraria.js';
+import { Especialidad } from './especialidad.js'
+import { Practica } from './practica.js'
 
 export class Medico{
     #id
@@ -59,8 +61,13 @@ export class Medico{
         console.log(`Disponibilidad agregada para ${this.nombre}: ${disponibilidad.diaSemana} de ${disponibilidad.horaDesde} a ${disponibilidad.horaHasta}`);
     }
 
-    tieneEspecialidad(especialidad){
-        return this.#especialidades.some(especialidadMedico => especialidadMedico.id === especialidad.id)
+    tieneTipoTurno(tipoTurno){
+        if (tipoTurno instanceof Especialidad){
+            return this.#especialidades.some(especialidadMedico => especialidadMedico.id === tipoTurno.id)
+        }
+        if (tipoTurno instanceof Practica){
+            return this.#practicas.some(practicaMedico => practicaMedico.id === tipoTurno.id)
+        }
     }
 
 }
