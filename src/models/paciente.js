@@ -14,4 +14,28 @@ export class Paciente {
     this.#obraSocial = obraSocial; // es necesario que los pacientes tengan obra social? puede atender a particulares?
     this.#plan = plan; // cada obraSocial tiene un plan?
   }
+
+  get id() {
+    return this.#id;
+  }
+
+  get usuario() {
+    return this.#usuario;
+  }
+
+  get dni() {
+    return this.#dni;
+  }
+
+  get nombre() {
+    return this.#nombre;
+  }
+
+  get obraSocial() {
+    return this.#obraSocial;
+  }
+
+  get plan() {
+    return this.#plan;
+  }
 }

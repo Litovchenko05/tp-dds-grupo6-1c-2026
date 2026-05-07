@@ -40,6 +40,42 @@ import { EstadoTurno } from './estadoTurno.enum.js';
  
     }
 
+    get id() {
+        return this.#id;
+    }
+
+    get medico() {
+        return this.#medico;
+    }
+
+    get paciente() {
+        return this.#paciente;
+    }
+
+    get fechaHora() {
+        return this.#fechaHora;
+    }
+
+    get sede() {
+        return this.#sede;
+    }
+
+    get practica() {
+        return this.#practica;
+    }
+
+    get estado() {
+        return this.#estado;
+    }
+
+    get historialEstados() {
+        return this.#historialEstados;
+    }
+
+    get costo() {
+        return this.#costo;
+    }
+
     get fechaTurno(){
         return this.fechaHora;
     }
@@ -53,7 +89,7 @@ import { EstadoTurno } from './estadoTurno.enum.js';
     }
 
     reservar(paciente){
-        this.paciente=paciente;
+        this.#paciente = paciente;
         this.actualizarEstado(EstadoTurno.RESERVADO,paciente.usuario,'El paciente ha reservado el turno');
     }
 

@@ -1,4 +1,4 @@
-import {DiasSemana} from './dia-semana.enum.js'
+import { DiasSemana } from './diaSemana.enum.js'
 export class DisponibilidadHoraria{
   #diaSemana
   #horaDesde

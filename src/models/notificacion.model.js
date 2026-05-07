@@ -26,4 +26,32 @@ export class Notificacion {
         this.#fechaHoraLeida = new Date()
     }
 
+    get id() {
+        return this.#id;
+    }
+
+    get destinatario() {
+        return this.#destinatario;
+    }
+
+    get remitente() {
+        return this.#remitente;
+    }
+
+    get mensaje() {
+        return this.#mensaje;
+    }
+
+    get fechaHoraCreacion() {
+        return this.#fechaHoraCreacion;
+    }
+
+    get fechaHoraLeida() {
+        return this.#fechaHoraLeida;
+    }
+
+    get leida() {
+        return this.#leida;
+    }
+
 }

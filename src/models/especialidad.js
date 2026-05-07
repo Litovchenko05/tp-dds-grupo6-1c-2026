@@ -13,7 +13,23 @@ export class Especialidad {
         this.#costoConsulta = costoConsulta;
     }
 
+    get id() {
+        return this.#id;
+    }
+
+    get nombre() {
+        return this.#nombre;
+    }
+
+    get duracionTurnoEnMins() {
+        return this.#duracionTurnoEnMins;
+    }
+
+    get costoConsulta() {
+        return this.#costoConsulta;
+    }
+
     get costo(){
-        return this.costoConsulta; // para usar servicio y practica de forma polimorfica en turno
+        return this.#costoConsulta; // para usar servicio y practica de forma polimorfica en turno
     }
 }

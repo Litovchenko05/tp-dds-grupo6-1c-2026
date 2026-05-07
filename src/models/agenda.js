@@ -2,7 +2,7 @@ import { Especialidad } from './especialidad.js';
 import { Practica } from './practica.js'
 import { Turno} from  './turno.js';
 import { EstadoTurno } from "./estadoTurno.enum.js";
-import { Medico } from "./Medico.js";
+import { Medico } from "./medico.js";
 export class Agenda {
 
   

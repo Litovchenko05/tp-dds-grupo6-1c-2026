@@ -1,5 +1,5 @@
 import {Sede} from './sede.js'
-import { DisponibilidadHoraria } from './DisponibilidadHoraria.js';
+import { DisponibilidadHoraria } from './disponibilidadHoraria.js';
 import { Especialidad } from './especialidad.js'
 import { Practica } from './practica.js'
 

@@ -13,6 +13,25 @@ export class Practica{
         this.#costo = costo;
 
     }
-    
+
+    get id() {
+        return this.#id;
+    }
+
+    get codigo() {
+        return this.#codigo;
+    }
+
+    get nombre() {
+        return this.#nombre;
+    }
+
+    get duracionTurnoEnMins() {
+        return this.#duracionTurnoEnMins;
+    }
+
+    get costo() {
+        return this.#costo;
+    }
 }
 
