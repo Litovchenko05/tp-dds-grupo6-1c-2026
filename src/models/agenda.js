@@ -78,23 +78,24 @@ export class Agenda {
         const turnosAsignados = [turno1, turno2, turno3];
 
 
-        medico.disponibilidades.forEach(unaDisponibilidad => {
+        const disponibilidadesModificadas = medico.disponibilidades.filter(disponibilidad => disponibilidad.getFueModificada === true);
 
-            if (unaDisponibilidad.getFueModificada() === true){
-            
-                turnosAsignados.forEach(turno => {
-                    if(turno.estadoActual == EstadoTurno.DISPONIBLE && turno.fechaTurno < unaDisponibilidad.obtenerFecha()){                          
-                        turno.fechaHora = unaDisponibilidad.obtenerFecha();
-                        turno.actualizarEstado(
-                            EstadoTurno.RESERVADO,
-                            medico.usuario,
-                            'Turno generado automáticamente por el sistema'
-                        );    
-                    }});
+        const nuevasFechas = disponibilidadesModificadas.map(disponibilidad => disponibilidad.obtenerFecha());
+
+        
+        turnosAsignados.forEach((turno, indice) => {
+
+            const nuevaFecha = nuevasFechas[indice];
+
+            if(turno.estadoActual === EstadoTurno.DISPONIBLE && nuevaFecha !== undefined){
+
+                turno.fechaTurno = nuevaFecha;
+
             }
         });
-       
     }
+       
+    
 
 
     static buscarTurnoParaGenerarNotificacionesDeRecordatorio(unTurno){

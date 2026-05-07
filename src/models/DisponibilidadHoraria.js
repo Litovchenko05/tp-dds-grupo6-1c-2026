@@ -13,7 +13,14 @@ export class DisponibilidadHoraria{
   }
 
   get getFueModificada(){
-    return this.fueModificada;
+    return this.#fueModificada;
+  }
+
+  actualizarDisponibilidad(diaSemana, horaDesde, horaHasta){
+    this.#diaSemana = diaSemana;
+    this.#horaDesde = horaDesde;
+    this.#horaHasta = horaHasta;
+    this.#fueModificada = true;
   }
   
   obtenerFecha() {
@@ -27,4 +34,5 @@ export class DisponibilidadHoraria{
 
     return fecha;
   }
+
 }
