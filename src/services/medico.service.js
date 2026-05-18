@@ -1,4 +1,5 @@
 import { medicoRepository } from '../repositories/datosPrueba.enMemoria.js'
+import { Medico } from '../models/Medico.js'    
 
 export class MedicoService {
     constructor({ medicoRepository }) {
@@ -42,5 +43,16 @@ export class MedicoService {
         const medico = this.medicoRepository.obtenerPorId(Number(id))
 
         return medico ? this.#mapToDto(medico) : null
+    }
+
+    agregarDisponibilidad(medicoId, disponibilidad){
+        const medico = this.medicoRepository.obtenerPorId(Number(medicoId))
+
+        console.log("medico encontrado: " + medico?.nombre);
+        
+        if (!medico) {
+            throw new Error('Médico no encontrado')
+        }
+        medico.definirDisponibilidad(disponibilidad);
     }
 }
