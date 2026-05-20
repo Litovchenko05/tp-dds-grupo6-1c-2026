@@ -4,12 +4,25 @@ export class DisponibilidadHoraria{
   #horaDesde
   #horaHasta
   #fueModificada
+  
 
   constructor(diaSemana, horaDesde, horaHasta){
     this.#diaSemana = diaSemana;
     this.#horaDesde = horaDesde;
     this.#horaHasta = horaHasta;
     this.#fueModificada = false;
+  }
+
+  get diaSemana(){
+    return this.#diaSemana;
+  }
+
+  get horaDesde(){
+    return this.#horaDesde;
+  }
+
+  get horaHasta(){
+    return this.#horaHasta;
   }
 
   get getFueModificada(){
@@ -33,6 +46,14 @@ export class DisponibilidadHoraria{
     fecha.setHours(this.horaDesde, 0, 0, 0);
 
     return fecha;
+  }
+
+  obtenerNombreDelDiaDeSemana(indice){
+    return Object.keys(DiasSemana).find(key => DiasSemana[key] === indice)
+  }
+
+  obtenerIndiceDelDiaDeSemana(nombreDia){
+    return DiasSemana[nombreDia];
   }
 
 }

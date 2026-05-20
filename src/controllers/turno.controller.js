@@ -35,4 +35,6 @@ export class TurnoController {
             return res.status(400).json({ data: error })
         }
     }
+
+   
 }

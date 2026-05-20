@@ -9,6 +9,7 @@ import { MedicoRepository } from './medico.repository.js';
 import { NotificacionRepository } from './notificacion.repository.js';
 import { PacienteRepository } from './paciente.repository.js';
 import { TurnoRepository } from './turno.repository.js';
+import { DisponibilidadHoraria } from '../models/DisponibilidadHoraria.js';
 
 export const medicoRepository = new MedicoRepository();
 export const pacienteRepository = new PacienteRepository();
@@ -24,6 +25,8 @@ function crearDatosDePrueba() {
         new Medico(2, 'medico_bruno', 'MAT-002', 'Dr. Bruno Diaz', [], [], [sedeNorte])
     ];
 
+    medicos[0].disponibilidades.push(new DisponibilidadHoraria("MARTES", "10:00", "11:00"));
+
     const pacientes = [
         new Paciente(1, 'paciente_lucia', '30111222', 'Lucia Gomez', { nombre: 'OSDE' }, { nombre: '210' }),
         new Paciente(2, 'paciente_juan', '28999888', 'Juan Torres', { nombre: 'Swiss Medical' }, { nombre: 'SMG20' })
@@ -33,8 +36,8 @@ function crearDatosDePrueba() {
     const practicaControl = new Practica(2, 'CTRL001', 'Control clinico', 20, 18000);
 
     const turnos = [
-        new Turno(1, medicos[0], new Date('2026-04-26T09:00:00'), sedeCentral, practicaConsulta),
-        new Turno(2, medicos[0], new Date('2026-04-26T10:00:00'), sedeCentral, practicaControl),
+        new Turno(1, medicos[0], new Date('2026-05-26T10:00:00'), sedeCentral, practicaConsulta),
+        new Turno(2, medicos[0], new Date('2026-05-26T10:30:00'), sedeCentral, practicaControl),
         new Turno(3, medicos[1], new Date('2026-04-27T15:30:00'), sedeNorte, practicaConsulta)
     ];
 

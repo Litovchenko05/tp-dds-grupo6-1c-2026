@@ -47,4 +47,18 @@ export class TurnoRepository {
     cargar(turnos = []) {
         turnos.forEach((turno) => this.guardar(turno));
     }
+
+    save(turnosNuevos){ 
+        this.#turnos.push(...turnosNuevos); 
+    }
+
+    delete(turno){   
+
+        const indice = this.#turnos.indexOf(turno);
+
+        if(indice !== -1){
+            this.#turnos.splice(indice, 1);
+        }
+    }
+
 }

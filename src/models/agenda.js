@@ -3,21 +3,73 @@ import { Practica } from './practica.js'
 import { Turno} from  './turno.js';
 import { EstadoTurno } from "./estadoTurno.enum.js";
 import { Medico } from "./medico.js";
+import { DiasSemana} from './diaSemana.enum.js'
+import { DisponibilidadHoraria } from './DisponibilidadHoraria.js';
 export class Agenda {
 
   
-   static generarTurnosPara(servicio, medico){
-        if (servicio instanceof Practica) {
-            return this.#generarPorPractica(servicio, medico);
-        }
+   static generarTurnos(medico, disponibilidad){
 
-        if (servicio instanceof Especialidad) {
-            return this.#generarPorEspecialidad(servicio, medico);
-        }
+       const nuevosTurnos = [];
+       const fechaActual = new Date(); 
+       const año = fechaActual.getFullYear();
+       const fechaDelUltimoDiaDelAño = new Date(año, 11, 31)
+       const [horaDesde, minutoDesde] = disponibilidad.horaDesde.split(':').map(Number);
 
-        throw new Error('Tipo de servicio no soportado para generar turnos');
+       const [horaHasta, minutoHasta] = disponibilidad.horaHasta.split(':').map(Number);
+
+        fechaActual.setDate(fechaActual.getDate() + 1); //empiezo a generar tunos para el dia siguiente
+
+        while(fechaActual <= fechaDelUltimoDiaDelAño){
+
+           const nombreDelDia = disponibilidad.obtenerNombreDelDiaDeSemana(fechaActual.getDay());
+
+            if(nombreDelDia == disponibilidad.diaSemana){
+
+                // hora inicial del cual arrancan los turnos
+                let fechaHora = new Date(
+                    año,
+                    fechaActual.getMonth(),
+                    fechaActual.getDate(),
+                    horaDesde,
+                    minutoDesde
+                );
+
+                // hora final para que terminen los turnos
+                const fechaLimite = new Date(
+                    año,
+                    fechaActual.getMonth(),
+                    fechaActual.getDate(),
+                    horaHasta,
+                    minutoHasta
+                );
+
+                while(fechaHora <= fechaLimite){
+                    
+                    console.log("La fecha del siguiente turno es " + fechaHora.toLocaleString('es-AR'));
+
+                        const nuevoTurno = new Turno(
+                            null,
+                            medico,
+                            fechaHora, 
+                            null,
+                            null
+                        );
+                    
+                    nuevosTurnos.push(nuevoTurno);
+                    //le sumo 30 min a la hora inicial de la fecha inicial para generar los turnos
+                    fechaHora.setMinutes(fechaHora.getMinutes() + 30);
+                }
+     
+                
+            }
+
+            fechaActual.setDate(fechaActual.getDate() + 1); //incremento la fecha para seguir generando turnos
+        }
+         return nuevosTurnos;
     }
 
+  
     static #generarPorPractica(practica, medico){
         if (!medico.tieneTipoTurno(practica)){
               throw new Error(`El médico ${medico.nombre} no tiene la practica ${practica.nombre}`);

@@ -22,7 +22,7 @@ import { EstadoTurno } from './estadoTurno.enum.js';
         this.#practica = practica; //practica o servicio asociado al turno
         this.#estado = EstadoTurno.DISPONIBLE; // Estado inicial
         this.#historialEstados = [];
-        this.#costo = practica.costo; 
+        this.#costo = null; 
     }
 
     actualizarEstado(nuevoEstado,quien,motivo){
@@ -93,11 +93,34 @@ import { EstadoTurno } from './estadoTurno.enum.js';
         this.actualizarEstado(EstadoTurno.RESERVADO,paciente.usuario,'El paciente ha reservado el turno');
     }
 
+    cambiarFechaHora(nuevaFechaHora){
+        this.#fechaHora = nuevaFechaHora;
+    }
+
    esManiana() { // 'YYYY-MM-DD'
         if(Agenda.buscarTurnoParaGenerarNotificacionesDeRecordatorio(this)){
             this.recordarTurno = true;
             return true;
         }
+    }
+
+    toJSON() {
+        return {
+            id: this.#id,
+            medico: {
+                id: this.#medico.id,
+                nombre: this.#medico.nombre
+            },
+            paciente: this.#paciente
+                ? {
+                    id: this.#paciente.id,
+                    nombre: this.#paciente.nombre
+                }
+                : null,
+            fechaHora: this.#fechaHora,
+            estado: this.#estado,
+            costo: this.#costo
+        };
     }
 
 }

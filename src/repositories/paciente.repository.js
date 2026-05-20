@@ -27,6 +27,7 @@ export class PacienteRepository {
     }
 
     obtenerPorId(idPaciente) {
+        console.log(this.#pacientes);
         return this.#pacientes.find((paciente) => paciente.id === idPaciente) ?? null;
     }
 
