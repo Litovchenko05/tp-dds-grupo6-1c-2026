@@ -5,8 +5,13 @@ import { EstadoTurnoSchema } from './estadoTurno.schema.js';
  import sedeSchema from './sede.schema.js';
  import practicaSchema from './practica.schema.js';
 
+ // Enum para tipo de usuario
+ const TipoUsuarioEnum = z.enum(['PACIENTE', 'MEDICO', 'ADMIN'], {
+     errorMap: () => ({ message: 'Tipo de usuario inválido' })
+ })
+
  export const turnoSchema = z.object({
-    id: z.string().optional, // Valida que el id sea un string opcionable recibirlo
+    id: z.number().int().positive(),
     medico: medicoSchema, // Valida que el médico cumpla con el schema de médico
     paciente: pacienteSchema, // Valida que el paciente cumpla con el schema de paciente
     fechaHora: z.date(), // Valida que fechaHora sea una fecha válida
@@ -16,3 +21,18 @@ import { EstadoTurnoSchema } from './estadoTurno.schema.js';
     historialEstados: z.array(EstadoTurnoSchema.nullable()), // Valida que sea un valor posible de estadoTurno o null 
     costo: z.number().int().positive() // Valida que el costo sea un número entero positivo
 });
+
+export const cancelarTurnoSchema = z.object({
+    id: z.number()
+        .int().positive('ID de usuario inválido'),
+
+    tipoUsuario: TipoUsuarioEnum,
+
+    motivo: z.string()
+        .min(1, 'El motivo es obligatorio')
+        .max(500, 'El motivo no puede exceder 500 caracteres')
+        .trim()
+})
+
+// Exportar tipos para TypeScript
+export const CancelarTurnoDto = z.infer<typeof cancelarTurnoSchema>

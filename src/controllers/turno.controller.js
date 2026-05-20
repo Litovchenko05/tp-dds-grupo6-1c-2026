@@ -35,4 +35,40 @@ export class TurnoController {
             return res.status(400).json({ data: error })
         }
     }
+
+    cancelarTurno = async (req, res) => {
+        try {
+            const { id } = req.params
+            const { motivo, idUsuario } = req.body
+            /* JSON que enviás desde el cliente:
+            {
+                "idUsuario": 5, //usuario que hace la cancelacion
+                "motivo": "Me enfermé"
+            }*/
+
+            const resultado = this.turnoService.cancelarTurno({
+                id, //del turno
+                idUsuario,
+                motivo
+            })
+
+
+            return res.status(200).json({
+                status: 'success',
+                data: resultado,
+                message: 'Turno cancelado exitosamente'
+            })
+
+        } catch (error) {
+            const status = error.message.includes('no encontrado') ? 404
+                        : error.message.includes('anticipación') ? 400
+                        : 500
+
+            return res.status(status).json({
+                status: 'error',
+                message: error.message
+            })
+        }
+    }
 }
+

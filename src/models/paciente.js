@@ -7,7 +7,7 @@ export class Paciente {
   #plan
 
   constructor( id, usuario, dni, nombre, obraSocial, plan ) {
-    this.#id = id;
+    this.#id = id;   //si uduario ya tiene el ID, es necesario?
     this.#usuario = usuario;
     this.#dni = dni;
     this.#nombre = nombre;

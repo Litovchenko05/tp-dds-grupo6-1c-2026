@@ -12,4 +12,11 @@ const router = express.Router()
 router.route('/')
     .get((req, res) => turnoController.findAll(req, res))
 
+router.route('/:id')
+    .get((req,res) => turnoController.findById(req, res))
+
+router.route('/:id/cancelar') //tengo dudas con la palabra "cancelar"
+    .patch((req,res) => turnoController.cancelarTurno(req, res))
+
+
 export default router
