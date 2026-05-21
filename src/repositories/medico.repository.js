@@ -1,46 +1,46 @@
 export class MedicoRepository {
-    #medicos;
+  #medicos
 
-    constructor(datosIniciales = []) {
-        this.#medicos = [];
-        this.cargar(datosIniciales);
+  constructor(datosIniciales = []) {
+    this.#medicos = []
+    this.cargar(datosIniciales)
+  }
+
+  guardar(medico) {
+    if (!medico || medico.id == null) {
+      throw new Error('El medico debe tener un id para guardarse en memoria')
     }
 
-    guardar(medico) {
-        if (!medico || medico.id == null) {
-            throw new Error('El medico debe tener un id para guardarse en memoria');
-        }
+    const indiceExistente = this.#medicos.findIndex((m) => m.id === medico.id)
 
-        const indiceExistente = this.#medicos.findIndex((m) => m.id === medico.id);
-
-        if (indiceExistente >= 0) {
-            this.#medicos[indiceExistente] = medico;
-        } else {
-            this.#medicos.push(medico);
-        }
-
-        return medico;
+    if (indiceExistente >= 0) {
+      this.#medicos[indiceExistente] = medico
+    } else {
+      this.#medicos.push(medico)
     }
 
-    obtenerTodos() {
-        return [...this.#medicos];
-    }
+    return medico
+  }
 
-    obtenerPorId(idMedico) {
-        return this.#medicos.find((medico) => medico.id === idMedico) ?? null;
-    }
+  obtenerTodos() {
+    return [...this.#medicos]
+  }
 
-    eliminarPorId(idMedico) {
-        const cantidadInicial = this.#medicos.length;
-        this.#medicos = this.#medicos.filter((medico) => medico.id !== idMedico);
-        return this.#medicos.length < cantidadInicial;
-    }
+  obtenerPorId(idMedico) {
+    return this.#medicos.find((medico) => medico.id === idMedico) ?? null
+  }
 
-    limpiar() {
-        this.#medicos = [];
-    }
+  eliminarPorId(idMedico) {
+    const cantidadInicial = this.#medicos.length
+    this.#medicos = this.#medicos.filter((medico) => medico.id !== idMedico)
+    return this.#medicos.length < cantidadInicial
+  }
 
-    cargar(medicos = []) {
-        medicos.forEach((medico) => this.guardar(medico));
-    }
+  limpiar() {
+    this.#medicos = []
+  }
+
+  cargar(medicos = []) {
+    medicos.forEach((medico) => this.guardar(medico))
+  }
 }
