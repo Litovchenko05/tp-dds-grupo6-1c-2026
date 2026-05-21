@@ -18,5 +18,4 @@ router.route('/:id')
 router.route('/:id/cancelar') //tengo dudas con la palabra "cancelar"
     .patch((req,res) => turnoController.cancelarTurno(req, res))
 
-
 export default router
