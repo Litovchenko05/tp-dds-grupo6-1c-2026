@@ -1,57 +1,54 @@
 export class Notificacion {
+  static ultimoId = 0
 
-    static ultimoId = 0;
+  #id
+  #destinatario
+  #remitente
+  #mensaje
+  #fechaHoraCreacion
+  #fechaHoraLeida
+  #leida
 
-    #id
-    #destinatario
-    #remitente
-    #mensaje
-    #fechaHoraCreacion
-    #fechaHoraLeida
-    #leida
+  constructor({ destinatario, remitente, mensaje }) {
+    this.#id = Notificacion.ultimoId++
+    this.#destinatario = destinatario
+    this.#remitente = remitente
+    this.#mensaje = mensaje
+    this.#fechaHoraCreacion = new Date()
+    this.#fechaHoraLeida = null
+    this.#leida = false
+  }
 
-    constructor({ destinatario, remitente, mensaje}){
+  marcarComoLeida() {
+    this.#leida = true
+    this.#fechaHoraLeida = new Date()
+  }
 
-        this.#id = Notificacion.ultimoId++;
-        this.#destinatario = destinatario
-        this.#remitente = remitente
-        this.#mensaje = mensaje
-        this.#fechaHoraCreacion = new Date()
-        this.#fechaHoraLeida = null
-        this.#leida = false
-    }
+  get id() {
+    return this.#id
+  }
 
-    marcarComoLeida(){
-        this.#leida = true
-        this.#fechaHoraLeida = new Date()
-    }
+  get destinatario() {
+    return this.#destinatario
+  }
 
-    get id() {
-        return this.#id;
-    }
+  get remitente() {
+    return this.#remitente
+  }
 
-    get destinatario() {
-        return this.#destinatario;
-    }
+  get mensaje() {
+    return this.#mensaje
+  }
 
-    get remitente() {
-        return this.#remitente;
-    }
+  get fechaHoraCreacion() {
+    return this.#fechaHoraCreacion
+  }
 
-    get mensaje() {
-        return this.#mensaje;
-    }
+  get fechaHoraLeida() {
+    return this.#fechaHoraLeida
+  }
 
-    get fechaHoraCreacion() {
-        return this.#fechaHoraCreacion;
-    }
-
-    get fechaHoraLeida() {
-        return this.#fechaHoraLeida;
-    }
-
-    get leida() {
-        return this.#leida;
-    }
-
+  get leida() {
+    return this.#leida
+  }
 }

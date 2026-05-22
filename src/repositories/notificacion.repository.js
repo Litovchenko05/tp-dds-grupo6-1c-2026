@@ -1,54 +1,56 @@
 export class NotificacionRepository {
-    #notificaciones
+  #notificaciones
 
-    constructor(datosIniciales = []) {
-        this.#notificaciones = []
-        this.cargar(datosIniciales)
+  constructor(datosIniciales = []) {
+    this.#notificaciones = []
+    this.cargar(datosIniciales)
+  }
+
+  guardar(notificacion) {
+    if (!notificacion || notificacion.id == null) {
+      throw new Error('La notificacion debe tener un id para guardarse en memoria')
     }
 
-    guardar(notificacion) {
-        if (!notificacion || notificacion.id == null) {
-            throw new Error('La notificacion debe tener un id para guardarse en memoria')
-        }
+    const indiceExistente = this.#notificaciones.findIndex((n) => n.id === notificacion.id)
 
-        const indiceExistente = this.#notificaciones.findIndex((n) => n.id === notificacion.id)
-
-        if (indiceExistente >= 0) {
-            this.#notificaciones[indiceExistente] = notificacion
-        } else {
-            this.#notificaciones.push(notificacion)
-        }
-
-        return notificacion
+    if (indiceExistente >= 0) {
+      this.#notificaciones[indiceExistente] = notificacion
+    } else {
+      this.#notificaciones.push(notificacion)
     }
 
-    obtenerTodos() {
-        return [...this.#notificaciones]
-    }
+    return notificacion
+  }
 
-    obtenerPorId(idNotificacion) {
-        return this.#notificaciones.find((notificacion) => notificacion.id === idNotificacion) ?? null
-    }
+  obtenerTodos() {
+    return [...this.#notificaciones]
+  }
 
-    obtenerNoLeidas() {
-        return this.#notificaciones.filter((notificacion) => !notificacion.leida)
-    }
+  obtenerPorId(idNotificacion) {
+    return this.#notificaciones.find((notificacion) => notificacion.id === idNotificacion) ?? null
+  }
 
-    obtenerLeidas() {
-        return this.#notificaciones.filter((notificacion) => notificacion.leida)
-    }
+  obtenerNoLeidas() {
+    return this.#notificaciones.filter((notificacion) => !notificacion.leida)
+  }
 
-    eliminarPorId(idNotificacion) {
-        const cantidadInicial = this.#notificaciones.length
-        this.#notificaciones = this.#notificaciones.filter((notificacion) => notificacion.id !== idNotificacion)
-        return this.#notificaciones.length < cantidadInicial
-    }
+  obtenerLeidas() {
+    return this.#notificaciones.filter((notificacion) => notificacion.leida)
+  }
 
-    limpiar() {
-        this.#notificaciones = []
-    }
+  eliminarPorId(idNotificacion) {
+    const cantidadInicial = this.#notificaciones.length
+    this.#notificaciones = this.#notificaciones.filter(
+      (notificacion) => notificacion.id !== idNotificacion
+    )
+    return this.#notificaciones.length < cantidadInicial
+  }
 
-    cargar(notificaciones = []) {
-        notificaciones.forEach((notificacion) => this.guardar(notificacion))
-    }
+  limpiar() {
+    this.#notificaciones = []
+  }
+
+  cargar(notificaciones = []) {
+    notificaciones.forEach((notificacion) => this.guardar(notificacion))
+  }
 }

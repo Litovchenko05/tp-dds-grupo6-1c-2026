@@ -1,50 +1,51 @@
 export class PacienteRepository {
-    #pacientes;
+  #pacientes
 
-    constructor(datosIniciales = []) {
-        this.#pacientes = [];
-        this.cargar(datosIniciales);
+  constructor(datosIniciales = []) {
+    this.#pacientes = []
+    this.cargar(datosIniciales)
+  }
+
+  guardar(paciente) {
+    if (!paciente || paciente.id == null) {
+      throw new Error('El paciente debe tener un id para guardarse en memoria')
     }
 
-    guardar(paciente) {
-        if (!paciente || paciente.id == null) {
-            throw new Error('El paciente debe tener un id para guardarse en memoria');
-        }
+    const indiceExistente = this.#pacientes.findIndex((p) => p.id === paciente.id)
 
-        const indiceExistente = this.#pacientes.findIndex((p) => p.id === paciente.id);
-
-        if (indiceExistente >= 0) {
-            this.#pacientes[indiceExistente] = paciente;
-        } else {
-            this.#pacientes.push(paciente);
-        }
-
-        return paciente;
+    if (indiceExistente >= 0) {
+      this.#pacientes[indiceExistente] = paciente
+    } else {
+      this.#pacientes.push(paciente)
     }
 
-    obtenerTodos() {
-        return [...this.#pacientes];
-    }
+    return paciente
+  }
 
-    obtenerPorId(idPaciente) {
-        return this.#pacientes.find((paciente) => paciente.id === idPaciente) ?? null;
-    }
+  obtenerTodos() {
+    return [...this.#pacientes]
+  }
 
-    obtenerPorDni(dni) {
-        return this.#pacientes.find((paciente) => paciente.dni === dni) ?? null;
-    }
+  obtenerPorId(idPaciente) {
+    console.log(this.#pacientes)
+    return this.#pacientes.find((paciente) => paciente.id === idPaciente) ?? null
+  }
 
-    eliminarPorId(idPaciente) {
-        const cantidadInicial = this.#pacientes.length;
-        this.#pacientes = this.#pacientes.filter((paciente) => paciente.id !== idPaciente);
-        return this.#pacientes.length < cantidadInicial;
-    }
+  obtenerPorDni(dni) {
+    return this.#pacientes.find((paciente) => paciente.dni === dni) ?? null
+  }
 
-    limpiar() {
-        this.#pacientes = [];
-    }
+  eliminarPorId(idPaciente) {
+    const cantidadInicial = this.#pacientes.length
+    this.#pacientes = this.#pacientes.filter((paciente) => paciente.id !== idPaciente)
+    return this.#pacientes.length < cantidadInicial
+  }
 
-    cargar(pacientes = []) {
-        pacientes.forEach((paciente) => this.guardar(paciente));
-    }
+  limpiar() {
+    this.#pacientes = []
+  }
+
+  cargar(pacientes = []) {
+    pacientes.forEach((paciente) => this.guardar(paciente))
+  }
 }

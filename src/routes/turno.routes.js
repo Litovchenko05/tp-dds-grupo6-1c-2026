@@ -3,8 +3,7 @@ import { TurnoService } from '../services/turno.service.js'
 import { turnoRepository } from '../repositories/datosPrueba.enMemoria.js'
 import { TurnoController } from '../controllers/turno.controller.js'
 
-
-const turnoService = new TurnoService({ turnoRepository: turnoRepository})
+const turnoService = new TurnoService({ turnoRepository: turnoRepository })
 const turnoController = new TurnoController({ turnoService: turnoService })
 
 const router = express.Router()

@@ -1,9 +1,9 @@
- import { z } from 'zod';
-import { EstadoTurnoSchema } from './estadoTurno.schema.js';
- import medicoSchema from './medico.schema.js';
- import pacienteSchema from './paciente.schema.js';
- import sedeSchema from './sede.schema.js';
- import practicaSchema from './practica.schema.js';
+import { z } from 'zod'
+import { EstadoTurnoSchema } from './estadoTurno.schema.js'
+import medicoSchema from './medico.schema.js'
+import pacienteSchema from './paciente.schema.js'
+import sedeSchema from './sede.schema.js'
+import practicaSchema from './practica.schema.js'
 
  // Enum para tipo de usuario
  const TipoUsuarioEnum = z.enum(['PACIENTE', 'MEDICO', 'ADMIN'], {
