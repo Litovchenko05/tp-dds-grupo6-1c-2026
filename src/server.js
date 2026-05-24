@@ -20,7 +20,6 @@ const start = async () => {
     }
 }
 app.listen(PORT, () => {
-    console.log('--- Sistema Sweet Medical ---');
-    console.log(`Servidor escuchando en: http://localhost:${PORT}`);
+  console.log('--- Sistema Sweet Medical ---')
+  console.log(`Servidor escuchando en: http://localhost:${PORT}`)
 })
-
