@@ -3,7 +3,7 @@ export class PacienteRepository {
 
   constructor(datosIniciales = []) {
     this.#pacientes = []
-    this.cargar(datosIniciales)
+    // this.cargar(datosIniciales)
   }
 
   guardar(paciente) {

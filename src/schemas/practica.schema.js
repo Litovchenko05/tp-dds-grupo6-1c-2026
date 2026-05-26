@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const practicaSchema = z.object({
-  id: z.number().nonnegative(),
+  // id: z.number().nonnegative(),
   codigo: z.string(),
   nombre: z.string(),
   duracionTurnoEnMins: z.number().nonnegative(),

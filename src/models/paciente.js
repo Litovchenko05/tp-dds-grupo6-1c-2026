@@ -16,31 +16,31 @@ export class Paciente {
     this.#historialDeTurnos = [] // historial de turnos del paciente
   }
 
-  get id() {
+  getId() {
     return this.#id
   }
 
-  get usuario() {
+  getUsuario() {
     return this.#usuario
   }
 
-  get dni() {
+  getDni() {
     return this.#dni
   }
 
-  get nombre() {
+  getNombre() {
     return this.#nombre
   }
 
-  get obraSocial() {
+  getObraSocial() {
     return this.#obraSocial
   }
 
-  get plan() {
+  getPlan() {
     return this.#plan
   }
 
-  get historialDeTurnos() {
+  getHistorialDeTurnos() {
     return this.#historialDeTurnos
   }
 

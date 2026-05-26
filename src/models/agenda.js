@@ -1,11 +1,13 @@
-import { Especialidad } from './especialidad.js'
-import { Practica } from './practica.js'
-import { Turno } from './turno.js'
-import { EstadoTurno } from './estadoTurno.enum.js'
+import { Especialidad } from './Especialidad.js'
+import { Practica } from './Practica.js'
+import { Turno } from './Turno.js'
+import { EstadoTurno } from './EstadoTurno.enum.js'
 import { Medico } from './medico.js'
-import { DiasSemana } from './diaSemana.enum.js'
+import { DiasSemana } from './DiaSemana.enum.js'
 import { DisponibilidadHoraria } from './DisponibilidadHoraria.js'
+
 export class Agenda {
+  
   static generarTurnos(medico, disponibilidad) {
     const nuevosTurnos = []
     const fechaActual = new Date()

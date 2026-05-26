@@ -24,31 +24,31 @@ export class Notificacion {
     this.#fechaHoraLeida = new Date()
   }
 
-  get id() {
+  getId() {
     return this.#id
   }
 
-  get destinatario() {
+  getDestinatario() {
     return this.#destinatario
   }
 
-  get remitente() {
+  getRemitente() {
     return this.#remitente
   }
 
-  get mensaje() {
+  getMensaje() {
     return this.#mensaje
   }
 
-  get fechaHoraCreacion() {
+  getFechaHoraCreacion() {
     return this.#fechaHoraCreacion
   }
 
-  get fechaHoraLeida() {
+  getFechaHoraLeida() {
     return this.#fechaHoraLeida
   }
 
-  get leida() {
+  getLeida() {
     return this.#leida
   }
 }
