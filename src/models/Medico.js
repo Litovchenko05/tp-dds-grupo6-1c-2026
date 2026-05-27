@@ -170,7 +170,7 @@ export class Medico {
       return listaServicio
     }
   }
-}
+
 
 
   toJSON(){
@@ -186,4 +186,4 @@ export class Medico {
     }
   }
 
-
+}
