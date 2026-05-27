@@ -30,5 +30,6 @@ router
 router
   .route('/:id/disponibilidad/')
   .get((req, res) => medicoController.obtenerDisponibilidades(req, res))
+  //GET /medicos/1/disponibilidades?tipoServicio=Cardiologia
 
 export default router

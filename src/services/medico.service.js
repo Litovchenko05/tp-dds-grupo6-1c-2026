@@ -146,7 +146,7 @@ export class MedicoService {
       disponibilidadModificada
     )
   }
-  
+
   #normalizarTexto(texto) {
   return String(texto)
     .normalize('NFD')
@@ -164,27 +164,10 @@ obtenerDisponibilidadesPorTipoServicio(medicoId, tipoServicio) {
 
   const servicioBuscado = this.#normalizarTexto(tipoServicio)
 
-  const atiendeEspecialidad = Array.isArray(medico.especialidades)
-    ? medico.especialidades.some(
-        (especialidad) => this.#normalizarTexto(especialidad.nombre) === servicioBuscado
-      )
-    : false
-
-  const atiendePractica = Array.isArray(medico.practicas)
-    ? medico.practicas.some(
-        (practica) => this.#normalizarTexto(practica.nombre) === servicioBuscado
-      )
-    : false
-
-  if (!atiendeEspecialidad && !atiendePractica) {
+  if (!medico.tieneServicio(tipoServicio)) {
     throw new Error('El médico no atiende el servicio solicitado')
   }
 
-  return medico.disponibilidades.map((disponibilidad, index) => ({
-    id: index,
-    diaSemana: disponibilidad.diaSemana,
-    horaDesde: disponibilidad.horaDesde,
-    horaHasta: disponibilidad.horaHasta,
-  }))
+  return agendaService.
 }
 }
