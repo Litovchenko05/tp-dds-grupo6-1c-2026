@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { EstadoTurnoSchema } from './estadoTurno.schema.js'
-import medicoSchema from './medico.schema.js'
-import pacienteSchema from './paciente.schema.js'
-import sedeSchema from './sede.schema.js'
-import practicaSchema from './practica.schema.js'
+import { medicoSchema } from './medico.schema.js'
+import { pacienteSchema}  from './paciente.schema.js'
+import {sedeSchema} from './sede.schema.js'
+import {practicaSchema} from './practica.schema.js'
 
 export const turnoSchema = z.object({
   id: z.string().optional, // Valida que el id sea un string opcionable recibirlo

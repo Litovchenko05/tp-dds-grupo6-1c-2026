@@ -66,9 +66,7 @@ export class Medico {
   }
 
   definirDisponibilidad(disponibilidad){
-    //disponibilidad es un objeto de tipo DisponibilidadHoraria
     this.disponibilidades.push(disponibilidad)
-    // console.log(`Disponibilidad agregada para ${this.nombre}: ${disponibilidad.diaSemana} de ${disponibilidad.horaDesde} a ${disponibilidad.horaHasta}`);
   }
 
   modificarDisponibilidad(idDisponibilidad, nuevaDisponibilidad){

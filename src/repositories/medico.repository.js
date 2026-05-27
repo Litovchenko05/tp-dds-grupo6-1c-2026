@@ -3,9 +3,6 @@ import {MedicoModel} from '../shemasBD/medicoSchema.js';
 export class MedicoRepository {
 
   constructor(datosIniciales = []){
-    // this.#medicos = []
-    // this.cargar(datosIniciales)
-
     this.MedicoModel = MedicoModel;
   }
 

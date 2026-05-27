@@ -1,8 +1,8 @@
 import { TurnoRepository } from '../repositories/turno.repository.js'
 
 export class TurnoService {
-  constructor({ turnoRepository }) {
-    this.turnoRepository = turnoRepository
+  constructor() {
+    this.turnoRepository = new TurnoRepository()
   }
 
   #mapToDto(t) {
@@ -47,8 +47,8 @@ export class TurnoService {
     }
   }
 
-  obtenerTodos() {
-    const turnos = this.turnoRepository.obtenerTodos()
+  async obtenerTodos() {
+    const turnos = await this.turnoRepository.findAll()
     return turnos.map(this.#mapToDto)
   }
 

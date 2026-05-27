@@ -6,27 +6,84 @@ import { TurnoRepository } from '../repositories/turno.repository.js'
 import { Medico } from '../models/Medico.js'
 
 export class PacienteService {
-  constructor({ turnoRepository }) {
-    this.pacienteRepository = new PacienteRepository([
-      new Paciente(1, 'juan123', '40111222', 'Juan Pérez', 'OSDE', '210'),
-
-      new Paciente(2, 'maria_lopez', '38999111', 'María López', 'Swiss Medical', 'SMG20'),
-
-      new Paciente(3, 'carlos.dev', '41222333', 'Carlos Gómez', 'Galeno', 'Oro'),
-
-      new Paciente(4, 'ana_romero', '42777888', 'Ana Romero', 'Medifé', 'Plata'),
-
-      new Paciente(5, 'lucia99', '39888777', 'Lucía Fernández', null, null),
-    ])
-    this.turnoRepository = turnoRepository
+  
+  constructor() {
+    this.pacienteRepository = new PacienteRepository()
+    this.turnoRepository = new TurnoRepository()
   }
 
+  #mapToDto(paciente) {
+      return {
+        id: paciente.id || paciente._id,
+        dni: paciente.dni,
+        usuario:paciente.usuario,
+        nombre: paciente.nombre,
+        obraSocial:{
+            id: paciente.obraSocial._id,
+            codigo: paciente.obraSocial.nombre,
+            planes: Array.isArray(paciente.obraSocial.planes)
+            ? paciente.obraSocial.planes.map((plan) => ({
+            id: plan._id,
+            nombre: plan.nombre,
+            coberturasEspecialidad: plan.duracionTurnoEnMins,
+            coberturasPractica: plan.coberturasPractica,
+            }))
+          :[],
+          },
+        plan: {
+            id: paciente.plan._id,
+            nombre: paciente.plan.nombre,
+            coberturasEspecialidad: paciente.plan.duracionTurnoEnMins,
+            coberturasPractica: paciente.plan.coberturasPractica,
+        }
+      };
+  }
+
+  
+  async createPaciente(pacienteData){
+    
+    const {dni, nombre, obraSocial, usuario ,plan} = pacienteData;
+
+       if (!usuario || !dni || !nombre || !obraSocial || !plan) {
+          throw new ValidationError('Todos los campos son requeridos');
+       }
+
+    const existente = await this.pacienteRepository.findByDni(dni); 
+
+        if (existente) {
+          throw new Error ('El Paciente ya existe');
+        }
+
+    const nuevoPaciente = {dni, nombre, obraSocial, usuario ,plan};
+   
+    const pacienteGuardado = await this.pacienteRepository.save(nuevoPaciente);
+
+    return this.#mapToDto(pacienteGuardado);
+  }
+
+  async obtenerTodos() {
+    const pacientes = await this.pacienteRepository.findAll()
+
+    const pacientesEnDTO = pacientes.map(p => {
+     return this.#mapToDto(p);
+    });
+    
+     return pacientesEnDTO;
+  }
+
+  async obtenerPorId(id) {
+    const paciente = await this.pacienteRepository.findById(id)
+
+    return paciente ? this.#mapToDto(paciente) : null
+  }
+
+
   reservarTurno(pacienteId, turnoId) {
-    const paciente = this.pacienteRepository.obtenerPorId(Number(pacienteId))
+    const paciente = this.pacienteRepository.findById(Number(pacienteId))
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
-    const turno = this.turnoRepository.obtenerPorId(Number(turnoId))
+    const turno = this.turnoRepository.findById(Number(turnoId))
 
     if (!turno) {
       throw new Error('Turno no encontrado')
@@ -48,7 +105,7 @@ export class PacienteService {
   }
 
   consultarHistorial(pacienteId) {
-    const paciente = this.pacienteRepository.obtenerPorId(Number(pacienteId))
+    const paciente = this.pacienteRepository.findById(Number(pacienteId))
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
@@ -57,11 +114,11 @@ export class PacienteService {
   }
 
   solicitarCambioDeFecha(pacienteId, turnoId, nuevaFechaHora) {
-    const paciente = this.pacienteRepository.obtenerPorId(Number(pacienteId))
+    const paciente = this.pacienteRepository.findById(Number(pacienteId))
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
-    const turno = this.turnoRepository.obtenerPorId(Number(turnoId))
+    const turno = this.turnoRepository.findById(Number(turnoId))
     // console.log("Se soliitó el cambio de fecha para el turno " + turnoId + " con el médico " + turno.medico.nombre + " del paciente " + paciente.nombre);
     if (!turno) {
       throw new Error('Turno no encontrado')

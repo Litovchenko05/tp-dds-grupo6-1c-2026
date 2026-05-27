@@ -4,8 +4,8 @@ export class ObraSocial {
   #nombre
   #planes
 
-  constructor(nombre, planes) {
-    this.#id = ObraSocial.nextId++ //Esto para autoincrementar
+  constructor(id,nombre, planes) {
+    this.#id = id;
     this.#nombre = nombre
     this.#planes = planes
   }

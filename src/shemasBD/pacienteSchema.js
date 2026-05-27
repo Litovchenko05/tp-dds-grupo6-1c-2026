@@ -1,10 +1,10 @@
 import mongoose from 'mongoose'
 import { Paciente } from '../models/paciente.js'
 import { UsuarioSchema } from './usuarioSchema.js'
+import { ObraSchema } from './obraSocialSchema.js'
 
-const PacienteSchema = new mongoose.Schema(
+export const PacienteSchema = new mongoose.Schema(
   {
-    usuario: UsuarioSchema,
     dni: {
       type: String,
       required: true,
@@ -16,9 +16,10 @@ const PacienteSchema = new mongoose.Schema(
       trim: true,
     },
     obraSocial: {
-      type: mongoose.Schema.Types.Mixed,
+      type: ObraSchema,
       default: null,
     },
+    usuario: UsuarioSchema,
     plan: {
       type: mongoose.Schema.Types.Mixed,
       default: null,

@@ -1,6 +1,7 @@
 import { PacienteModel } from '../shemasBD/pacienteSchema.js'
 
 export class PacienteRepository {
+  
   constructor(datosIniciales = []) {
     this.PacienteModel = PacienteModel
   }
@@ -18,7 +19,7 @@ export class PacienteRepository {
   }
 
   async findByDni(dniPaciente) {
-    return await this.PacienteModel.findOne({ 'usuario.dni': dniPaciente })
+    return await this.PacienteModel.findOne({ dni: dniPaciente })
   }
 
   async save(paciente) {
@@ -26,7 +27,7 @@ export class PacienteRepository {
 
     return await this.PacienteModel.findOneAndUpdate(
       query,
-      paciente.toJSON ? paciente.toJSON() : paciente,
+      paciente,
       {
         returnDocument: 'after',
         runValidators: true,

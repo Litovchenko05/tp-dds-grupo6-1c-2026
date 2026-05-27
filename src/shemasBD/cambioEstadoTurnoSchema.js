@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import { UsuarioSchema } from './usuarioSchema.js'
 import { CambioEstadoTurno } from '../models/cambioEstadoTurno.js'
+import { EstadoTurno } from '../models/EstadoTurno.enum.js'
 
 export const CambioEstadoTurnoSchema = new mongoose.Schema(
   {
@@ -11,8 +12,9 @@ export const CambioEstadoTurnoSchema = new mongoose.Schema(
     },
     estado: {
       type: String,
+      enum: Object.values(EstadoTurno),
       required: true,
-      trim: true,
+      default: EstadoTurno.DISPONIBLE
     },
     usuario: UsuarioSchema,
     motivo: {

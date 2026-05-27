@@ -78,15 +78,15 @@ export class MedicoService {
      return medicosEnDTO;
   }
 
-  obtenerPorId(id) {
-    const medico = this.medicoRepository.obtenerPorId(Number(id))
+  async obtenerPorId(id) {
+    const medico = await this.medicoRepository.findById(id)
 
     return medico ? this.#mapToDto(medico) : null
   }
 
-  agregarDisponibilidad(medicoId, disponibilidad) {
+  async agregarDisponibilidad(medicoId, disponibilidad) {
     try {
-      const medico = this.medicoRepository.obtenerPorId(Number(medicoId))
+      const medico =  await this.medicoRepository.findById(medicoId)
 
       if (!medico) {
         throw new Error('Médico no encontrado')
@@ -96,6 +96,7 @@ export class MedicoService {
         disponibilidad.horaDesde,
         disponibilidad.horaHasta
       )
+      //le agrego la disponibilidad al medico
       medico.definirDisponibilidad(nuevaDisponibilidad)
 
       setImmediate(() => {
@@ -114,53 +115,45 @@ export class MedicoService {
     }
   }
 
-  modificarDisponibilidad(medicoId, disponibilidadId, nuevaDisponibilidad) {
+ async modificarDisponibilidad(medicoId, disponibilidadId, nuevaDisponibilidad) {
     try {
-      const medico = this.medicoRepository.obtenerPorId(Number(medicoId))
+      const medico = await this.medicoRepository.findById(medicoId)
 
       if (!medico) {
         throw new Error('Médico no encontrado')
       }
 
-      if (disponibilidadId < 0 || disponibilidadId >= medico.disponibilidades.length) {
-        throw new Error('Disponibilidad no encontrada para el médico')
+      const disponibilidadAnterior = {
+          diaSemana: disponibilidad.diaSemana,
+          horaDesde: disponibilidad.horaDesde,
+          horaHasta: disponibilidad.horaHasta,
       }
 
-      const disponibilidadAnterior = medico.disponibilidades[disponibilidadId]
+     const disponibilidad = medico.disponibilidades.id(disponibilidadId)
 
-      const disponibilidadNuevaObj = new DisponibilidadHoraria(
-        nuevaDisponibilidad.diaSemana,
-        nuevaDisponibilidad.horaDesde,
-        nuevaDisponibilidad.horaHasta
-      )
+      if (!disponibilidad) {
+        throw new Error('Disponibilidad no encontrada')
+      }
 
-      console.log(
-        'Disponibilidad existente antes de la modificación: ',
-        disponibilidadAnterior.diaSemana +
-          ' ' +
-          disponibilidadAnterior.horaDesde +
-          ' - ' +
-          disponibilidadAnterior.horaHasta
-      )
 
-      medico.modificarDisponibilidad(disponibilidadId, disponibilidadNuevaObj)
+      disponibilidad.diaSemana = nuevaDisponibilidad.diaSemana
 
-      console.log(
-        'Disponibilidad existente después de la modificación: ',
-        medico.disponibilidades[disponibilidadId].diaSemana +
-          ' ' +
-          medico.disponibilidades[disponibilidadId].horaDesde +
-          ' - ' +
-          medico.disponibilidades[disponibilidadId].horaHasta
-      )
+      disponibilidad.horaDesde = nuevaDisponibilidad.horaDesde
+
+      disponibilidad.horaHasta = nuevaDisponibilidad.horaHasta
+
+      await medico.save()
 
       setImmediate(() => {
-        this.generarTurnosPorAnioParaDisponibilidadModificada(
+          this.generarTurnosPorAnioParaDisponibilidadModificada(
           medico,
           disponibilidadAnterior,
-          disponibilidadNuevaObj
+          nuevaDisponibilidad
         )
       })
+
+      return medico
+
     } catch (error) {
       throw new Error('Error en modificar disponibilidad para el médico')
     }

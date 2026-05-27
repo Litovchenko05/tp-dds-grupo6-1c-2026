@@ -8,6 +8,7 @@ export class AgendaService {
   }
   //generar turnos mediante un proceso batch
   async generarTurnosParaDisponibilidad(medico, disponibilidad) {
+
     const todosLosTurnosGenerados = Agenda.generarTurnos(medico, disponibilidad) //acá me llegan todos los turnos con estado DISPONIBLE, para una disponibilidad del médico
 
     const TAMANIO_BATCH = 10 // Defino que el tamaño del lote a procesar, va a ser de a 10 turnos por vez
@@ -24,10 +25,13 @@ export class AgendaService {
     disponibilidadAnterior,
     disponibilidadModificada
   ) {
-    const turnosTotales = this.turnoRepository.obtenerTodos()
-    const nuevosTurnosModificados = Agenda.generarTurnos(medico, disponibilidadModificada)
+    const cantTurnosTotales = await this.turnoRepository.count()
+    // const nuevosTurnosModificados = Agenda.generarTurnos(medico, disponibilidadModificada)
     const fechaActual = new Date()
 
+    if(cantTurnosTotales == 0){
+        throw new Error('Todavia no hay turnos definidos')
+    }
     turnosTotales.forEach((turno) => {
       if (
         turno.medico.id === medico.id &&

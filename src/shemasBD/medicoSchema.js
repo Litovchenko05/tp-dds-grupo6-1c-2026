@@ -6,7 +6,7 @@ import { SedeSchema } from "../shemasBD/sedeSchema.js";
 import { DisponibilidadSchema } from "../shemasBD/disponibilidadSchema.js";
 import {UsuarioSchema} from "../shemasBD/usuarioSchema.js";
 
-const MedicoSchema = new mongoose.Schema({
+export const MedicoSchema = new mongoose.Schema({
 
     /*
             #id

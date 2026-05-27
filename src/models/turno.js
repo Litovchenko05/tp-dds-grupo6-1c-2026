@@ -13,8 +13,7 @@ export class Turno {
   #historialEstados
   #costo
 
-  constructor(idTurno, medico, fechaHora, sede, practica) {
-    this.#id = idTurno
+  constructor(medico, fechaHora, sede, practica) {
     this.#medico = medico
     this.#paciente = null // Inicialmente sin paciente asignado
     this.#fechaHora = fechaHora //date

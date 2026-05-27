@@ -29,6 +29,6 @@ router
 
 router
   .route('/:id/modificarDisponibilidad/:idDisponibilidad')
-  .put((req, res) => medicoController.modificarDisponibilidad(req, res))
+  .patch((req, res) => medicoController.modificarDisponibilidad(req, res))
 
 export default router

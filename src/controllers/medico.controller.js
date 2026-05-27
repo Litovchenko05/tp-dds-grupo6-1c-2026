@@ -45,7 +45,7 @@ export class MedicoController {
     try {
       const { id } = req.params
 
-      const medico = this.medicoService.obtenerPorId(id)
+      const medico = await this.medicoService.obtenerPorId(id)
       if (!medico) {
         return res.status(404).json({ status: 'error', message: 'Medico no encontrado' })
       }
@@ -56,7 +56,7 @@ export class MedicoController {
     }
   }
 
-  createDisponibilidad = async (req, res) => {
+  modificarDisponibilidad= async (req, res) => {
     try {
       const body = req.body
       const resultado = disponibilidadHorariaSchema.safeParse(body)

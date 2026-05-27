@@ -5,7 +5,7 @@ export class TurnoController {
 
   findAll = async (req, res) => {
     try {
-      const resultado = this.turnoService.obtenerTodos()
+      const resultado = await this.turnoService.obtenerTodos()
 
       return res.status(200).json({
         status: 'success',
@@ -13,7 +13,7 @@ export class TurnoController {
       })
     } catch (error) {
       return res.status(400).json({
-        data: error,
+        data: error.message,
       })
     }
   }

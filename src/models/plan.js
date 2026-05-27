@@ -1,13 +1,12 @@
-import { CoberturaEspecialidad } from './coberturaEspecialidad'
-import { CoberturaPractica } from './coberturaPractica'
+import { CoberturaEspecialidad } from './CoberturaEspecialidad.js'
+import { CoberturaPractica } from './CoberturaPractica.js'
 export class Plan {
   #id
   #nombre
   #coberturasEspecialidad
   #coberturasPractica
 
-  constructor(data) {
-    const { id, nombre, coberturasEspecialidad, coberturasPractica } = planSchema.parse(data)
+  constructor(id, nombre, coberturasEspecialidad, coberturasPractica) {
     this.#id = id
     this.#nombre = nombre
     this.#coberturasEspecialidad = coberturasEspecialidad
