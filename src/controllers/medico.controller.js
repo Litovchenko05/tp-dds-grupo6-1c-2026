@@ -73,4 +73,43 @@ export class MedicoController {
       return res.status(500).json({ data: error.message })
     }
   }
+
+  
+  obtenerDisponibilidades = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const { tipoServicio } = req.query
+
+    const disponibilidades = this.medicoService.obtenerDisponibilidadesPorTipoServicio(
+      id,
+      tipoServicio
+    )
+
+    return res.status(200).json({
+      status: 'success',
+      data: disponibilidades,
+    })
+  } catch (error) {
+    if (error.message === 'Médico no encontrado') {
+      return res.status(404).json({
+        status: 'error',
+        message: error.message,
+      })
+    }
+
+    if (error.message === 'El médico no atiende el servicio solicitado') {
+      return res.status(400).json({
+        status: 'error',
+        message: error.message,
+      })
+    }
+
+    return res.status(500).json({
+      status: 'error',
+      message: 'Error interno del servidor',
+    })
+  }
+}
+
 }

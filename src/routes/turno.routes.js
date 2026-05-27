@@ -14,7 +14,10 @@ router.route('/')
 router.route('/:id')
     .get((req,res) => turnoController.findById(req, res))
 
-router.route('/:id/cancelar') //tengo dudas con la palabra "cancelar"
+router.route('/:id/cancelar')
     .patch((req,res) => turnoController.cancelarTurno(req, res))
+
+router.route('/:id/realizado')
+    .patch((req,res) => turnoController.marcarTurnoComoRealizado(req, res))
 
 export default router

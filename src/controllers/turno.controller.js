@@ -32,40 +32,57 @@ export class TurnoController {
     } catch (error) {
       return res.status(400).json({ data: error })
     }
+  }
 
-    cancelarTurno = async (req, res) => {
-        try {
-            const { id } = req.params
-            const { motivo, idUsuario } = req.body
-            /* JSON que enviás desde el cliente:
-            {
-                "idUsuario": 5, //usuario que hace la cancelacion
-                "motivo": "Me enfermé"
-            }*/
-
-            const resultado = this.turnoService.cancelarTurno({
-                id, //del turno
-                idUsuario,
-                motivo
-            })
+  cancelarTurno = async (req, res) => {
+    try {
+      const { id } = req.params
+      const { motivo, idUsuario } = req.body
+      const resultado = this.turnoService.cancelarTurno({
+        id,
+        idUsuario,
+        motivo
+      })
 
 
-            return res.status(200).json({
-                status: 'success',
-                data: resultado,
-                message: 'Turno cancelado exitosamente'
-            })
+      return res.status(200).json({
+        status: 'success',
+        data: resultado,
+        message: 'Turno cancelado exitosamente'
+      })
 
-        } catch (error) {
-            const status = error.message.includes('no encontrado') ? 404
-                        : error.message.includes('anticipación') ? 400
-                        : 500
+    } catch (error) {
+      const status = error.message.includes('no encontrado') ? 404
+        : error.message.includes('anticipación') ? 400
+        : 500
 
-            return res.status(status).json({
-                status: 'error',
-                message: error.message
-            })
-        }
+      return res.status(status).json({
+        status: 'error',
+        message: error.message
+      })
     }
-}
+  }
 
+  marcarTurnoComoRealizado = async (req, res) => {
+    try {
+      const { id } = req.params
+      const resultado = this.turnoService.marcarTurnoComoRealizado(id)
+
+      return res.status(200).json({
+        status: 'success',
+        data: resultado,
+        message: 'Turno marcado como realizado exitosamente'
+      })
+    } catch (error) {
+      const status = error.message.includes('no encontrado') ? 404
+        : error.message.includes('no tiene permiso') ? 403
+        : error.message.includes('solo se pueden marcar como realizado un turno confirmado') ? 409
+        : 500
+
+      return res.status(status).json({
+        status: 'error',
+        message: error.message
+      })
+    }
+  }
+}

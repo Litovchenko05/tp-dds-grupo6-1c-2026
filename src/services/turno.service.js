@@ -1,5 +1,6 @@
 import { TurnoRepository } from './repositories/turno.repository.js'
 import { Turno } from './models/turno.js'
+import { EstadoTurno } from '../models/estadoTurno.enum.js'
 
 export class TurnoService {
   constructor({ turnoRepository }) {
@@ -55,41 +56,56 @@ export class TurnoService {
 
   obtenerPorId(id) {
     const turno = this.turnoRepository.obtenerPorId(Number(id))
+  }
 
-    cancelar(id_turno, id_usuario, motivo){
-            const turno = this.turnoRepository.obtenerPorId(Number(turnoId))
-            if (!turno) {
-                throw new Error('Turno no encontrado')
-            }
-            if (turno.estado === 'cancelado') {
-                throw new Error('El turno ya está cancelado')
-            }
-
-            const unaHoraEnMs = 60 * 60 * 1000
-            const tiempoRestante = new Date(turno.fechaHora).getTime() - Date.now()
-
-            if (tiempoRestante < unaHoraEnMs) {
-                throw new Error('Debe cancelar con al menos 1 hora de anticipación')
-            }
-            const quienCancela ={
-                if (turno.paciente.id === id_usuario) return turno.paciente
-                if (turno.medico.id === id_usuario) return turno.medico
-                }
-            if(!quienCancela){
-                 throw new Error('No tiene permiso para cancelar este turno.')
-            }
-
-            turno.actualizarEstado('cancelado',quienCancela,motivo)
-
-            // 7. Guardar cambios en el repository
-            this.turnoRepository.guardar(turno)
-
-            // 8. Mapear a DTO y retornar
-            return this.#mapToDto(turno)
-        }
+  cancelar(id_turno, id_usuario, motivo){
+    const turno = this.turnoRepository.obtenerPorId(Number(turnoId))
+    if (!turno) {
+      throw new Error('Turno no encontrado')
+    }
+    if (turno.estado === 'cancelado') {
+      throw new Error('El turno ya está cancelado')
     }
 
-}
-    return turno ? this.#mapToDto(turno) : null
+    const unaHoraEnMs = 60 * 60 * 1000
+    const tiempoRestante = new Date(turno.fechaHora).getTime() - Date.now()
+
+    if (tiempoRestante < unaHoraEnMs) {
+      throw new Error('Debe cancelar con al menos 1 hora de anticipación')
+    }
+
+    const cancelador = turno.quienModifica(id_usuario)
+
+    if(!cancelador){
+      throw new Error('No tiene permiso para cancelar este turno.')
+    }
+
+    turno.actualizarEstado(EstadoTurno.CANCELADO,cancelador,motivo)
+
+    this.turnoRepository.guardar(turno)
+
+    return this.#mapToDto(turno)
+  }
+
+  marcarComoRealizado(id_turno, id_usuario){
+    if (turno.estado === 'realizado') {
+      return this.#mapToDto(turno)
+    }
+    const turno = this.turnoRepository.obtenerPorId(id_turno)
+    if (!turno) {
+      throw new Error('Turno no encontrado')
+    }
+    
+    if(turno.medico.id !== id_usuario){
+      throw new Error('Solo el médico puede marcar el turno como realizado')
+    }
+    
+    if (turno.estado !== 'confirmado') {
+      throw new Error('Solo se puede marcar como realizado un turno confirmado')
+    }
+
+    turno.actualizarEstado(EstadoTurno.REALIZADO, turno.medico, 'El turno ha sido realizado')
+    this.turnoRepository.guardar(turno)
+    return this.#mapToDto(turno)
   }
 }

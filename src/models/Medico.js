@@ -66,6 +66,11 @@ export class Medico {
     return this.#disponibilidades
   }
 
+  tieneServicio(tipoServicio) {
+    return this.especialidades.some((especialidad) => especialidad.nombre=== tipoServicio) ||
+           this.practicas.some((practica) => practica.nombre === tipoServicio)
+  }
+
   definirDisponibilidad(disponibilidad) {
     //disponibilidad es un objeto de tipo DisponibilidadHoraria
     this.disponibilidades.push(disponibilidad)
@@ -110,4 +115,6 @@ export class Medico {
       (solicitud) => solicitud.turno !== turno
     )
   }
+
+
 }
