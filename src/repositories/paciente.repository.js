@@ -1,51 +1,49 @@
+import { PacienteModel } from '../shemasBD/pacienteSchema.js'
+
 export class PacienteRepository {
-  #pacientes
-
   constructor(datosIniciales = []) {
-    this.#pacientes = []
-    // this.cargar(datosIniciales)
+    this.PacienteModel = PacienteModel
   }
 
-  guardar(paciente) {
-    if (!paciente || paciente.id == null) {
-      throw new Error('El paciente debe tener un id para guardarse en memoria')
-    }
-
-    const indiceExistente = this.#pacientes.findIndex((p) => p.id === paciente.id)
-
-    if (indiceExistente >= 0) {
-      this.#pacientes[indiceExistente] = paciente
-    } else {
-      this.#pacientes.push(paciente)
-    }
-
-    return paciente
+  async findAll() {
+    return await this.PacienteModel.find()
   }
 
-  obtenerTodos() {
-    return [...this.#pacientes]
+  async findByFilters(filtros = {}) {
+    return await this.PacienteModel.find(filtros)
   }
 
-  obtenerPorId(idPaciente) {
-    console.log(this.#pacientes)
-    return this.#pacientes.find((paciente) => paciente.id === idPaciente) ?? null
+  async findById(id) {
+    return await this.PacienteModel.findById(id)
   }
 
-  obtenerPorDni(dni) {
-    return this.#pacientes.find((paciente) => paciente.dni === dni) ?? null
+  async findByDni(dniPaciente) {
+    return await this.PacienteModel.findOne({ 'usuario.dni': dniPaciente })
   }
 
-  eliminarPorId(idPaciente) {
-    const cantidadInicial = this.#pacientes.length
-    this.#pacientes = this.#pacientes.filter((paciente) => paciente.id !== idPaciente)
-    return this.#pacientes.length < cantidadInicial
+  async save(paciente) {
+    const query = paciente.id ? { _id: paciente.id } : { _id: new this.PacienteModel()._id }
+
+    return await this.PacienteModel.findOneAndUpdate(
+      query,
+      paciente.toJSON ? paciente.toJSON() : paciente,
+      {
+        returnDocument: 'after',
+        runValidators: true,
+        upsert: true,
+      }
+    )
   }
 
-  limpiar() {
-    this.#pacientes = []
+  async delete(id) {
+    return await this.PacienteModel.findByIdAndDelete(id)
   }
 
-  cargar(pacientes = []) {
-    pacientes.forEach((paciente) => this.guardar(paciente))
+  async obtenerTodos() {
+    return await this.findAll()
+  }
+
+  async obtenerPorId(id) {
+    return await this.findById(id)
   }
 }
