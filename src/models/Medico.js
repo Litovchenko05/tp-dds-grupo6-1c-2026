@@ -1,7 +1,7 @@
 import { Sede } from './sede.js'
 import { DisponibilidadHoraria } from './disponibilidadHoraria.js'
-import { Especialidad } from './especialidad.js'
-import { Practica } from './practica.js'
+import { Especialidad } from './Especialidad.js'
+import { Practica } from './Practica.js'
 
 export class Medico {
   #id
@@ -15,67 +15,66 @@ export class Medico {
   #solicitudesDeCambioDeFecha
 
   constructor(
-    idMedico,
     usuarioMedico,
     matriculaMedica,
     nombreMedico,
     especialidadesMedico,
     practicasMedico,
-    sedesMedico
+    sedesMedico,
+    disponibilidadesMedico
   ) {
-    this.#id = idMedico
     this.#usuario = usuarioMedico
     this.#matricula = matriculaMedica
     this.#nombre = nombreMedico
     this.#especialidades = especialidadesMedico
     this.#practicas = practicasMedico
     this.#sedes = sedesMedico
-    this.#disponibilidades = []
+    this.#disponibilidades =  disponibilidadesMedico ?? []
     this.#solicitudesDeCambioDeFecha = []
   }
 
-  get id() {
+  getId() {
     return this.#id
   }
 
-  get usuario() {
+  getUsuario() {
     return this.#usuario
   }
 
-  get matricula() {
+  getMatricula() {
     return this.#matricula
   }
 
-  get nombre() {
+  getNombre() {
     return this.#nombre
   }
 
-  get especialidades() {
+  getEspecialidades() {
     return this.#especialidades
   }
 
-  get practicas() {
+  getPracticas() {
     return this.#practicas
   }
 
-  get sedes() {
+  getSedes() {
     return this.#sedes
   }
 
-  get disponibilidades() {
+  getDisponibilidades() {
     return this.#disponibilidades
   }
 
-  definirDisponibilidad(disponibilidad) {
+  definirDisponibilidad(disponibilidad){
     //disponibilidad es un objeto de tipo DisponibilidadHoraria
     this.disponibilidades.push(disponibilidad)
     // console.log(`Disponibilidad agregada para ${this.nombre}: ${disponibilidad.diaSemana} de ${disponibilidad.horaDesde} a ${disponibilidad.horaHasta}`);
   }
 
-  modificarDisponibilidad(idDisponibilidad, nuevaDisponibilidad) {
+  modificarDisponibilidad(idDisponibilidad, nuevaDisponibilidad){
     this.disponibilidades[idDisponibilidad] = nuevaDisponibilidad
   }
-  tieneTipoTurno(tipoTurno) {
+  tieneTipoTurno(tipoTurno){
     if (tipoTurno instanceof Especialidad) {
       return this.#especialidades.some(
         (especialidadMedico) => especialidadMedico.id === tipoTurno.id
@@ -86,11 +85,11 @@ export class Medico {
     }
   }
 
-  recibirSolicitud(turno, nuevaFechaHora) {
+  recibirSolicitud(turno, nuevaFechaHora){
     this.#solicitudesDeCambioDeFecha.push({ turno, nuevaFechaHora })
   }
 
-  aceptarCambioDeFecha(turno) {
+  aceptarCambioDeFecha(turno){
     const solicitud = this.#solicitudesDeCambioDeFecha.find(
       (solicitud) => solicitud.turno === turno
     )
@@ -105,13 +104,12 @@ export class Medico {
     )
   }
 
-  rechazarCambioDeFecha(turno) {
+  rechazarCambioDeFecha(turno){
     this.#solicitudesDeCambioDeFecha = this.#solicitudesDeCambioDeFecha.filter(
       (solicitud) => solicitud.turno !== turno
     )
   }
-
-    modificarServicio(servicioAModificar, nuevoServicio){
+   modificarServicio(servicioAModificar, nuevoServicio){
       
      if(nuevoServicio instanceof Practica){
         this.#practicas[this.#practicas.indexOf(servicioAModificar)] = nuevoServicio
@@ -173,3 +171,19 @@ export class Medico {
     }
   }
 }
+
+
+  toJSON(){
+    return {
+      id: this.#id,
+      usuario: this.#usuario,
+      matricula: this.#matricula,
+      nombre: this.#nombre,
+      especialidades: this.#especialidades,
+      practicas: this.#practicas,
+      sedes: this.#sedes,
+      disponibilidades: this.#disponibilidades
+    }
+  }
+
+

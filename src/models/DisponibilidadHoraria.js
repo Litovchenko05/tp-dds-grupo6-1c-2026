@@ -1,4 +1,4 @@
-import { DiasSemana } from './diaSemana.enum.js'
+import { DiasSemana } from './DiaSemana.enum.js'
 export class DisponibilidadHoraria {
   #diaSemana
   #horaDesde
@@ -12,19 +12,19 @@ export class DisponibilidadHoraria {
     this.#fueModificada = false
   }
 
-  get diaSemana() {
+  getDiaSemana() {
     return this.#diaSemana
   }
 
-  get horaDesde() {
+  getHoraDesde() {
     return this.#horaDesde
   }
 
-  get horaHasta() {
+  getHoraHasta() {
     return this.#horaHasta
   }
 
-  get getFueModificada() {
+  getFueModificada() {
     return this.#fueModificada
   }
 

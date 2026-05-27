@@ -1,4 +1,4 @@
-import { NivelDeCobertura } from './nivelDeCobertura'
+import { NivelDeCobertura } from './NivelDeCobertura'
 export class CoberturaEspecialidad {
   #especialidad
   #nivel

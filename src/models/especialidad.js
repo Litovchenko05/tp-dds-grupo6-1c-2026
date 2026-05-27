@@ -19,23 +19,23 @@ export class Especialidad {
     this.#costoConsulta = costoConsulta
   }
 
-  get id() {
+  getId() {
     return this.#id
   }
 
-  get nombre() {
+  getNombre() {
     return this.#nombre
   }
 
-  get duracionTurnoEnMins() {
+  getDuracionTurnoEnMins() {
     return this.#duracionTurnoEnMins
   }
 
-  get costoConsulta() {
+  getCostoConsulta() {
     return this.#costoConsulta
   }
 
-  get costo() {
+  getCosto() {
     return this.#costoConsulta // para usar servicio y practica de forma polimorfica en turno
   }
 }
