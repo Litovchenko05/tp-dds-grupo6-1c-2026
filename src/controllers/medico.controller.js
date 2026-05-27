@@ -1,13 +1,34 @@
-import { disponibilidadHorariaSchema } from '../schemas/disponibilidadHoraria.schema.js'
+import { medicoSchema } from '../schemas/medico.schema.js'
 
 export class MedicoController {
+
   constructor({ medicoService }) {
     this.medicoService = medicoService
   }
 
+  createMedico = async (req, res) => {
+    try{
+      const body = req.body
+     
+      const resultado = medicoSchema.safeParse(body)
+
+      if (!resultado.success) {
+        console.log('el resultado dio error')
+        return res.status(400).json({ status: 'error', message: resultado.error.message })
+      }
+
+      const medicoCreado = await this.medicoService.createMedico(resultado.data)
+
+      return res.status(201).json({ status: 'success', data: medicoCreado })
+
+    }catch(error){
+      return res.status(409).json({ data: error.message })
+    }
+  }
+
   findAll = async (req, res) => {
     try {
-      const resultado = this.medicoService.obtenerTodos()
+      const resultado = await this.medicoService.obtenerTodos()
 
       return res.status(200).json({
         status: 'success',
@@ -15,7 +36,7 @@ export class MedicoController {
       })
     } catch (error) {
       return res.status(400).json({
-        data: error,
+        data: error.message,
       })
     }
   }

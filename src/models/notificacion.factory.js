@@ -1,6 +1,6 @@
-import { Agenda } from './agenda.js'
-import { Notificacion } from './notificacion.model.js'
-import { Turno } from './turno.js'
+import { Agenda } from './Agenda.js'
+import { Notificacion } from './Notificacion.model.js'
+import { Turno } from './Turno.js'
 
 //notificacionFactory-->Singleton
 export class FactoryNotificacion {
