@@ -1,62 +1,41 @@
+import { TurnoModel } from '../shemasBD/turnoSchema.js'
 export class TurnoRepository {
   #turnos
 
   constructor(datosIniciales = []) {
-    this.#turnos = []
-    this.cargar(datosIniciales)
+    this.TurnoModel = TurnoModel
   }
 
-  guardar(turno) {
-    if (!turno || turno.id == null) {
-      throw new Error('El turno debe tener un id para guardarse en memoria')
-    }
-
-    const indiceExistente = this.#turnos.findIndex((t) => t.id === turno.id)
-
-    if (indiceExistente >= 0) {
-      this.#turnos[indiceExistente] = turno
-    } else {
-      this.#turnos.push(turno)
-    }
-
-    return turno
+  async findAll() {
+    return await this.TurnoModel.find()
   }
 
-  obtenerTodos() {
-    return [...this.#turnos]
+  async findByFilters(filtros = {}) {
+    return await this.TurnoModel.find(filtros)
   }
 
-  obtenerPorId(idTurno) {
-    return this.#turnos.find((turno) => turno.id === idTurno) ?? null
+  async findById(id) {
+    return await this.TurnoModel.findById(id)
   }
 
-  obtenerPorMedicoId(idMedico) {
-    return this.#turnos.filter((turno) => turno.medico?.id === idMedico)
+  async findByMedicoId(idMedico) {
+    return await this.TurnoModel.find({ 'medico.id': idMedico })
   }
 
-  eliminarPorId(idTurno) {
-    const cantidadInicial = this.#turnos.length
-    this.#turnos = this.#turnos.filter((turno) => turno.id !== idTurno)
-    return this.#turnos.length < cantidadInicial
+  async save(turno) {
+    //Si tiene id es update, si no es create
+    const query = turno.id ? { _id: turno.id } : { _id: new this.TurnoModel()._id }
+
+    //Busca un medico con ese _id y la actualiza con los datos de medico.
+    //Si no existe, la crea (por upsert: true).
+    return await this.TurnoModel.findOneAndUpdate(query, turno.toJSON(), {
+      returnDocument: 'after',
+      runValidators: true,
+      upsert: true,
+    })
   }
 
-  limpiar() {
-    this.#turnos = []
-  }
-
-  cargar(turnos = []) {
-    turnos.forEach((turno) => this.guardar(turno))
-  }
-
-  save(turnosNuevos) {
-    this.#turnos.push(...turnosNuevos)
-  }
-
-  delete(turno) {
-    const indice = this.#turnos.indexOf(turno)
-
-    if (indice !== -1) {
-      this.#turnos.splice(indice, 1)
-    }
+  async delete(id) {
+    return await this.TurnoModel.findByIdAndDelete(id)
   }
 }
