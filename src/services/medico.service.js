@@ -1,22 +1,22 @@
-import { medicoRepository } from '../repositories/datosPrueba.enMemoria.js'
+import { MedicoRepository } from '../repositories/medico.repository.js'
 import { Medico } from '../models/Medico.js'
 import { DisponibilidadHoraria } from '../models/disponibilidadHoraria.js'
 
 export class MedicoService {
   constructor({ medicoRepository, agendaService }) {
-    this.medicoRepository = medicoRepository
+    this.medicoRepository = new medicoRepository()
     this.agendaService = agendaService
   }
 
   #mapToDto(m) {
     return {
-      id: m.id,
+      id:  m._id,
       usuario: m.usuario,
       matricula: m.matricula,
       nombre: m.nombre,
       especialidades: Array.isArray(m.especialidades)
         ? m.especialidades.map((e) => ({
-            id: e.id,
+            id: e._id,
             nombre: e.nombre,
             duracionTurnoEnMins: e.duracionTurnoEnMins,
             costo: e.costo,
@@ -24,7 +24,7 @@ export class MedicoService {
         : [],
       practicas: Array.isArray(m.practicas)
         ? m.practicas.map((p) => ({
-            id: p.id,
+            id: p._id,
             codigo: p.codigo,
             nombre: p.nombre,
             duracionTurnoEnMins: p.duracionTurnoEnMins,
@@ -33,18 +33,49 @@ export class MedicoService {
         : [],
       sedes: Array.isArray(m.sedes)
         ? m.sedes.map((s) => ({
-            id: s.id,
+            id: s._id,
             nombre: s.nombre,
             direccion: s.direccion,
+          }))
+        : [],
+      disponibilidades: Array.isArray(m.disponibilidades)
+        ? m.disponibilidades.map((d) => ({
+            diaSemana: d.diaSemana,
+            horaDesde: d.horaDesde,
+            horaHasta: d.horaHasta,
           }))
         : [],
     }
   }
 
-  obtenerTodos() {
-    const medicos = this.medicoRepository.obtenerTodos()
+  async createMedico(medicoData){
+    
+    const {usuario, matricula, nombre, especialidades, practicas, sedes, disponibilidades} = medicoData;
 
-    return medicos.map(this.#mapToDto)
+       if (!usuario || !matricula || !nombre || !especialidades || !practicas || !sedes || !disponibilidades) {
+          throw new ValidationError('Todos los campos son requeridos');
+       }
+
+    const existente = await this.medicoRepository.findByNombre(nombre); 
+
+        if (existente) {
+          throw new Error ('El médico ya existe');
+        }
+
+    const nuevoMedico = new Medico(usuario, matricula, nombre, especialidades, practicas, sedes,disponibilidades);
+    const medicoGuardado = await this.medicoRepository.save(nuevoMedico);
+
+    return this.#mapToDto(medicoGuardado);
+  }
+
+  async obtenerTodos() {
+    const medicos = await this.medicoRepository.findAll()
+
+    const medicosEnDTO = medicos.map(m => {
+     return this.#mapToDto(m);
+    });
+    
+     return medicosEnDTO;
   }
 
   obtenerPorId(id) {

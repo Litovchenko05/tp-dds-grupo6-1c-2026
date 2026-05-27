@@ -9,15 +9,15 @@ export class Sede {
     this.#direccion = direccionSede
   }
 
-  get id() {
+  getId() {
     return this.#id
   }
 
-  get nombre() {
+  getNombre() {
     return this.#nombre
   }
 
-  get direccion() {
+  getDireccion() {
     return this.#direccion
   }
 }

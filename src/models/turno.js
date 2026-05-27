@@ -1,7 +1,7 @@
 //import { turnoSchema } from '../schemas/turno.schema.js'
-import { Agenda } from './agenda.js'
-import { FactoryNotificacion } from './notificacion.factory.js'
-import { EstadoTurno } from './estadoTurno.enum.js'
+import { Agenda } from './Agenda.js'
+import { FactoryNotificacion } from './Notificacion.factory.js'
+import { EstadoTurno } from './EstadoTurno.enum.js'
 export class Turno {
   #id
   #medico
@@ -51,47 +51,47 @@ export class Turno {
     return this.#id
   }
 
-  get medico() {
+  getMedico() {
     return this.#medico
   }
 
-  get paciente() {
+  getPaciente() {
     return this.#paciente
   }
 
-  get fechaHora() {
+  getFechaHora() {
     return this.#fechaHora
   }
 
-  get sede() {
+  getSede() {
     return this.#sede
   }
 
-  get practica() {
+  getPractica() {
     return this.#practica
   }
 
-  get estado() {
+  getEstado() {
     return this.#estado
   }
 
-  get historialEstados() {
+  getHistorialEstados() {
     return this.#historialEstados
   }
 
-  get costo() {
+  getCosto() {
     return this.#costo
   }
 
-  get fechaTurno() {
+  getFechaTurno() {
     return this.fechaHora
   }
 
-  get ultimoCambioEstado() {
+  getUltimoCambioEstado() {
     return this.historialEstados.at(-1)
   }
 
-  get estadoActual() {
+  getEstadoActual() {
     return this.estado
   }
 
