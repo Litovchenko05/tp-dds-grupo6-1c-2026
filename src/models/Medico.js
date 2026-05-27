@@ -110,4 +110,66 @@ export class Medico {
       (solicitud) => solicitud.turno !== turno
     )
   }
+
+    modificarServicio(servicioAModificar, nuevoServicio){
+      
+     if(nuevoServicio instanceof Practica){
+        this.#practicas[this.#practicas.indexOf(servicioAModificar)] = nuevoServicio
+      }else if (nuevoServicio instanceof Especialidad){
+        this.#especialidades[this.#especialidades.indexOf(servicioAModificar)] = nuevoServicio
+      }else {
+        throw new Error(
+            "servicio no esta en formato indicado"
+        )
+      }}
+    darDeAltaServicio(servicio){
+      if(servicio instanceof Practica){
+        this.#practicas = this.darDeAlta(servicio,this.#practicas)
+      }else if (servicio instanceof Especialidad){
+        this.#especialidades = this.darDeAlta(servicio,this.#especialidades)
+      }else {
+        throw new Error(
+            "servicio no esta en formato indicado"
+        )
+      }}
+    
+    darDeBajaServicio(servicio){
+      
+      if(servicio instanceof Practica){
+        this.#practicas = this.darDeBaja(servicio,this.#practicas)
+      }else if (servicio instanceof Especialidad){
+        this.#especialidades = this.darDeBaja(servicio,this.#especialidades)
+      }else {
+        throw new Error(
+            "servicio no esta en formato indicado"
+        )
+      }
+
+    }
+    darDeBaja(servicio,listaServicios){
+      if(!this.servicioExiste(servicio,listaServicios)){
+            throw new Error(
+            "Este servicio no es brindado por el medico"
+        ) 
+        }
+      return listaServicios.filter(p=>p.id !== servicio.id)
+    }
+    servicioExiste(servicio,listaServicios){
+      return listaServicios.some(p=>p.id === servicio.id)
+    }
+  
+     darDeAlta(servicio,listaServicio){
+    if(this.servicioExiste(servicio,listaServicio)){
+      throw new Error(
+            "Servicio ya está dado de alta"
+        )
+    }    
+    else if(!listaServicio){
+      return listaServicio = [servicio]
+           
+    }else{
+      listaServicio.push(servicio) 
+      return listaServicio
+    }
+  }
 }
