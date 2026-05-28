@@ -7,3 +7,4 @@ export const practicaSchema = z.object({
   duracionTurnoEnMins: z.number().nonnegative(),
   costo: z.number().nonnegative(),
 })
+

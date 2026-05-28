@@ -9,4 +9,7 @@ export class ObraSocial {
     this.#nombre = nombre
     this.#planes = planes
   }
+  getPlanes(){
+    return this.#planes
+  }
 }

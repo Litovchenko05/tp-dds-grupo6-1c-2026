@@ -11,6 +11,12 @@ export class Especialidad {
     this.#duracionTurnoEnMins = duracionTurnoEnMins
     this.#costoConsulta = costoConsulta
   }
+  modificarEspecialidad(id,nombre,duracionTurnoEnMins,costoConsulta){
+    this.#id = id
+    this.#nombre = nombre
+    this.#duracionTurnoEnMins = duracionTurnoEnMins
+    this.#costoConsulta = costoConsulta
+  }
 
   getId() {
     return this.#id
