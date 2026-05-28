@@ -1,11 +1,9 @@
-import { NivelDeCobertura } from './NivelDeCobertura'
+import { NivelDeCobertura } from './NivelDeCobertura.js'
 export class CoberturaPractica {
   #practica
   #nivel
 
-  constructor(data) {
-    const { practica, nivel } = coberturaPracticaSchema.parse(data)
-
+  constructor(practica, nivel) {
     this.#practica = practica
     this.#nivel = nivel
   }

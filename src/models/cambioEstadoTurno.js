@@ -7,12 +7,11 @@ export class CambioEstadoTurno {
   #usuario
   #motivo
 
-  constructor(data) {
-    const result = cambioEstadoTurnoSchema.parse(data)
-    this.#fechaHoraIngreso = result.fechaHoraIngreso
-    this.#estado = result.estado
-    this.#turno = result.turno
-    this.#usuario = result.usuario
-    this.#motivo = result.motivo
+  constructor(fechaHoraIngreso,estado,turno,usuario,motivo) {
+    this.#fechaHoraIngreso = fechaHoraIngreso
+    this.#estado = estado
+    this.#turno = turno
+    this.#usuario = usuario
+    this.#motivo = motivo
   }
 }

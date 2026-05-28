@@ -6,8 +6,7 @@ export class Paciente {
   #obraSocial
   #plan
   #historialDeTurnos
-  constructor(id, usuario, dni, nombre, obraSocial, plan) {
-    this.#id = id
+  constructor(usuario, dni, nombre, obraSocial, plan) {
     this.#usuario = usuario
     this.#dni = dni
     this.#nombre = nombre

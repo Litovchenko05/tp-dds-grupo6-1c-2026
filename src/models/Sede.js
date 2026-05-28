@@ -3,8 +3,7 @@ export class Sede {
   #nombre
   #direccion
 
-  constructor(idSede, nombreSede, direccionSede) {
-    this.#id = idSede
+  constructor(nombreSede, direccionSede) {
     this.#nombre = nombreSede
     this.#direccion = direccionSede
   }

@@ -5,8 +5,7 @@ export class Practica {
   #duracionTurnoEnMins
   #costo
 
-  constructor(id, codigo, nombre, duracionTurnoEnMins, costo) {
-    this.#id = id
+  constructor(codigo, nombre, duracionTurnoEnMins, costo) {
     this.#codigo = codigo
     this.#nombre = nombre
     this.#duracionTurnoEnMins = duracionTurnoEnMins

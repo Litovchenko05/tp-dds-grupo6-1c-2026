@@ -36,6 +36,9 @@ export class Medico {
   getId() {
     return this.#id
   }
+  setId(id){
+      this.#id = id;
+  }
 
   getUsuario() {
     return this.#usuario
@@ -65,25 +68,6 @@ export class Medico {
     return this.#disponibilidades
   }
 
-  definirDisponibilidad(disponibilidad){
-    //disponibilidad es un objeto de tipo DisponibilidadHoraria
-    this.disponibilidades.push(disponibilidad)
-    // console.log(`Disponibilidad agregada para ${this.nombre}: ${disponibilidad.diaSemana} de ${disponibilidad.horaDesde} a ${disponibilidad.horaHasta}`);
-  }
-
-  modificarDisponibilidad(idDisponibilidad, nuevaDisponibilidad){
-    this.disponibilidades[idDisponibilidad] = nuevaDisponibilidad
-  }
-  tieneTipoTurno(tipoTurno){
-    if (tipoTurno instanceof Especialidad) {
-      return this.#especialidades.some(
-        (especialidadMedico) => especialidadMedico.id === tipoTurno.id
-      )
-    }
-    if (tipoTurno instanceof Practica) {
-      return this.#practicas.some((practicaMedico) => practicaMedico.id === tipoTurno.id)
-    }
-  }
 
   recibirSolicitud(turno, nuevaFechaHora){
     this.#solicitudesDeCambioDeFecha.push({ turno, nuevaFechaHora })
@@ -170,8 +154,6 @@ export class Medico {
       return listaServicio
     }
   }
-
-
 
   toJSON(){
     return {
