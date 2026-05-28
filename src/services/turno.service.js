@@ -53,7 +53,7 @@ export class TurnoService {
   }
 
   obtenerPorId(id) {
-    const turno = this.turnoRepository.obtenerPorId(Number(id))
+    const turno = this.turnoRepository.findById(id)
 
     return turno ? this.#mapToDto(turno) : null
   }

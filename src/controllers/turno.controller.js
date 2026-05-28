@@ -30,7 +30,7 @@ export class TurnoController {
 
       return res.status(200).json({ status: 'success', data: turno })
     } catch (error) {
-      return res.status(400).json({ data: error })
+      return res.status(400).json({ data: error.message })
     }
   }
 }
