@@ -6,9 +6,8 @@ import {NotificacionService} from './notificacion.service.js'
 import { NotificacionRepository } from './repositories/.js'
 
 export class TurnoService {
-  constructor({ turnoRepository}) {
-    this.turnoRepository = turnoRepository
-    //this.servicioNotificacion = new NotificacionService()
+  constructor() {
+    this.turnoRepository = new TurnoRepository()
   }
 
   #mapToDto(t) {
@@ -53,8 +52,8 @@ export class TurnoService {
     }
   }
 
-  obtenerTodos() {
-    const turnos = this.turnoRepository.obtenerTodos()
+  async obtenerTodos() {
+    const turnos = await this.turnoRepository.findAll()
     return turnos.map(this.#mapToDto)
   }
 

@@ -2,8 +2,9 @@ import { z } from 'zod'
 import { usuarioSchema } from './usuario.schema.js'
 import { especialidadSchema } from './especialidad.schema.js'
 import { practicaSchema } from './practica.schema.js'
-import {sedeSchema} from './sede.schema.js';
+import { sedeSchema } from './sede.schema.js';
 import { disponibilidadHorariaSchema } from './disponibilidadHoraria.schema.js'
+
 
 //Schema de validacion
 //para matriculas medicas provinciales y nacionales  MP012345 o MN0012334...

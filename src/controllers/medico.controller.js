@@ -1,6 +1,8 @@
 import { medicoSchema } from '../schemas/medico.schema.js'
 import { disponibilidadHorariaSchema } from '../schemas/disponibilidadHoraria.schema.js'
 import {AgendaService} from '../services/agenda.service.js'
+import { disponibilidadHorariaSchema } from '../schemas/disponibilidadHoraria.schema.js';
+import {disponibilidadDetalladaSchema } from '../schemas/disponibilidadPorSedeyServicio.js';
 export class MedicoController {
 
   constructor({ medicoService}) {
@@ -46,7 +48,7 @@ export class MedicoController {
     try {
       const { id } = req.params
 
-      const medico = this.medicoService.obtenerPorId(id)
+      const medico = await this.medicoService.obtenerPorId(id)
       if (!medico) {
         return res.status(404).json({ status: 'error', message: 'Medico no encontrado' })
       }
@@ -57,10 +59,10 @@ export class MedicoController {
     }
   }
 
-  createDisponibilidad = async (req, res) => {
+  createDisponibilidad= async (req, res) => {
     try {
       const body = req.body
-      const resultado = disponibilidadHorariaSchema.safeParse(body)
+      const resultado = disponibilidadDetalladaSchema.safeParse(body)
 
       if (!resultado.success) {
         console.log('el resultado dio error')
@@ -86,10 +88,11 @@ export class MedicoController {
         console.log('el resultado dio error')
         return res.status(400).json({ status: 'error', message: resultado.error.errors })
       }
-
       const medicoId = req.params.id
       const disponibilidadId = req.params.idDisponibilidad
+
       await this.medicoService.modificarDisponibilidad(medicoId, disponibilidadId, resultado.data)
+      
       return res.status(200).json({ status: 'success', data: resultado.data })
     } catch (error) {
       return res.status(500).json({ data: error.message })

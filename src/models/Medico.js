@@ -36,6 +36,9 @@ export class Medico {
   getId() {
     return this.#id
   }
+  setId(id){
+      this.#id = id;
+  }
 
   getUsuario() {
     return this.#usuario
@@ -175,8 +178,6 @@ export class Medico {
       return listaServicio
     }
   }
-
-
 
   toJSON(){
     return {

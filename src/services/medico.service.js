@@ -3,6 +3,9 @@ import { Medico } from '../models/Medico.js'
 import { DisponibilidadHoraria } from '../models/disponibilidadHoraria.js'
 import { TurnoService } from './turno.service.js'
 import { turnoRepository } from '../repositories/datosPrueba.enMemoria.js'
+import { Especialidad } from '../models/Especialidad.js'
+import { Practica } from '../models/Practica.js'
+import { Sede } from '../models/Sede.js'
 
 export class MedicoService {
   constructor({ medicoRepository, agendaService, turnoService}) {
@@ -81,91 +84,126 @@ export class MedicoService {
      return medicosEnDTO;
   }
 
-  obtenerPorId(id) {
-    const medico = this.medicoRepository.obtenerPorId(Number(id))
+  async obtenerPorId(id) {
+    const medico = await this.medicoRepository.findById(id)
 
     return medico ? this.#mapToDto(medico) : null
   }
 
-  agregarDisponibilidad(medicoId, disponibilidad) {
+  async agregarDisponibilidad(medicoId, disponibilidadCompleta) {
     try {
-      const medico = this.medicoRepository.obtenerPorId(Number(medicoId))
+      const medico =  await this.medicoRepository.findById(medicoId)
+
+      console.log(medico)
 
       if (!medico) {
         throw new Error('Médico no encontrado')
       }
-      const nuevaDisponibilidad = new DisponibilidadHoraria(
-        disponibilidad.diaSemana,
-        disponibilidad.horaDesde,
-        disponibilidad.horaHasta
-      )
-      medico.definirDisponibilidad(nuevaDisponibilidad)
 
-      setImmediate(() => {
-        this.generarTurnosPorAnio(medico, nuevaDisponibilidad)
-      })
+      //le agrego la disponibilidad al doc del medico
+      console.log("antes de pushear la dispo");
+
+      const nuevaDisponibilidad = disponibilidadCompleta.disponibilidadHoraria;
+      
+      medico.disponibilidades.push(nuevaDisponibilidad);
+
+      console.log("despues de pushear la dispo");
+      //persisto en mongo
+      await medico.save()
+      console.log("despues de guardar al medico con la nueva dispo en mongo");
+
+     const objMedico = this.mapToEntidad(medico);
+
+    console.log(objMedico.getMatricula());
+    console.log(objMedico.getPracticas());
+ 
+      const objNuevaDisponibilidad = new DisponibilidadHoraria(
+                                      nuevaDisponibilidad.diaSemana,
+                                      nuevaDisponibilidad.horaDesde,
+                                      nuevaDisponibilidad.horaHasta
+                                    );
+
+      const objSede = new Sede(
+                        disponibilidadCompleta.sede.nombre,
+                        disponibilidadCompleta.sede.direccion
+                      );
+        if(disponibilidadCompleta.servicio.codigo == undefined){
+            //es una especialidad
+            const especialidadObj = new Especialidad(
+            disponibilidadCompleta.servicio.nombre,
+            disponibilidadCompleta.servicio.duracionTurnoEnMins,
+            disponibilidadCompleta.servicio.costo);
+            
+            setImmediate(() => {
+            this.generarTurnosPorAnio(objMedico, objNuevaDisponibilidad, objSede, especialidadObj);
+            })
+
+        }else{
+            const practicaObj = new Practica(
+            disponibilidadCompleta.servicio.codigo,
+            disponibilidadCompleta.servicio.nombre,
+            disponibilidadCompleta.servicio.duracionTurnoEnMins,
+            disponibilidadCompleta.servicio.costo);
+
+            setImmediate(() => {
+            this.generarTurnosPorAnio(objMedico, objNuevaDisponibilidad, objSede, practicaObj);
+            })
+        }              
+
     } catch (error) {
-      throw new Error('error en agregar disponibilidad para el médico')
+      throw new Error(error.message)
     }
   }
 
-  async generarTurnosPorAnio(medico, disponibilidad) {
+  async generarTurnosPorAnio(medico, disponibilidad, sede, servicio) {
     try {
-      this.agendaService.generarTurnosParaDisponibilidad(medico, disponibilidad)
+      this.agendaService.generarTurnosParaDisponibilidad(medico, disponibilidad, sede, servicio)
     } catch (error) {
       throw new Error('error al delegar la generación de turnos por disponibildad al serviceAgenda')
     }
   }
 
-  modificarDisponibilidad(medicoId, disponibilidadId, nuevaDisponibilidad) {
+ async modificarDisponibilidad(medicoId, disponibilidadId, nuevaDisponibilidad) {
     try {
-      const medico = this.medicoRepository.obtenerPorId(Number(medicoId))
+      const medico = await this.medicoRepository.findById(medicoId);
 
       if (!medico) {
         throw new Error('Médico no encontrado')
       }
 
-      if (disponibilidadId < 0 || disponibilidadId >= medico.disponibilidades.length) {
-        throw new Error('Disponibilidad no encontrada para el médico')
+     const disponibilidad = medico.disponibilidades.id(disponibilidadId);
+
+       if (!disponibilidad) {
+        throw new Error('Disponibilidad no encontrada')
       }
 
-      const disponibilidadAnterior = medico.disponibilidades[disponibilidadId]
+     const disponibilidadAnteriorObj = new DisponibilidadHoraria(disponibilidad.diaSemana, disponibilidad.horaDesde, disponibilidad.horaHasta);
+     const nuevaDisponibilidadObj = new DisponibilidadHoraria(nuevaDisponibilidad.diaSemana, nuevaDisponibilidad.horaDesde, nuevaDisponibilidad.horaHasta);
 
-      const disponibilidadNuevaObj = new DisponibilidadHoraria(
-        nuevaDisponibilidad.diaSemana,
-        nuevaDisponibilidad.horaDesde,
-        nuevaDisponibilidad.horaHasta
-      )
-
-      console.log(
-        'Disponibilidad existente antes de la modificación: ',
-        disponibilidadAnterior.diaSemana +
-          ' ' +
-          disponibilidadAnterior.horaDesde +
-          ' - ' +
-          disponibilidadAnterior.horaHasta
-      )
-
-      medico.modificarDisponibilidad(disponibilidadId, disponibilidadNuevaObj)
-
-      console.log(
-        'Disponibilidad existente después de la modificación: ',
-        medico.disponibilidades[disponibilidadId].diaSemana +
-          ' ' +
-          medico.disponibilidades[disponibilidadId].horaDesde +
-          ' - ' +
-          medico.disponibilidades[disponibilidadId].horaHasta
-      )
+  
+      if(nuevaDisponibilidad.diaSemana != undefined){
+          disponibilidad.diaSemana = nuevaDisponibilidad.diaSemana
+      }
+      if(nuevaDisponibilidad.horaDesde != undefined){
+          disponibilidad.horaDesde = nuevaDisponibilidad.horaDesde
+      }
+      if(nuevaDisponibilidad.horaHasta != undefined){
+        disponibilidad.horaHasta = nuevaDisponibilidad.horaHasta
+      }
+      await medico.save()
 
       setImmediate(() => {
-        this.generarTurnosPorAnioParaDisponibilidadModificada(
+          this.generarTurnosPorAnioParaDisponibilidadModificada(
           medico,
-          disponibilidadAnterior,
-          disponibilidadNuevaObj
+          disponibilidadAnteriorObj,
+          nuevaDisponibilidadObj
         )
       })
+
+      return medico
+
     } catch (error) {
-      throw new Error('Error en modificar disponibilidad para el médico')
+      throw new Error(error.message)
     }
   }
 
@@ -209,4 +247,33 @@ export class MedicoService {
     const resultado = this.turnoService.solicitarCambioDeFecha(idUsuario, idTurno, nuevaFechaHora)
     return resultado
   }
+  mapToEntidad(medico){
+
+    const objEspecialidades =  (medico.especialidades || []).map(e => new Especialidad(e.nombre,e.duracionTurnoEnMins,e.costoConsulta));
+    const objPracticas  = (medico.practicas || []).map(p => new Practica(p.codigo,p.nombre,p.duracionTurnoEnMins,p.costo));
+    const objSede = (medico.sedes || []).map(s => new Sede (s.nombre, s.direccion));
+    const objDisponibilidades = (medico.disponibilidades || []).map(
+                                  d => new DisponibilidadHoraria(
+                                  d.diaSemana,
+                                  d.horaDesde,
+                                  d.horaHasta
+                                  )
+                                );
+    const objMedico = new Medico(
+                          medico.usuario,
+                          medico.matricula,
+                          medico.nombre,
+                          objEspecialidades,
+                          objPracticas,
+                          objSede,
+                          objDisponibilidades
+                    );
+      objMedico.setId(medico._id);
+
+      console.log(objMedico.getId());
+
+      return objMedico;
+  }
+
+ 
 }
