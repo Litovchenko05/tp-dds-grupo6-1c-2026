@@ -6,8 +6,7 @@ export class Plan {
   #coberturasEspecialidad
   #coberturasPractica
 
-  constructor(id, nombre, coberturasEspecialidad, coberturasPractica) {
-    this.#id = id
+  constructor(nombre, coberturasEspecialidad, coberturasPractica) {
     this.#nombre = nombre
     this.#coberturasEspecialidad = coberturasEspecialidad
     this.#coberturasPractica = coberturasPractica

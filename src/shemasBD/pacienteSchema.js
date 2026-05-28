@@ -24,6 +24,11 @@ export const PacienteSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Mixed,
       default: null,
     },
+    historialDeTurnos:{
+      type: [mongoose.Schema.Types.Mixed],
+      default:[],
+      required:false,
+    }
   },
   {
     timestamps: true,

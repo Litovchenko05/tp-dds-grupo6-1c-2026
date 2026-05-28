@@ -8,18 +8,6 @@ import {UsuarioSchema} from "../shemasBD/usuarioSchema.js";
 
 export const MedicoSchema = new mongoose.Schema({
 
-    /*
-            #id
-            #usuario
-            #matricula
-            #nombre
-            #especialidades
-            #practicas
-            #sedes
-            #disponibilidades
-            #solicitudesDeCambioDeFecha //este no lo muestro
-
-    */
     medicoId: {
     type: mongoose.Schema.Types.ObjectId,
     required: false
@@ -39,6 +27,11 @@ export const MedicoSchema = new mongoose.Schema({
     practicas:[PracticaSchema],
     sedes:[SedeSchema],
     disponibilidades:[DisponibilidadSchema],
+    solicitudesDeCambioDeFecha:{
+          type: [mongoose.Schema.Types.Mixed],
+          default:[],
+          required:false,
+        }
     },
     {
     timestamps: true,
@@ -46,15 +39,6 @@ export const MedicoSchema = new mongoose.Schema({
          
 });
 
-
-// //MIDDLEWARE PARA POPULAR TODOS LOS METODOS QUE TENGAN 'find'
-// MedicoSchema.pre(/^find/, async function(){
-//     this.populate('especialidades');
-//     this.populate('practicas');
-//     this.populate('sedes');
-//     this.populate('disponibilidades');
-    
-// });
 
 MedicoSchema.loadClass(Medico);
 

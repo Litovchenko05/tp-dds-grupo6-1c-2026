@@ -4,12 +4,15 @@ import { Turno } from '../models/turno.js'
 import { PacienteRepository } from '../repositories/paciente.repository.js'
 import { TurnoRepository } from '../repositories/turno.repository.js'
 import { Medico } from '../models/Medico.js'
-
+import { ObraSocial } from '../models/ObraSocial.js'
+import { Plan } from '../models/Plan.js'
+import { MedicoRepository } from '../repositories/medico.repository.js'
 export class PacienteService {
   
   constructor() {
     this.pacienteRepository = new PacienteRepository()
     this.turnoRepository = new TurnoRepository()
+    this.medicoRespository = new MedicoRepository()
   }
 
   #mapToDto(paciente) {
@@ -78,51 +81,64 @@ export class PacienteService {
   }
 
 
-  reservarTurno(pacienteId, turnoId) {
-    const paciente = this.pacienteRepository.findById(Number(pacienteId))
+  async reservarTurno(pacienteId, turnoId) {
+    
+    const paciente = await  this.pacienteRepository.findById(pacienteId)
+   
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
-    const turno = this.turnoRepository.findById(Number(turnoId))
-
+    const turno = await this.turnoRepository.findById(turnoId)
+   
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
-    if (turno.estado == EstadoTurno.DISPONIBLE) {
-      turno.reservar(paciente)
-      paciente.guardarTurnoEnHistorial(turno)
-      console.log(
-        'Se reservó el turno ' +
-          turno.id +
-          ' con el médico ' +
-          turno.medico.nombre +
-          ' para el paciente ' +
-          turno.paciente.nombre
-      )
+   
+    if (turno.estado == "disponible") {
+
+        turno.paciente = paciente;
+        turno.estado = "reservado";
+        turno.save()
+
+        paciente.historialDeTurnos.push(turno);
+        paciente.save()
     } else {
       throw new Error('El turno no está disponible para reservar')
     }
   }
 
-  consultarHistorial(pacienteId) {
-    const paciente = this.pacienteRepository.findById(Number(pacienteId))
+  
+
+  async consultarHistorial(pacienteId) {
+    const paciente = await this.pacienteRepository.findById(pacienteId)
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
-    const historial = paciente.historialDeTurnos.map((turno) => turno.toJSON())
+    const historial = paciente.historialDeTurnos;
     return historial
   }
 
-  solicitarCambioDeFecha(pacienteId, turnoId, nuevaFechaHora) {
-    const paciente = this.pacienteRepository.findById(Number(pacienteId))
+  async solicitarCambioDeFecha(pacienteId, turnoId, nuevaFechaHora) {
+    const paciente = await this.pacienteRepository.findById(pacienteId)
+
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
-    const turno = this.turnoRepository.findById(Number(turnoId))
-    // console.log("Se soliitó el cambio de fecha para el turno " + turnoId + " con el médico " + turno.medico.nombre + " del paciente " + paciente.nombre);
+    const turno = await this.turnoRepository.findById(turnoId)
+
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
-    paciente.solicitarCambioDeFechaTurno(turno, nuevaFechaHora, turno.medico)
+
+    const medico = await this.medicoRespository.findByNombre(turno.medico.nombre);
+
+    medico.solicitudesDeCambioDeFecha.push ({
+        nuevaFechaHora: new Date(nuevaFechaHora),
+        estado: 'pendiente'
+    });
+
+    await medico.save();
+    
   }
+
 }
