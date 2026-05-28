@@ -20,7 +20,10 @@ export const MedicoSchema = new mongoose.Schema({
             #solicitudesDeCambioDeFecha //este no lo muestro
 
     */
-
+    medicoId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false
+    },
     usuario: UsuarioSchema,
     matricula:{
         type: String,

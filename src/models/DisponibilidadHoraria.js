@@ -35,17 +35,6 @@ export class DisponibilidadHoraria {
     this.#fueModificada = true
   }
 
-  obtenerFecha() {
-    const fecha = new Date()
-
-    while (fecha.getDay() !== this.diaSemana) {
-      fecha.setDate(fecha.getDate() + 1)
-    }
-
-    fecha.setHours(this.horaDesde, 0, 0, 0)
-
-    return fecha
-  }
 
   obtenerNombreDelDiaDeSemana(indice) {
     return Object.keys(DiasSemana).find((key) => DiasSemana[key] === indice)

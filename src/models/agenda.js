@@ -5,24 +5,29 @@ import { EstadoTurno } from './EstadoTurno.enum.js'
 import { Medico } from './medico.js'
 import { DiasSemana } from './DiaSemana.enum.js'
 import { DisponibilidadHoraria } from './DisponibilidadHoraria.js'
+import { Sede } from './Sede.js';
+import { Paciente } from './Paciente.js'
+
 
 export class Agenda {
   
-  static generarTurnos(medico, disponibilidad) {
+  static generarTurnos(medico, disponibilidad, sede, servicio) {
+
     const nuevosTurnos = []
     const fechaActual = new Date()
     const año = fechaActual.getFullYear()
     const fechaDelUltimoDiaDelAño = new Date(año, 11, 31)
-    const [horaDesde, minutoDesde] = disponibilidad.horaDesde.split(':').map(Number)
 
-    const [horaHasta, minutoHasta] = disponibilidad.horaHasta.split(':').map(Number)
+    const [horaDesde, minutoDesde] = disponibilidad.getHoraDesde().split(':').map(Number)
+
+    const [horaHasta, minutoHasta] = disponibilidad.getHoraHasta().split(':').map(Number)
 
     fechaActual.setDate(fechaActual.getDate() + 1) //empiezo a generar tunos para el dia siguiente
 
     while (fechaActual <= fechaDelUltimoDiaDelAño) {
       const nombreDelDia = disponibilidad.obtenerNombreDelDiaDeSemana(fechaActual.getDay())
 
-      if (nombreDelDia == disponibilidad.diaSemana) {
+      if (nombreDelDia == disponibilidad.getDiaSemana()) {
         // hora inicial del cual arrancan los turnos
         let fechaHora = new Date(
           año,
@@ -42,11 +47,13 @@ export class Agenda {
         )
 
         while (fechaHora <= fechaLimite) {
-          console.log('La fecha del siguiente turno es ' + fechaHora.toLocaleString('es-AR'))
+          // console.log('La fecha del siguiente turno es ' + fechaHora.toLocaleString('es-AR'))
 
-          const nuevoTurno = new Turno(null, medico, fechaHora, null, null)
+          const fechaTurno = new Date(fechaHora);
+          const nuevoTurno = new Turno(medico, fechaTurno, sede, servicio);
+          const nuevoTurnoJSON = Agenda.#mapToJSON(nuevoTurno);
 
-          nuevosTurnos.push(nuevoTurno)
+          nuevosTurnos.push(nuevoTurnoJSON)
           //le sumo 30 min a la hora inicial de la fecha inicial para generar los turnos
           fechaHora.setMinutes(fechaHora.getMinutes() + 30)
         }
@@ -57,68 +64,108 @@ export class Agenda {
     return nuevosTurnos
   }
 
-  static #generarPorPractica(practica, medico) {
-    if (!medico.tieneTipoTurno(practica)) {
-      throw new Error(`El médico ${medico.nombre} no tiene la practica ${practica.nombre}`)
+  static obtenerNuevaFechaDelTurno(fechaHoraVieja, disponibilidadAnterior, disponibilidadModificada){  
+
+        const nuevaFechaHora = new Date(fechaHoraVieja); 
+        const diaAnt = DiasSemana[disponibilidadAnterior.getDiaSemana()];
+        const diaMod = DiasSemana[disponibilidadModificada.getDiaSemana()];
+        const diffDias = diaMod - diaAnt;   
+        // moverse de fecha en la semana
+        nuevaFechaHora.setDate(nuevaFechaHora.getDate() + diffDias);
+
+        return nuevaFechaHora;
+  }
+
+
+  static #mapToJSON(turno){
+    return{
+      medico:{
+            id: turno.getMedico().getId(),
+            nombre: turno.getMedico().getNombre(),
+            usuario: turno.getMedico().getUsuario(),
+            matricula: turno.getMedico().getMatricula(),
+            especialidades: Array.isArray(
+              turno.getMedico().getEspecialidades()
+            )
+              ? turno.getMedico()
+                  .getEspecialidades()
+                  .map((e) => ({
+                    id: e.getId(),
+
+                    nombre: e.getNombre(),
+
+                    duracionTurnoEnMins:
+                      e.getDuracionTurnoEnMins(),
+
+                    costo:
+                      e.getCostoConsulta(),
+                  }))
+              : [],
+
+            practicas: Array.isArray(
+              turno.getMedico().getPracticas()
+            )
+              ? turno.getMedico()
+                  .getPracticas()
+                  .map((p) => ({
+                    
+                    codigo: p.getCodigo(),
+                    nombre: p.getNombre(),
+                    duracionTurnoEnMins: p.getDuracionTurnoEnMins(),
+                    costo: p.getCosto(),
+                  }))
+              : [],
+
+            sedes: Array.isArray(
+              turno.getMedico().getSedes()
+            )
+              ? turno.getMedico()
+                  .getSedes()
+                  .map((s) => ({
+                   
+
+                    nombre: s.getNombre(),
+
+                    direccion: s.getDireccion(),
+                  }))
+              : [],
+
+            disponibilidades: Array.isArray(
+              turno.getMedico().getDisponibilidades()
+            )
+              ? turno.getMedico()
+                  .getDisponibilidades()
+                  .map((d) => ({
+                    diaSemana: d.getDiaSemana(),
+
+                    horaDesde: d.getHoraDesde(),
+
+                    horaHasta: d.getHoraHasta(),
+                  }))
+              : [],
+          },
+      paciente: null,
+      fechaHora:turno.getFechaHora(),
+      sede:{
+        nombre:turno.getSede().getNombre(),
+        direccion:turno.getSede().getDireccion(),
+      },
+      servicio:{
+        nombre:turno.getServicio().getNombre(),
+      },
+      estado:turno.getEstado(),
+      historialDeEstados: Array.isArray(turno.getHistorialEstados())
+        ? turno.getHistorialEstados().map((cambio) => ({
+            fechaHoraIngreso: cambio.fechaHoraIngreso,
+            estado: cambio.estado,
+            motivo: cambio.motivo,
+          }))
+        : [],
+      costo: turno.getServicio().getCosto(),
+     
     }
-
-    const nuevosTurnos = []
-
-    medico.disponibilidades.forEach((disponibilidad) => {
-      const fechaTurno = disponibilidad.obtenerFecha()
-
-      const turno = new Turno(null, medico, fechaTurno, medico.sedes[0], practica)
-
-      nuevosTurnos.push(turno)
-    })
-
-    return nuevosTurnos
   }
 
-  static #generarPorEspecialidad(especialidad, medico) {
-    if (!medico.tieneTipoTurno(especialidad)) {
-      throw new Error(`El médico ${medico.nombre} no tiene la especialidad ${especialidad.nombre}`)
-    }
-
-    const nuevosTurnos = []
-
-    medico.disponibilidades.forEach((disponibilidad) => {
-      const fechaTurno = disponibilidad.obtenerFecha()
-
-      const turno = new Turno(null, medico, fechaTurno, medico.sedes[0], especialidad)
-
-      nuevosTurnos.push(turno)
-    })
-
-    return nuevosTurnos
-  }
-
-  static refrescarTurnosSegunDisponibilidadDe(medico) {
-    /*Aca tendrian que traerse todos los turnos del medico, que esten con estado disponible y 
-        con fecha posterior a la actual, de la base de datos y modificarlos segun  la nueva disponilidad del medico*/
-
-    const turno1 = new Turno(1, medico, new Date(), null, null)
-    const turno2 = new Turno(2, medico, new Date(), null, null)
-    const turno3 = new Turno(3, medico, new Date(), null, null)
-
-    const turnosAsignados = [turno1, turno2, turno3]
-
-    const disponibilidadesModificadas = medico.disponibilidades.filter(
-      (disponibilidad) => disponibilidad.getFueModificada === true
-    )
-
-    const nuevasFechas = disponibilidadesModificadas.map((disponibilidad) =>
-      disponibilidad.obtenerFecha()
-    )
-
-    turnosAsignados.forEach((turno, indice) => {
-      const nuevaFecha = nuevasFechas[indice]
-
-      if (turno.estadoActual === EstadoTurno.DISPONIBLE && nuevaFecha !== undefined) {
-        turno.fechaTurno = nuevaFecha
-      }
-    })
-  }
 
   static buscarTurnoParaGenerarNotificacionesDeRecordatorio(unTurno) {
     const fechaManiana = new Date()

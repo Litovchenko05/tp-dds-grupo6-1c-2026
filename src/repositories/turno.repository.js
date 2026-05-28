@@ -33,6 +33,10 @@ export class TurnoRepository {
     })
   }
 
+  async saveMany(turnos) {
+   await this.TurnoModel.insertMany(turnos)
+  }
+
   async delete(id) {
     return await this.TurnoModel.findByIdAndDelete(id)
   }
@@ -40,7 +44,6 @@ export class TurnoRepository {
   async update(id, turnoModificado) {
     return await this.TurnoModel.findByIdAndUpdate(id, turnoModificado, { new: true });
   }
-
 
 
   async count(){

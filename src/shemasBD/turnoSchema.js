@@ -5,8 +5,9 @@ import { SedeSchema } from './sedeSchema.js'
 import { PracticaSchema } from './practicaSchema.js'
 import { PacienteSchema } from './pacienteSchema.js'
 import { CambioEstadoTurnoSchema } from './cambioEstadoTurnoSchema.js'
+import { required } from 'zod/mini'
 
-const TurnoSchema = new mongoose.Schema(
+export const TurnoSchema = new mongoose.Schema(
   {
     medico: {
       type: MedicoSchema,
@@ -14,6 +15,7 @@ const TurnoSchema = new mongoose.Schema(
     },
     paciente: {
       type: PacienteSchema,
+      required: false,
       default: null,
     },
     fechaHora: {
@@ -24,9 +26,10 @@ const TurnoSchema = new mongoose.Schema(
       type: SedeSchema,
       required: true,
     },
-    practica: {
-      type: PracticaSchema,
-      required: true,
+    servicio: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null,
+      required: false,
     },
     estado: {
       type: String,
@@ -36,10 +39,12 @@ const TurnoSchema = new mongoose.Schema(
     },
     historialEstados: {
       type: [CambioEstadoTurnoSchema],
+      required: false,
       default: [],
     },
     costo: {
       type: Number,
+      required: false,
       default: null,
     },
   },

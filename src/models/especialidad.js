@@ -6,8 +6,7 @@ export class Especialidad {
   #duracionTurnoEnMins
   #costoConsulta
 
-  constructor(id, nombre, duracionTurnoEnMins, costoConsulta) {
-    this.#id = id
+  constructor(nombre, duracionTurnoEnMins, costoConsulta) {
     this.#nombre = nombre
     this.#duracionTurnoEnMins = duracionTurnoEnMins
     this.#costoConsulta = costoConsulta
@@ -25,7 +24,7 @@ export class Especialidad {
     return this.#duracionTurnoEnMins
   }
 
-  getCostoConsulta() {
+  getCosto() {
     return this.#costoConsulta
   }
 
