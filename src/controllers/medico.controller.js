@@ -1,4 +1,7 @@
+import { especialidadSchema } from '../schemas/especialidad.schema.js'
 import { medicoSchema } from '../schemas/medico.schema.js'
+import { practicaSchema } from '../schemas/practica.schema.js'
+import { PracticaSchema } from '../shemasBD/practicaSchema.js'
 
 export class MedicoController {
 
@@ -94,4 +97,57 @@ export class MedicoController {
       return res.status(500).json({ data: error.message })
     }
   }
+    modificarServicio = async (req, res) => {
+    try {
+      const body = req.body
+      const resultado = practicaSchema.safeParse(body)
+
+      if (!resultado.success) {
+      resultado = especialidadSchema.safeParse(body);
+        if(!resultado.success){
+          console.log('el resultado dio error')
+          return res.status(400).json({ status: 'error', message: resultado.error.errors })     
+        }
+    } 
+    
+      const medicoId = req.params.id
+      const servicioId = req.params.idServicio
+      await this.medicoService.modificarServicio(medicoId, servicioId, resultado.data)
+      return res.status(200).json({ status: 'success', data: resultado.data })
+    } catch (error) {
+      return res.status(500).json({ data: error.message })
+    }
+  }
+  createServicio = async(req,res)=>{
+    try{
+      const body = req.body
+      let resultado = practicaSchema.safeParse(body);
+      if (!resultado.success) {
+      resultado = especialidadSchema.safeParse(body);
+        if(!resultado.success){
+          console.log('el resultado dio error')
+          return res.status(400).json({ status: 'error', message: resultado.error.errors })     
+        }
+    } 
+      const medicoId = req.params.id
+      await this.medicoService.agregarServicio(medicoId, resultado.data)
+      return res.status(201).json({ status: 'success', data: resultado.data })
+    } 
+    catch(error){
+      return res.status(500).json({ data: error.message })
+    }   
+
+  }
+  deleteServicio = async (req, res) => {
+        try {
+            const medicoId = req.params.id
+            const tipoDeServicio = req.params.tipoServicio 
+            const idServicio = req.params.servicioId
+            await this.medicoService.eliminarServicio(idServicio,tipoDeServicio,medicoId)
+
+            return res.status(200).json({ status: "success", data:"servicio eliminado" })
+        } catch (error) {
+            return this.manejarError(res, error)
+        }
+    }  
 }

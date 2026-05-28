@@ -17,6 +17,7 @@ export class Especialidad {
     this.#nombre = nombre
     this.#duracionTurnoEnMins = duracionTurnoEnMins
     this.#costoConsulta = costoConsulta
+    
   }
 
   getId() {

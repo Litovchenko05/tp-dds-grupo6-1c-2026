@@ -1,7 +1,8 @@
 import { MedicoRepository } from '../repositories/medico.repository.js'
 import { Medico } from '../models/Medico.js'
 import { DisponibilidadHoraria } from '../models/disponibilidadHoraria.js'
-
+import { Practica } from '../models/Practica.js'
+import { Especialidad } from '../models/Especialidad.js'
 export class MedicoService {
   constructor({ medicoRepository, agendaService }) {
     this.medicoRepository = new medicoRepository()
@@ -82,6 +83,31 @@ export class MedicoService {
     const medico = this.medicoRepository.obtenerPorId(Number(id))
 
     return medico ? this.#mapToDto(medico) : null
+  }
+  agregarServicio(medicoId, servicio){
+    try{
+      const medico = this.medicoRepository.obtenerPorId(Number(medicoId))
+      if(!medico){
+        throw new Error('Medico no encontrado')
+      }
+      if("codigo" in servicio){
+        const nuevoServicio = new Practica(
+          servicio.codigo,
+          servicio.nombre,
+          servicio.duracionTurnoEnMins,
+          servicio.costo
+        )
+      }else{
+        const nuevoServicio = new Especialidad(
+          servicio.nombre,
+          servicio.duracionTurnoEnMins,
+          servicio.costoConsulta
+        )
+      }
+      medico.darDeAltaServicio(nuevoServicio)
+    }catch(error){
+      throw new Error('error en agregar servicio para el médico')
+    }
   }
 
   agregarDisponibilidad(medicoId, disponibilidad) {
@@ -165,7 +191,107 @@ export class MedicoService {
       throw new Error('Error en modificar disponibilidad para el médico')
     }
   }
+  modificarServicio(medicoId, servicioId, nuevoServicio){
+      try{
+      const medico = this.medicoRepository.obtenerPorId(Number(medicoId))
 
+      if (!medico) {
+        throw new Error('Médico no encontrado')
+      }
+
+     if("codigo" in nuevoServicio){
+        if (servicioId < 0 || servicioId >= medico.practicas.length) {
+        throw new Error('Practica no encontrada para el médico')
+      }
+
+      const practicaAnterior = medico.practicas[servicioId]
+        const servicioNuevo = new Practica(
+          nuevoServicio.codigo,
+          nuevoServicio.nombre,
+          nuevoServicio.duracionTurnoEnMins,
+          nuevoServicio.costo
+        )
+
+        console.log(
+        'Practica existente antes de la modificación: ',
+        practicaAnterior.codigo +
+          ' ' +
+          practicaAnterior.nombre +
+          ' ' +
+          practicaAnterior.duracionTurnoEnMins +
+          ' ' +
+          practicaAnterior.costo
+      )
+
+      medico.modificarServicio(practicaAnterior, servicioNuevo)
+
+      console.log(
+        'Practica existente después de la modificación: ',
+         medico.practicas[servicioId].codigo +
+          ' ' +
+          medico.practicas[servicioId].nombre +
+          ' ' +
+          medico.practicas[servicioId].duracionTurnoEnMins +
+          ' ' +
+          medico.practicas[servicioId].costo
+      )
+
+      }else{
+       
+        if (servicioId < 0 || servicioId >= medico.especialidades.length) {
+        throw new Error('Especialidad no encontrada para el médico')
+      }
+
+      const especialidadAnterior = medico.especialidades[servicioId]
+
+       const servicioNuevo = new Especialidad(
+          nuevoServicio.nombre,
+          nuevoServicio.duracionTurnoEnMins,
+          nuevoServicio.costoConsulta
+        )
+          console.log(
+        'Especialidad existente antes de la modificación: ',
+          especialidadAnterior.nombre +
+          ' ' +
+          especialidadAnterior.duracionTurnoEnMins +
+          ' ' +
+          especialidadAnterior.costoConsulta
+      )
+       medico.modificarServicio(especialidadAnterior, servicioNuevo)
+
+       console.log(
+        'Especialidad existente después de la modificación: ',
+          medico.especialidades[servicioId].nombre +
+          ' ' +
+          medico.especialidades[servicioId].duracionTurnoEnMins +
+          ' ' +
+          medico.especialidades[servicioId].costoConsulta
+      )
+      }
+      
+
+
+      }
+      catch(error){
+        throw new Error('Error en modificar servicio para el médico')
+      }
+  }
+  eliminarServicio(idServicio, tipoDeServicio,medicoId){
+    
+    try{
+      const medico = this.medicoRepository.obtenerPorId(Number(medicoId))
+      let servicio
+          if(tipoDeServicio == "practica"){
+            servicio = medico.practicas[idServicio]
+            
+          }else if(tipoDeServicio == "especialidad"){
+            servicio = medico.especialidades[idServicio]
+          }
+          medico.darDeBajaServicio(servicio)}
+    catch(error){
+      throw new Error("error al eliminar el servicio para el medico")
+    }
+  }
   generarTurnosPorAnioParaDisponibilidadModificada(
     medico,
     disponibilidadAnterior,

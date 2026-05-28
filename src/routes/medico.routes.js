@@ -30,5 +30,14 @@ router
 router
   .route('/:id/modificarDisponibilidad/:idDisponibilidad')
   .put((req, res) => medicoController.modificarDisponibilidad(req, res))
+router
+  .route('/:id/servicio')
+  .post((req,res)=> medicoController.createServicio(req,res))
+router
+  .route('/:id/modificarServicio/servicio')
+  .put((req,res)=>medicoController.modificarServicio(req,res))
+router
+  .route(":id/:tipoServicio/:servicioId")
+  .delete((req,res)=> medicoController.deleteServicio(req,res))
 
 export default router

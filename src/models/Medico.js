@@ -150,7 +150,9 @@ export class Medico {
             "Este servicio no es brindado por el medico"
         ) 
         }
-      return listaServicios.filter(p=>p.id !== servicio.id)
+        return listaServicios.filter(p=>p.id !== servicio.id)
+    
+      
     }
     servicioExiste(servicio,listaServicios){
       return listaServicios.some(p=>p.id === servicio.id)
@@ -163,9 +165,14 @@ export class Medico {
         )
     }    
     else if(!listaServicio){
+      servicio.id = 0
       return listaServicio = [servicio]
            
     }else{
+      const maxId = listaServicio.reduce(
+      (max, servicio) => Math.max(max, servicio.id),
+        -1)
+      servicio.id = maxId + 1
       listaServicio.push(servicio) 
       return listaServicio
     }
