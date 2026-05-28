@@ -1,10 +1,14 @@
 import { TurnoRepository } from './repositories/turno.repository.js'
 import { Turno } from './models/turno.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
+import { Medico } from '../models/Medico.js'
+import {NotificacionService} from './notificacion.service.js'
+import { NotificacionRepository } from './repositories/.js'
 
 export class TurnoService {
-  constructor({ turnoRepository }) {
+  constructor({ turnoRepository}) {
     this.turnoRepository = turnoRepository
+    //this.servicioNotificacion = new NotificacionService()
   }
 
   #mapToDto(t) {
@@ -84,7 +88,23 @@ export class TurnoService {
 
     this.turnoRepository.guardar(turno)
 
+    this.servicioNotificacion.generarNotificacion(turno.getContraparte(id_usuario), cancelador, 'El turno ha sido cancelado. Motivo: ' + motivo)
     return this.#mapToDto(turno)
+  }
+
+  solicitarCambioDeFecha(idUsuario, idTurno, nuevaFechaHora) {
+    const turno = this.turnoRepository.obtenerPorId(Number(idTurno))
+    if (!turno) {
+      throw new Error('Turno no encontrado')
+    }
+    const quienSolicita = turno.quienModifica(idUsuario)
+    if (!quienSolicita) {
+      throw new Error('No tiene permiso para solicitar cambio de fecha para este turno.')
+    }
+    const mensaje = 'Solicitud de cambio de fecha del turno actual' + idTurno + ' para la nueva fecha: ' + nuevaFechaHora
+    const destinatario = turno.getContraparte(idUsuario)
+    this.servicioNotificacion.generarNotificacion(destinatario, quienSolicita, mensaje)
+    return 'Solicitud de cambio de fecha enviada. La respuesta será notificada.'
   }
 
   marcarComoRealizado(id_turno, id_usuario){
@@ -107,5 +127,11 @@ export class TurnoService {
     turno.actualizarEstado(EstadoTurno.REALIZADO, turno.medico, 'El turno ha sido realizado')
     this.turnoRepository.guardar(turno)
     return this.#mapToDto(turno)
+  }
+
+  obtenerHistorial(id_usuario) {
+    let turnos = this.turnoRepository.obtenerPorUsuario(id_usuario)
+    let turnosFiltrados = turnos.filter(t=> t.estado === EstadoTurno.REALIZADO)
+    return turnosFiltrados.map(this.#mapToDto)
   }
 }

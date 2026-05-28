@@ -51,4 +51,28 @@ export class AgendaService {
     }
     return false
   }
+
+  obtenerDisponiblesSegunMedico(medicoId) {
+    const turnosTotales = this.turnoRepository.obtenerPorMedicoId(medicoId)
+    const turnosFiltrados = turnosTotales.filter((turno) => turno.estado === EstadoTurno.DISPONIBLE)
+    return turnosFiltrados
+  }
+
+  obtenerDisponiblesSegunServicio(nombreServicio){
+    const turnosTotales = this.turnoRepository.obtenerTodos()
+    const turnosFiltrados = turnosTotales.filter((turno) => turno.getNombreServicio() === nombreServicio && turno.estado === EstadoTurno.DISPONIBLE)
+    return turnosFiltrados
+  }
+
+  obtenerDisponiblesSegunMedicoYServicio(medicoId, nombreServicio){
+    const turnosTotales = this.turnoRepository.obtenerPorMedicoId(medicoId)
+    const turnosFiltrados = turnosTotales.filter((turno) => turno.getNombreServicio() === nombreServicio && turno.estado === EstadoTurno.DISPONIBLE)
+    return turnosFiltrados
+  }
+
+  obtenerTurnosPorMedico(medicoId) {
+    const turnosTotales = this.turnoRepository.obtenerPorMedicoId(medicoId)
+    return turnosTotales
+  }
+  
 }

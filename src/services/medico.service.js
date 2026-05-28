@@ -1,10 +1,13 @@
 import { MedicoRepository } from '../repositories/medico.repository.js'
 import { Medico } from '../models/Medico.js'
 import { DisponibilidadHoraria } from '../models/disponibilidadHoraria.js'
+import { TurnoService } from './turno.service.js'
+import { turnoRepository } from '../repositories/datosPrueba.enMemoria.js'
 
 export class MedicoService {
-  constructor({ medicoRepository, agendaService }) {
+  constructor({ medicoRepository, agendaService, turnoService}) {
     this.medicoRepository = new medicoRepository()
+    this.turnoService = turnoService
     this.agendaService = agendaService
   }
 
@@ -184,9 +187,9 @@ export class MedicoService {
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .trim()
-}
+  }
 
-obtenerDisponibilidadesPorTipoServicio(medicoId, tipoServicio) {
+  obtenerDisponibilidadesPorTipoServicio(medicoId, tipoServicio) {
   const medico = this.medicoRepository.obtenerPorId(Number(medicoId))
 
   if (!medico) {
@@ -199,6 +202,11 @@ obtenerDisponibilidadesPorTipoServicio(medicoId, tipoServicio) {
     throw new Error('El médico no atiende el servicio solicitado')
   }
 
-  return agendaService.
-}
+  return this.agendaService.obtenerDisponiblesSegunMedicoYServicio(medicoId, tipoServicio)
+  }
+
+  solicitarCambioFecha(idUsuario, idTurno, nuevaFechaHora) {
+    const resultado = this.turnoService.solicitarCambioDeFecha(idUsuario, idTurno, nuevaFechaHora)
+    return resultado
+  }
 }

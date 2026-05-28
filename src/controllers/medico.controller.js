@@ -1,8 +1,9 @@
 import { medicoSchema } from '../schemas/medico.schema.js'
-
+import { disponibilidadHorariaSchema } from '../schemas/disponibilidadHoraria.schema.js'
+import {AgendaService} from '../services/agenda.service.js'
 export class MedicoController {
 
-  constructor({ medicoService }) {
+  constructor({ medicoService}) {
     this.medicoService = medicoService
   }
 
@@ -96,17 +97,15 @@ export class MedicoController {
   }
 
   
-  obtenerDisponibilidades = async (req, res) => {
+  obtenerTurnos = async (req, res) => {
   try {
-    const { id } = req.params
+    const { idMedico } = req.params
 
-    const { tipoServicio } = req.query
-
-    const disponibilidades = this.medicoService.obtenerDisponibilidadesPorTipoServicio(
-      id,
-      tipoServicio
-    )
-
+    const { nombreServicio, estadoTurno } = req.query
+    const disponibilidades
+    if(estadoTurno && estadoTurno == 'DISPONIBLE') {
+    disponibilidades = this.medicoService.obtenerDisponiblesSegunMedicoYServicio(idMedico, nombreServicio)
+    }
     return res.status(200).json({
       status: 'success',
       data: disponibilidades,
@@ -133,4 +132,19 @@ export class MedicoController {
   }
 }
 
+  solicitarCambioFecha = async (req, res) => {
+    try {
+      const { id } = req.params
+      const { idTurno } = req.params
+      const { nuevaFechaHora } = req.body
+      const resultado = this.medicoService.solicitarCambioDeFecha(id, idTurno, nuevaFechaHora)
+    } catch (error) {
+      if (error.message === 'Turno no encontrado') {
+        return res.status(404).json({
+          status: 'error',
+          message: error.message,
+        })
+      }
+    }
+  }
 }

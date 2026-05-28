@@ -6,10 +6,12 @@ import { AgendaService } from '../services/agenda.service.js'
 import { TurnoRepository } from '../repositories/turno.repository.js'
 
 const turnoRepository = new TurnoRepository()
+const turnoService = new TurnoService({ turnoRepository: turnoRepository })
 const agendaService = new AgendaService({ turnoRepository: turnoRepository })
 const medicoService = new MedicoService({
   medicoRepository: MedicoRepository,
   agendaService: agendaService,
+  turnoService: turnoService
 })
 const medicoController = new MedicoController({ medicoService: medicoService })
 
@@ -32,8 +34,12 @@ router
   .put((req, res) => medicoController.modificarDisponibilidad(req, res))
 
 router
-  .route('/:id/disponibilidad/')
-  .get((req, res) => medicoController.obtenerDisponibilidades(req, res))
-  //GET /medicos/1/disponibilidades?tipoServicio=Cardiologia
+  .route('/:id/turnos')
+  .get((req, res) => medicoController.obtenerTurnos(req, res))
+  //GET /medicos/1/disponibilidades?nombreServicio=Cardiologia&&estadoTurno=DISPONIBLE
 
+router
+  .route('/:id/turnos/:idTurno/solicitarCambioFecha')
+  .post((req, res) => medicoController.solicitarCambioFecha(req, res))
+  
 export default router

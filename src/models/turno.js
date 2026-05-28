@@ -47,7 +47,17 @@ export class Turno {
       return null
   }
 
-  get id() {
+  getContraparte(id_usuario){
+    if (this.paciente.id === id_usuario) {
+      return this.medico
+      }
+      if (this.medico.id === id_usuario) {
+      return this.paciente
+      }
+      return null
+  }
+
+  getId() {
     return this.#id
   }
 
@@ -133,5 +143,9 @@ export class Turno {
       estado: this.#estado,
       costo: this.#costo,
     }
+  }
+
+  getNombreServicio() {
+    return this.#practica.nombre
   }
 }

@@ -20,4 +20,7 @@ router.route('/:id/cancelar')
 router.route('/:id/realizado')
     .patch((req,res) => turnoController.marcarTurnoComoRealizado(req, res))
 
+router.route('/:id/solicitarCambioFecha')
+    .post((req,res) => turnoController.solicitarCambioFecha(req, res))
+
 export default router

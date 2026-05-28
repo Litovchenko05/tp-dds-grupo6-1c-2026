@@ -41,4 +41,15 @@ export class NotificacionService {
 
     return notificaciones.map(this.#mapToDto)
   }
+
+  generarNotificacion(destinatario, remitente, mensaje) {
+    const nuevaNotificacion = {
+      destinatario,
+      remitente,
+      mensaje,
+      fechaHoraCreacion: new Date(),
+      leida: false,
+    }
+  this.notificacionRepository.crear(nuevaNotificacion)
+  }
 }

@@ -85,4 +85,23 @@ export class TurnoController {
       })
     }
   }
+
+  solicitarCambioDeFecha = async (req, res) => {
+    try {
+      const { id } = req.params
+      const { nuevaFechaHora, idUsuario } = req.body
+      const resultado = this.turnoService.solicitarCambioDeFecha(idUsuario, id, nuevaFechaHora)
+
+      return res.status(200).json({
+        status: 'success',
+        data: resultado,
+        message: 'Solicitud de cambio de fecha enviada exitosamente'
+      })
+    } catch (error) {
+      return res.status(400).json({
+        status: 'error',
+        message: error.message
+      })
+    }
+  }
 }
