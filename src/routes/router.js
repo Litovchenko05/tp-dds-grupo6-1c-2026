@@ -3,6 +3,7 @@ import notificacionRouter from './notificacion.routes.js'
 import medicoRouter from './medico.routes.js'
 import turnoRouter from './turno.routes.js'
 import pacienteRouter from './paciente.routes.js'
+import usuarioRuter from './usuario.routes.js'
 
 const router = express.Router()
 
@@ -20,5 +21,6 @@ router.use('/notificaciones', notificacionRouter)
 router.use('/turnos', turnoRouter)
 router.use('/medicos', medicoRouter)
 router.use('/pacientes', pacienteRouter)
+router.use('/usuarios', usuarioRuter)
 
 export default router
