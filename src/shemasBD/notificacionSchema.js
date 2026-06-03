@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { Notificacion } from '../models/notificacion.model.js'
 
 export const NotificacionSchema = new mongoose.Schema({
+  
   destinatario: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Usuario',

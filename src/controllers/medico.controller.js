@@ -69,9 +69,9 @@ export class MedicoController {
 
       const medicoId = req.params.id
 
-      await this.medicoService.agregarDisponibilidad(medicoId, resultado.data)
+      const medico = await this.medicoService.agregarDisponibilidad(medicoId, resultado.data)
 
-      return res.status(201).json({ status: 'success', data: resultado.data })
+      return res.status(201).json({ status: 'success', data: medico })
     } catch (error) {
       return res.status(500).json({ data: error.message })
     }
@@ -89,9 +89,9 @@ export class MedicoController {
       const medicoId = req.params.id
       const disponibilidadId = req.params.idDisponibilidad
 
-      await this.medicoService.modificarDisponibilidad(medicoId, disponibilidadId, resultado.data)
+      const medico = await this.medicoService.modificarDisponibilidad(medicoId, disponibilidadId, resultado.data)
       
-      return res.status(200).json({ status: 'success', data: resultado.data })
+      return res.status(200).json({ status: 'success', data: medico })
     } catch (error) {
       return res.status(500).json({ data: error.message })
     }

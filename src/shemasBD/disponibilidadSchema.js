@@ -26,7 +26,7 @@ export const DisponibilidadSchema = new mongoose.Schema({
     ,
 },{
     timestamps: true,
-    collection: 'disponibilidades',
+    collection: 'disponibilidades',//chequear!
            
 });
 
