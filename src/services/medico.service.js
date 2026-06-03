@@ -9,7 +9,7 @@ import { Sede } from '../models/Sede.js'
 
 export class MedicoService {
   constructor({ medicoRepository, agendaService, turnoService}) {
-    this.medicoRepository = new medicoRepository()
+    this.medicoRepository = medicoRepository
     this.turnoService = turnoService
     this.agendaService = agendaService
   }
@@ -275,5 +275,8 @@ export class MedicoService {
       return objMedico;
   }
 
- 
+ async findAllPaginated(page, limit) {
+      return await this.medicoRepository
+          .findAllPaginated(page, limit)
+  }
 }

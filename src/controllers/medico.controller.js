@@ -150,4 +150,21 @@ export class MedicoController {
       }
     }
   }
+  //GET ALL PAGINADO
+    async findAllPaginated(req, res) {
+        try {
+            const page = Number(req.query.page) || 1
+            const limit = Number(req.query.limit) || 5
+            const resultado =  await this.medicoService.findAllPaginated(page, limit)
+             return res.status(200).json({
+            status: 'success',
+            data: resultado,
+        })
+        } catch(error) {
+          return res.status(500).json({
+          status: 'error',
+          message: 'Error interno del servidor',
+        })
+        }
+    }
 }

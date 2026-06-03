@@ -49,4 +49,29 @@ export class TurnoRepository {
   async count(){
     return this.TurnoModel.countDocuments();
   }
+  //paginado
+  //GET ALL PAGINADO
+  async findAllPaginated(page = 1, limit = 5) {
+      //cuantos documentos hay que saltar
+      const skip = (page - 1) * limit
+
+      const turnos =
+          await this.TurnoModel
+              .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
+              .skip(skip)
+              .limit(limit)
+
+      const total =
+          await this.TurnoModel.countDocuments({
+              //eliminado: false
+          })
+
+      return {
+            turnos,
+            total,
+            page,
+            // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
+            totalPages: Math.ceil(total / limit)
+        }
+    }
 }

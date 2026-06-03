@@ -133,4 +133,58 @@ export class TurnoService {
     let turnosFiltrados = turnos.filter(t=> t.estado === EstadoTurno.REALIZADO)
     return turnosFiltrados.map(this.#mapToDto)
   }
+
+  //paginado
+  async findAllPaginated(page, limit) {
+      return await this.turnoRepository
+          .findAllPaginated(page, limit)
+  }
+
+  async buscarTurnos({
+    nombreMedico,
+    nombreServicio,
+    especialidad,
+    practica,
+    sede,
+    fechaDesde,
+    fechaHasta,
+    estadoTurno = 'DISPONIBLE',
+    page = 1,
+    limit = 5,
+    sortBy = 'fecha',
+    order = 'asc',
+  }) {
+    const servicioBuscado = nombreServicio || especialidad || practica
+
+    const resultado = await this.turnoRepository.buscarTurnosPaginated({
+      nombreMedico,
+      nombreServicio: servicioBuscado,
+      sede,
+      fechaDesde,
+      fechaHasta,
+      estadoTurno,
+      page,
+      limit,
+      sortBy,
+      order,
+    })
+
+    return {
+      data: resultado.turnos.map((turno) => this.#mapToDto(turno)),
+
+      pagination: {
+        total: resultado.total,
+        page: resultado.page,
+        limit: resultado.limit,
+        totalPages: resultado.totalPages,
+        hasNextPage: resultado.page < resultado.totalPages,
+        hasPreviousPage: resultado.page > 1,
+      },
+
+      sort: {
+        sortBy,
+        order,
+      },
+    }
+  }
 }

@@ -89,4 +89,8 @@ export class AgendaService {
     return turnosTotales
   }
   
+  async findAllPaginated(page, limit) {
+      return await this.turnoRepository
+          .findAllPaginated(page, limit)
+  }
 }
