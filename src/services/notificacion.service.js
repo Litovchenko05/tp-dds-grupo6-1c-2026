@@ -1,5 +1,3 @@
-import { notificacionRepository } from '../repositories/datosPrueba.enMemoria.js'
-
 export class NotificacionService {
   constructor({ notificacionRepository }) {
     this.notificacionRepository = notificacionRepository
@@ -22,24 +20,28 @@ export class NotificacionService {
     }
   }
 
-  obtenerTodas(filtroLeida = null) {
+  async obtenerDeUsuario(idUsuario, filtroLeida = null) {
     let notificaciones
 
     if (filtroLeida === null) {
-      notificaciones = this.notificacionRepository.obtenerTodos()
+      notificaciones = await this.notificacionRepository.obtenerTodosDeUsuario(idUsuario)
     } else if (filtroLeida === true) {
-      notificaciones = this.notificacionRepository.obtenerLeidas()
+      notificaciones = await this.notificacionRepository.obtenerLeidasDeUsuario(idUsuario)
     } else {
-      notificaciones = this.notificacionRepository.obtenerNoLeidas()
+      notificaciones = await this.notificacionRepository.obtenerNoLeidasDeUsuario(idUsuario)
     }
 
     return notificaciones.map(this.#mapToDto)
   }
 
-  obtenerNoLeidas() {
-    const notificaciones = this.notificacionRepository.obtenerNoLeidas()
+  async marcarComoLeida(idNotificacion) {
+    const notificacion = await this.notificacionRepository.marcarComoLeida(idNotificacion)
 
-    return notificaciones.map(this.#mapToDto)
+    if (!notificacion) {
+      return null
+    }
+
+    return this.#mapToDto(notificacion)
   }
 
   generarNotificacion(destinatario, remitente, mensaje) {

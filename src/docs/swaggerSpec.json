@@ -1,0 +1,632 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sistema Sweet Medical",
+    "description": "API REST para la gestión de turnos de una clínica.",
+    "version": "1.2.0"
+  },
+
+  "tags": [
+    {
+      "name": "Turnos",
+      "description": "Operaciones sobre turnos"
+    },
+    {
+      "name": "Medicos",
+      "description": "Operaciones sobre médicos"
+    },
+    {
+      "name": "Pacientes",
+      "description": "Operaciones sobre pacientes"
+    }
+  ],
+
+  "paths": {
+
+    "/": {
+
+      "get": {
+        "tags": ["Turnos"],
+        "summary": "Obtener turnos",
+        "description": "Devuelve una lista paginada de turnos",
+
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+
+        "responses": {
+
+          "200": {
+            "description": "Turnos obtenidos correctamente",
+
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+
+                  "properties": {
+
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+
+                    "data": {
+                      "type": "array",
+
+                      "items": {
+                        "$ref": "#/components/schemas/Turno"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+
+      "post": {
+        "tags": ["Medicos"],
+        "summary": "Crear médico",
+        "description": "Da de alta un nuevo médico",
+
+        "requestBody": {
+          "required": true,
+
+          "content": {
+            "application/json": {
+
+              "schema": {
+                "$ref": "#/components/schemas/Medico"
+              },
+
+              "example": {
+                "usuario": "DrCarlos",
+                "matricula": "MP12345",
+                "nombre": "Carlos Garaleli",
+                "especialidadesMedico":[{"nombre":"cardiologia", "duracionTurnoEnMins":30, "costo":30000},{"nombre":"Oftalmologia", "duracionTurnoEnMins":30, "costo":30000}],
+                "practicasMedico":[{"codigo": "POOO2", "nombre":"RPG","duracionTurnoEnMins":30, "costo":30000}],
+                "disponibilidades": [{"diaSemana": "LUNES", "horaDesde":"10:00","horaHasta":"12:00"}],
+                "sedes": [{"nombre": "SEDE LUGANO", "direccion":"Lugano, mozart 400"}]
+            }
+            }
+          }
+        },
+
+        "responses": {
+
+          "201": {
+            "description": "Médico creado correctamente"
+          },
+
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          }
+        }
+      }
+    },
+
+    "/turnos/{id}": {
+
+      "get": {
+        "tags": ["Turnos"],
+        "summary": "Obtener turno por ID",
+
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "responses": {
+
+          "200": {
+            "description": "Turno encontrado correctamente"
+          },
+
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+
+    "/medicos/{id}": {
+
+      "get": {
+        "tags": ["Medicos"],
+        "summary": "Obtener médico por ID",
+
+        "parameters": [
+          {
+            "id": "id",
+            "in": "path",
+            "required": true,
+
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "responses": {
+
+          "200": {
+            "description": "Médico encontrado correctamente"
+          },
+
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+
+    "/medicos/{id}/modificarDisponibilidad/{idDisponibilidad}": {
+
+      "put": {
+        "tags": ["Medicos"],
+        "summary": "Modificar disponibilidad horaria",
+
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+
+            "schema": {
+              "type": "string"
+            }
+          },
+
+          {
+            "name": "idDisponibilidad",
+            "in": "path",
+            "required": true,
+
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "requestBody": {
+          "required": true,
+
+          "content": {
+            "application/json": {
+
+              "schema": {
+                "$ref": "#/components/schemas/DisponibilidadHoraria"
+              },
+
+              "example": {
+                "diaSemana": "LUNES",
+                "horaDesde": "10:00",
+                "horaHasta": "14:00"
+              }
+            }
+          }
+        },
+
+        "responses": {
+
+          "200": {
+            "description": "Disponibilidad modificada correctamente"
+          },
+
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+
+    "/pacientes": {
+
+      "get": {
+        "tags": ["Pacientes"],
+        "summary": "Obtener pacientes",
+        "description": "Devuelve todos los pacientes",
+
+        "responses": {
+
+          "200": {
+            "description": "Pacientes obtenidos correctamente",
+
+            "content": {
+              "application/json": {
+
+                "schema": {
+                  "type": "object",
+
+                  "properties": {
+
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+
+                    "data": {
+                      "type": "array",
+
+                      "items": {
+                        "$ref": "#/components/schemas/Paciente"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/pacientes/{id}": {
+
+      "get": {
+        "tags": ["Pacientes"],
+        "summary": "Obtener paciente por ID",
+
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "responses": {
+
+          "200": {
+            "description": "Paciente encontrado correctamente"
+          },
+
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+
+    "/pacientes/{pacienteId}/reservarTurno/{turnoId}": {
+
+      "post": {
+        "tags": ["Pacientes"],
+        "summary": "Reservar turno",
+
+        "parameters": [
+          {
+            "name": "pacienteId",
+            "in": "path",
+            "required": true,
+
+            "schema": {
+              "type": "string"
+            }
+          },
+
+          {
+            "name": "turnoId",
+            "in": "path",
+            "required": true,
+
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "responses": {
+
+          "200": {
+            "description": "Turno reservado correctamente"
+          },
+
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+
+    "/pacientes/{pacienteId}/consultarHistorial": {
+
+      "get": {
+        "tags": ["Pacientes"],
+        "summary": "Consultar historial de turnos",
+
+        "parameters": [
+          {
+            "name": "pacienteId",
+            "in": "path",
+            "required": true,
+
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "responses": {
+
+          "200": {
+            "description": "Historial obtenido correctamente"
+          },
+
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+
+    "/pacientes/{pacienteId}/solicitarCambioDeFecha/{turnoId}": {
+
+      "put": {
+        "tags": ["Pacientes"],
+        "summary": "Solicitar cambio de fecha",
+
+        "parameters": [
+          {
+            "name": "pacienteId",
+            "in": "path",
+            "required": true,
+
+            "schema": {
+              "type": "string"
+            }
+          },
+
+          {
+            "name": "turnoId",
+            "in": "path",
+            "required": true,
+
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "requestBody": {
+          "required": true,
+
+          "content": {
+            "application/json": {
+
+              "schema": {
+                "type": "object",
+
+                "properties": {
+
+                  "nuevaFechaHora": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+
+              "example": {
+                "nuevaFechaHora": "2026-09-10T15:30:00Z"
+              }
+            }
+          }
+        },
+
+        "responses": {
+
+          "200": {
+            "description": "Solicitud enviada correctamente"
+          },
+
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    }
+  },
+
+  "components": {
+
+    "schemas": {
+
+      "Turno": {
+        "type": "object",
+
+        "properties": {
+
+          "id": {
+            "type": "6a17898de83aee8be87a293c"
+          },
+
+          "medico": {
+            "type": "Maria De Los Angeles Fuseneco"
+          },
+
+          "paciente": {
+            "type": "Matias Torrrenciaba"
+          },
+
+          "fechaHora": {
+            "type": "2026-06-02T11:00",
+            "format": "date-time"
+          },
+
+          "estado": {
+            "type": "disponible"
+          },
+          "sede":{
+            "type": "SEDE LUGANO"
+          },
+          "servicio":{
+            "nombre": "medico clinico",
+            "duracionConsultaMin": "30",
+            "costo": "300000"
+        },
+        "historialEstados": []
+        
+      },
+
+      "Paciente": {
+        "type": "object",
+
+        "properties": {
+
+          "id": {
+            "type": "string"
+          },
+
+          "usuario": {
+            "type": "string"
+          },
+
+          "dni": {
+            "type": "integer"
+          },
+
+          "nombre": {
+            "type": "string"
+          }
+        }
+      },
+
+      "Medico": {
+        "type": "object",
+
+        "properties": {
+
+          "usuario": {
+            "type": "string"
+          },
+
+          "matricula": {
+            "type": "string"
+          },
+
+          "nombre": {
+            "type": "string"
+          }
+        }
+      },
+
+      "DisponibilidadHoraria": {
+        "type": "object",
+
+        "properties": {
+
+          "diaSemana": {
+            "type": "string"
+          },
+
+          "horaDesde": {
+            "type": "string"
+          },
+
+          "horaHasta": {
+            "type": "string"
+          }
+        }
+      },
+
+      "Paginacion": {
+        "type": "object",
+
+        "properties": {
+
+          "numeroPagina": {
+            "type": "integer"
+          },
+
+          "limitePorPagina": {
+            "type": "integer"
+          },
+
+          "totalPaginas": {
+            "type": "integer"
+          }
+        }
+      },
+
+      "ErrorResponse": {
+        "type": "object",
+
+        "properties": {
+
+          "status": {
+            "type": "string"
+          },
+
+          "message": {
+            "type": "string"
+          },
+
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+
+    "responses": {
+
+      "BadRequest": {
+        "description": "Solicitud inválida"
+      },
+
+      "Conflict": {
+        "description": "Conflicto de datos"
+      },
+
+      "UnprocessableEntity": {
+        "description": "Error de validación"
+      },
+
+      "NotFound": {
+        "description": "Recurso no encontrado"
+      }
+    }
+  }
+}
+}

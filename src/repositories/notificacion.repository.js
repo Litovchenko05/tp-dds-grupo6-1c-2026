@@ -1,56 +1,97 @@
+import { NotificacionModel } from '../shemasBD/notificacionSchema.js'
+
 export class NotificacionRepository {
-  #notificaciones
-
-  constructor(datosIniciales = []) {
-    this.#notificaciones = []
-    this.cargar(datosIniciales)
+  constructor() {
+    this.NotificacionModel = NotificacionModel
   }
 
-  guardar(notificacion) {
-    if (!notificacion || notificacion.id == null) {
-      throw new Error('La notificacion debe tener un id para guardarse en memoria')
+  #consultaBase() {
+    return this.NotificacionModel.find().populate('destinatario').populate('remitente')
+  }
+
+  #filtroPorUsuario(idUsuario, consulta) {
+    if (idUsuario == null) {
+      return consulta
     }
 
-    const indiceExistente = this.#notificaciones.findIndex((n) => n.id === notificacion.id)
+    return consulta.where('destinatario').equals(idUsuario)
+  }
 
-    if (indiceExistente >= 0) {
-      this.#notificaciones[indiceExistente] = notificacion
-    } else {
-      this.#notificaciones.push(notificacion)
+  async guardar(notificacion) {
+    if (!notificacion) {
+      throw new Error('La notificacion no puede ser nula')
     }
 
-    return notificacion
+    const datos = typeof notificacion.toJSON === 'function' ? notificacion.toJSON() : notificacion
+    const identificador = datos.id ?? datos._id
+
+    if (identificador == null) {
+      throw new Error('La notificacion debe tener un id para guardarse')
+    }
+
+    const restoDatos = { ...datos }
+    delete restoDatos.id
+    delete restoDatos._id
+
+    return await this.NotificacionModel.findOneAndUpdate({ _id: identificador }, restoDatos, {
+      returnDocument: 'after',
+      runValidators: true,
+      upsert: true,
+    })
+      .populate('destinatario')
+      .populate('remitente')
   }
 
-  obtenerTodos() {
-    return [...this.#notificaciones]
+  async obtenerTodos() {
+    return await this.#consultaBase()
   }
 
-  obtenerPorId(idNotificacion) {
-    return this.#notificaciones.find((notificacion) => notificacion.id === idNotificacion) ?? null
+  async obtenerPorId(idNotificacion) {
+    return await this.NotificacionModel.findById(idNotificacion)
+      .populate('destinatario')
+      .populate('remitente')
   }
 
-  obtenerNoLeidas() {
-    return this.#notificaciones.filter((notificacion) => !notificacion.leida)
-  }
-
-  obtenerLeidas() {
-    return this.#notificaciones.filter((notificacion) => notificacion.leida)
-  }
-
-  eliminarPorId(idNotificacion) {
-    const cantidadInicial = this.#notificaciones.length
-    this.#notificaciones = this.#notificaciones.filter(
-      (notificacion) => notificacion.id !== idNotificacion
+  async marcarComoLeida(idNotificacion) {
+    return await this.NotificacionModel.findByIdAndUpdate(
+      idNotificacion,
+      {
+        leida: true,
+        fechaHoraLeida: new Date(),
+      },
+      {
+        returnDocument: 'after',
+        runValidators: true,
+      }
     )
-    return this.#notificaciones.length < cantidadInicial
+      .populate('destinatario')
+      .populate('remitente')
   }
 
-  limpiar() {
-    this.#notificaciones = []
+  async obtenerTodosDeUsuario(idUsuario) {
+    return await this.#filtroPorUsuario(idUsuario, this.#consultaBase())
   }
 
-  cargar(notificaciones = []) {
-    notificaciones.forEach((notificacion) => this.guardar(notificacion))
+  async obtenerLeidasDeUsuario(idUsuario) {
+    return await this.#filtroPorUsuario(idUsuario, this.#consultaBase().where({ leida: true }))
+  }
+
+  async obtenerNoLeidasDeUsuario(idUsuario) {
+    return await this.#filtroPorUsuario(idUsuario, this.#consultaBase().where({ leida: false }))
+  }
+
+  async eliminarPorId(idNotificacion) {
+    const resultado = await this.NotificacionModel.findByIdAndDelete(idNotificacion)
+    return resultado !== null
+  }
+
+  async limpiar() {
+    await this.NotificacionModel.deleteMany({})
+  }
+
+  async cargar(notificaciones = []) {
+    for (const notificacion of notificaciones) {
+      await this.guardar(notificacion)
+    }
   }
 }

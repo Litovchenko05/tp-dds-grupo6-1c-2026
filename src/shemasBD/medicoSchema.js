@@ -23,7 +23,7 @@ export const MedicoSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    especialidades: [EspecialidadSchema],
+    especialidades: [EspecialidadSchema], // [{ type: Schema.Types.ObjectId, ref: 'Especialidad' }]
     practicas:[PracticaSchema],
     sedes:[SedeSchema],
     disponibilidades:[DisponibilidadSchema],

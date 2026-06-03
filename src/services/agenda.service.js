@@ -3,6 +3,7 @@ import { Agenda } from '../models/Agenda.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 
 export class AgendaService {
+  
   constructor({ turnoRepository }) {
     this.turnoRepository = turnoRepository
   }
