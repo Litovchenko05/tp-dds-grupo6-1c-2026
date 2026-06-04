@@ -2,7 +2,7 @@ import { TurnoRepository } from './repositories/turno.repository.js'
 import { Turno } from './models/turno.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 import { Medico } from '../models/Medico.js'
-import {NotificacionService} from './notificacion.service.js'
+import { NotificacionService } from './notificacion.service.js'
 import { NotificacionRepository } from './repositories/.js'
 
 export class TurnoService {
@@ -10,58 +10,142 @@ export class TurnoService {
     this.turnoRepository = new TurnoRepository()
   }
 
-  #mapToDto(t) {
-    return {
-      id: t.id,
-      medico: t.medico
-        ? {
-            id: t.medico.id,
-            nombre: t.medico.nombre,
-            matricula: t.medico.matricula,
-            usuario: t.medico.usuario,
-          }
-        : null,
-      paciente: t.paciente
-        ? {
-            id: t.paciente.id,
-            nombre: t.paciente.nombre,
-            dni: t.paciente.dni,
-            usuario: t.paciente.usuario,
-          }
-        : null,
-      fechaHora: t.fechaHora,
-      sede: t.sede
-        ? {
-            id: t.sede.id,
-            nombre: t.sede.nombre,
-            direccion: t.sede.direccion,
-          }
-        : null,
-      practica: t.practica
-        ? {
-            id: t.practica.id,
-            codigo: t.practica.codigo,
-            nombre: t.practica.nombre,
-            duracionTurnoEnMins: t.practica.duracionTurnoEnMins,
-            costo: t.practica.costo,
-          }
-        : null,
-      estado: t.estado,
-      historialEstados: t.historialEstados,
-      costo: t.costo,
+  async obtenerTodos() {
+    return await this.turnoRepository.findAll()
+  }
+
+  async obtenerPorId(id) {
+    return await this.turnoRepository.findById(id)
+  }
+
+  async cancelarTurno(turnoId, medicoId, motivo) {
+    try {
+      const turno = await this.turnoRepository.findById(turnoId)
+
+      if (!turno) {
+        throw new Error('Turno no encontrado')
+      }
+
+      // Validar que el turno pertenece al médico
+      if (turno.medico._id.toString() !== medicoId) {
+        throw new Error('Este turno no pertenece al médico')
+      }
+
+      // Validar que el turno no esté ya cancelado
+      if (turno.estado === EstadoTurno.CANCELADO) {
+        throw new Error('El turno ya está cancelado')
+      }
+
+      // Validar que el turno esté en estado DISPONIBLE o RESERVADO
+      if (turno.estado !== EstadoTurno.DISPONIBLE && turno.estado !== EstadoTurno.RESERVADO) {
+        throw new Error(`No se puede cancelar un turno en estado ${turno.estado}`)
+      }
+
+      // Crear registro de cambio de estado
+      const cambioEstado = {
+        fechaHoraIngreso: new Date(),
+        estado: EstadoTurno.CANCELADO,
+        usuario: medicoId,
+        motivo: motivo || 'Sin motivo especificado',
+      }
+
+      // Actualizar turno
+      const turnoActualizado = await this.turnoRepository.update(turnoId, {
+        estado: EstadoTurno.CANCELADO,
+        $push: { historialEstados: cambioEstado },
+      })
+
+      return turnoActualizado
+    } catch (error) {
+      throw error
     }
   }
 
-  async obtenerTodos() {
-    const turnos = await this.turnoRepository.findAll()
-    return turnos.map(this.#mapToDto)
+  async marcarRealizadoTurno(turnoId, medicoId, notas = '') {
+    try {
+      const turno = await this.turnoRepository.findById(turnoId)
+
+      if (!turno) {
+        throw new Error('Turno no encontrado')
+      }
+
+      // Validar que el turno pertenece al médico
+      if (turno.medico._id.toString() !== medicoId) {
+        throw new Error('Este turno no pertenece al médico')
+      }
+
+      // Validar que el turno está en estado RESERVADO
+      if (turno.estado !== EstadoTurno.RESERVADO) {
+        throw new Error(`No se puede marcar como realizado un turno en estado ${turno.estado}`)
+      }
+
+      // Crear registro de cambio de estado
+      const cambioEstado = {
+        fechaHoraIngreso: new Date(),
+        estado: EstadoTurno.REALIZADO,
+        usuario: medicoId,
+        motivo: notas || 'Turno realizado',
+      }
+
+      // Actualizar turno
+      const turnoActualizado = await this.turnoRepository.update(turnoId, {
+        estado: EstadoTurno.REALIZADO,
+        $push: { historialEstados: cambioEstado },
+      })
+
+      return turnoActualizado
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async proponerCambioFecha(turnoId, medicoId, nuevaFecha, nuevaHora, motivo = '') {
+    try {
+      const turno = await this.turnoRepository.findById(turnoId)
+
+      if (!turno) {
+        throw new Error('Turno no encontrado')
+      }
+
+      // Validar que el turno pertenece al médico
+      if (turno.medico._id.toString() !== medicoId) {
+        throw new Error('Este turno no pertenece al médico')
+      }
+
+      // Validar que el turno está en estado RESERVADO
+      if (turno.estado !== EstadoTurno.RESERVADO) {
+        throw new Error('Solo se puede proponer cambio de fecha para turnos reservados')
+      }
+
+      // Crear solicitud de cambio (se almacena en historialEstados como estado especial)
+      const cambioFecha = {
+        fechaHoraIngreso: new Date(),
+        estado: 'CAMBIO_PROPUESTO',
+        usuario: medicoId,
+        motivo: motivo || 'Cambio de fecha propuesto por médico',
+        fechaProuesta: nuevaFecha,
+        horaProuesta: nuevaHora,
+        original: {
+          fecha: turno.fechaHora,
+        },
+      }
+
+      // Guardar solicitud
+      const turnoActualizado = await this.turnoRepository.update(turnoId, {
+        $push: { historialEstados: cambioFecha },
+      })
+
+      return turnoActualizado
+    } catch (error) {
+      throw error
+    }
   }
 
   obtenerPorId(id) {
     const turno = this.turnoRepository.obtenerPorId(Number(id))
   }
 
-  cancelar(id_turno, id_usuario, motivo){
+  cancelar(id_turno, id_usuario, motivo) {
     const turno = this.turnoRepository.obtenerPorId(Number(turnoId))
     if (!turno) {
       throw new Error('Turno no encontrado')
@@ -79,15 +163,19 @@ export class TurnoService {
 
     const cancelador = turno.quienModifica(id_usuario)
 
-    if(!cancelador){
+    if (!cancelador) {
       throw new Error('No tiene permiso para cancelar este turno.')
     }
 
-    turno.actualizarEstado(EstadoTurno.CANCELADO,cancelador,motivo)
+    turno.actualizarEstado(EstadoTurno.CANCELADO, cancelador, motivo)
 
     this.turnoRepository.guardar(turno)
 
-    this.servicioNotificacion.generarNotificacion(turno.getContraparte(id_usuario), cancelador, 'El turno ha sido cancelado. Motivo: ' + motivo)
+    this.servicioNotificacion.generarNotificacion(
+      turno.getContraparte(id_usuario),
+      cancelador,
+      'El turno ha sido cancelado. Motivo: ' + motivo
+    )
     return this.#mapToDto(turno)
   }
 
@@ -100,13 +188,17 @@ export class TurnoService {
     if (!quienSolicita) {
       throw new Error('No tiene permiso para solicitar cambio de fecha para este turno.')
     }
-    const mensaje = 'Solicitud de cambio de fecha del turno actual' + idTurno + ' para la nueva fecha: ' + nuevaFechaHora
+    const mensaje =
+      'Solicitud de cambio de fecha del turno actual' +
+      idTurno +
+      ' para la nueva fecha: ' +
+      nuevaFechaHora
     const destinatario = turno.getContraparte(idUsuario)
     this.servicioNotificacion.generarNotificacion(destinatario, quienSolicita, mensaje)
     return 'Solicitud de cambio de fecha enviada. La respuesta será notificada.'
   }
 
-  marcarComoRealizado(id_turno, id_usuario){
+  marcarComoRealizado(id_turno, id_usuario) {
     if (turno.estado === 'realizado') {
       return this.#mapToDto(turno)
     }
@@ -114,11 +206,11 @@ export class TurnoService {
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
-    
-    if(turno.medico.id !== id_usuario){
+
+    if (turno.medico.id !== id_usuario) {
       throw new Error('Solo el médico puede marcar el turno como realizado')
     }
-    
+
     if (turno.estado !== 'confirmado') {
       throw new Error('Solo se puede marcar como realizado un turno confirmado')
     }
@@ -130,14 +222,13 @@ export class TurnoService {
 
   obtenerHistorial(id_usuario) {
     let turnos = this.turnoRepository.obtenerPorUsuario(id_usuario)
-    let turnosFiltrados = turnos.filter(t=> t.estado === EstadoTurno.REALIZADO)
+    let turnosFiltrados = turnos.filter((t) => t.estado === EstadoTurno.REALIZADO)
     return turnosFiltrados.map(this.#mapToDto)
   }
 
   //paginado
   async findAllPaginated(page, limit) {
-      return await this.turnoRepository
-          .findAllPaginated(page, limit)
+    return await this.turnoRepository.findAllPaginated(page, limit)
   }
 
   async buscarTurnos({
@@ -185,6 +276,68 @@ export class TurnoService {
         sortBy,
         order,
       },
+    }
+  }
+  async buscarTurnos({
+    pacienteId,
+    nombreMedico,
+    nombreServicio,
+    especialidad,
+    practica,
+    sede,
+    fechaDesde,
+    fechaHasta,
+    estadoTurno = 'DISPONIBLE',
+    page = 1,
+    limit = 5,
+    sortBy = 'fechaHora',
+    order = 'asc',
+  }) {
+    try {
+      const servicioBuscado = nombreServicio || especialidad || practica
+
+      const resultado = await this.turnoRepository.buscarTurnosPaginated({
+        nombreMedico,
+        nombreServicio: servicioBuscado,
+        sede,
+        fechaDesde,
+        fechaHasta,
+        estadoTurno,
+        page,
+        limit,
+        sortBy,
+        order,
+      })
+
+      // Mapear respuesta con información de cobertura
+      const turnosConCobertura = resultado.turnos.map((turno) => ({
+        ...turno,
+        // Placeholder para cálculo de cobertura - se integra con CoberturasService
+        cobertura: {
+          estado: 'PENDIENTE_CALCULO', // Se calculará con la obra social del paciente
+          montoAbonarPaciente: null,
+          porcentajeCobertura: null,
+          esUrgencia: false,
+        },
+      }))
+
+      return {
+        data: turnosConCobertura,
+        pagination: {
+          total: resultado.total,
+          page: resultado.page,
+          limit: resultado.limit,
+          totalPages: resultado.totalPages,
+          hasNextPage: resultado.page < resultado.totalPages,
+          hasPreviousPage: resultado.page > 1,
+        },
+        sort: {
+          sortBy,
+          order,
+        },
+      }
+    } catch (error) {
+      throw error
     }
   }
 }
