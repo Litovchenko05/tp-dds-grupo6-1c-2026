@@ -4,14 +4,10 @@ import { PracticaSchema } from "../shemasBD/practicaSchema.js";
 import { EspecialidadSchema } from "../shemasBD/especialidadSchema.js";
 import { SedeSchema } from "../shemasBD/sedeSchema.js";
 import { DisponibilidadSchema } from "../shemasBD/disponibilidadSchema.js";
-import {UsuarioSchema} from "../shemasBD/usuarioSchema.js";
-
+import { UsuarioSchema} from "../shemasBD/usuarioSchema.js";
+const Schema = mongoose.Schema;
 export const MedicoSchema = new mongoose.Schema({
 
-    medicoId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: false
-    },
     usuario: UsuarioSchema,
     matricula:{
         type: String,
@@ -23,9 +19,21 @@ export const MedicoSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    especialidades: [EspecialidadSchema], // [{ type: Schema.Types.ObjectId, ref: 'Especialidad' }]
-    practicas:[PracticaSchema],
-    sedes:[SedeSchema],
+    especialidades: [{
+        type: Schema.Types.ObjectId, 
+        ref: 'Especialidad',
+        required: true,}], 
+
+    practicas:[{
+        type: Schema.Types.ObjectId, 
+        ref: 'Practica',
+        required: true,}], 
+
+    sedes:[{
+        type: Schema.Types.ObjectId, 
+        ref: 'Sede',
+        required: true,}],
+
     disponibilidades:[DisponibilidadSchema],
     solicitudesDeCambioDeFecha:{
           type: [mongoose.Schema.Types.Mixed],

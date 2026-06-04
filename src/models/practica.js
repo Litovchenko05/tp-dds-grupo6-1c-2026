@@ -4,6 +4,7 @@ export class Practica {
   nombre
   duracionTurnoEnMins
   costo
+ 
 
   constructor(codigo, nombre, duracionTurnoEnMins, costo) {
     this.codigo = codigo

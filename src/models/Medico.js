@@ -163,17 +163,4 @@ export class Medico {
     }
   }
 
-  toJSON(){
-    return {
-      id: this.id,
-      usuario: this.usuario,
-      matricula: this.matricula,
-      nombre: this.nombre,
-      especialidades: this.especialidades,
-      practicas: this.practicas,
-      sedes: this.sedes,
-      disponibilidades: this.disponibilidades
-    }
-  }
-
 }
