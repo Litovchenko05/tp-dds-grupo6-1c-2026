@@ -2,8 +2,9 @@ import { especialidadSchema } from '../schemas/especialidad.schema.js'
 import { medicoSchema } from '../schemas/medico.schema.js'
 import { practicaSchema } from '../schemas/practica.schema.js'
 import { PracticaSchema } from '../shemasBD/practicaSchema.js'
+
 import { disponibilidadHorariaSchema } from '../schemas/disponibilidadHoraria.schema.js';
-import {disponibilidadDetalladaSchema } from '../schemas/disponibilidadPorSedeyServicio.js';
+import { disponibilidadDetalladaSchema } from '../schemas/disponibilidadPorSedeyServicio.js';
 export class MedicoController {
 
   constructor({ medicoService }) {
@@ -11,13 +12,13 @@ export class MedicoController {
   }
 
   createMedico = async (req, res) => {
-    try{
+    try {
       const body = req.body
-     
+
       const resultado = medicoSchema.safeParse(body)
 
       if (!resultado.success) {
-        console.log('el resultado dio error')
+        console.log('el resultado dio error (incorrecto)')
         return res.status(400).json({ status: 'error', message: resultado.error.message })
       }
 
@@ -25,7 +26,7 @@ export class MedicoController {
 
       return res.status(201).json({ status: 'success', data: medicoCreado })
 
-    }catch(error){
+    } catch (error) {
       return res.status(409).json({ data: error.message })
     }
   }
@@ -60,7 +61,7 @@ export class MedicoController {
     }
   }
 
-  createDisponibilidad= async (req, res) => {
+  createDisponibilidad = async (req, res) => {
     try {
       const body = req.body
       const resultado = disponibilidadDetalladaSchema.safeParse(body)
@@ -93,63 +94,71 @@ export class MedicoController {
       const disponibilidadId = req.params.idDisponibilidad
 
       const medico = await this.medicoService.modificarDisponibilidad(medicoId, disponibilidadId, resultado.data)
-      
+
       return res.status(200).json({ status: 'success', data: medico })
     } catch (error) {
       return res.status(500).json({ data: error.message })
     }
   }
-    modificarServicio = async (req, res) => {
+  modificarServicio = async (req, res) => {
     try {
       const body = req.body
-      const resultado = practicaSchema.safeParse(body)
+      let resultado = practicaSchema.safeParse(body)
 
       if (!resultado.success) {
-      resultado = especialidadSchema.safeParse(body);
-        if(!resultado.success){
+        resultado = especialidadSchema.safeParse(body);
+        if (!resultado.success) {
           console.log('el resultado dio error')
-          return res.status(400).json({ status: 'error', message: resultado.error.errors })     
+          return res.status(400).json({ status: 'error', message: resultado.error.errors })
         }
-    } 
-    
+      }
+
       const medicoId = req.params.id
-      const servicioId = req.params.idServicio
-      await this.medicoService.modificarServicio(medicoId, servicioId, resultado.data)
+      const servicioNombre = req.params.nombreServicio
+
+
+      await this.medicoService.modificarServicio(medicoId, servicioNombre, resultado.data)
       return res.status(200).json({ status: 'success', data: resultado.data })
     } catch (error) {
       return res.status(500).json({ data: error.message })
     }
   }
-  createServicio = async(req,res)=>{
-    try{
+  createServicio = async (req, res) => {
+    try {
       const body = req.body
       let resultado = practicaSchema.safeParse(body);
+
+
+
       if (!resultado.success) {
-      resultado = especialidadSchema.safeParse(body);
-        if(!resultado.success){
+
+        resultado = especialidadSchema.safeParse(body);
+        if (!resultado.success) {
           console.log('el resultado dio error')
-          return res.status(400).json({ status: 'error', message: resultado.error.errors })     
+          return res.status(400).json({ status: 'error', message: resultado.error.errors })
         }
-    } 
+      }
       const medicoId = req.params.id
+
       await this.medicoService.agregarServicio(medicoId, resultado.data)
       return res.status(201).json({ status: 'success', data: resultado.data })
-    } 
-    catch(error){
+    }
+    catch (error) {
       return res.status(500).json({ data: error.message })
-    }   
+    }
 
   }
   deleteServicio = async (req, res) => {
-        try {
-            const medicoId = req.params.id
-            const tipoDeServicio = req.params.tipoServicio 
-            const idServicio = req.params.servicioId
-            await this.medicoService.eliminarServicio(idServicio,tipoDeServicio,medicoId)
+    try {
 
-            return res.status(200).json({ status: "success", data:"servicio eliminado" })
-        } catch (error) {
-            return this.manejarError(res, error)
-        }
-    }  
+      const medicoId = req.params.id
+      const tipoDeServicio = req.params.tipoServicio
+      const nombreServicio = req.params.servicioNombre
+      await this.medicoService.eliminarServicio(nombreServicio, tipoDeServicio, medicoId)
+
+      return res.status(200).json({ status: "success", data: "servicio eliminado" })
+    } catch (error) {
+      return res.status(500).json({ data: error.message })
+    }
+  }
 }

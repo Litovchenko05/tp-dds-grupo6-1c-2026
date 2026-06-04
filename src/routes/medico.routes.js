@@ -32,13 +32,18 @@ router
   .put((req, res) => medicoController.modificarDisponibilidad(req, res))
 router
   .route('/:id/servicio')
-  .post((req,res)=> medicoController.createServicio(req,res))
+  .post((req, res) => medicoController.createServicio(req, res))
 router
-  .route('/:id/modificarServicio/servicio')
-  .put((req,res)=>medicoController.modificarServicio(req,res))
+  .route('/:id/modificarServicio/:nombreServicio')
+  .put((req, res) => medicoController.modificarServicio(req, res))
+
+//router
+//.route("/:id/darDeBajaServicio/:tipoServicio/:servicioNombre")
+//.delete((req,res)=> medicoController.deleteServicio(req,res))
 router
-  .route(":id/:tipoServicio/:servicioId")
-  .delete((req,res)=> medicoController.deleteServicio(req,res))
-  .patch((req, res) => medicoController.modificarDisponibilidad(req, res))
+  .route('/:id/darDeBajaServicio/:tipoServicio/:servicioNombre')
+  .delete((req, res) => {
+    medicoController.deleteServicio(req, res)
+  });
 
 export default router
