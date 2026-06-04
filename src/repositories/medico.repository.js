@@ -3,9 +3,6 @@ import {MedicoModel} from '../shemasBD/medicoSchema.js';
 export class MedicoRepository {
 
   constructor(datosIniciales = []){
-    // this.#medicos = []
-    // this.cargar(datosIniciales)
-
     this.MedicoModel = MedicoModel;
   }
 
@@ -34,14 +31,15 @@ export class MedicoRepository {
     //Si no existe, la crea (por upsert: true).
     return await this.MedicoModel.findOneAndUpdate(
       query,
-      medico.toJSON(),
+      medico,
       { 
-        returnDocument: 'after', 
+        new: true,
         runValidators: true,
         upsert: true
       }
       );
   }
+  //medico.toJSON(),
 
   async delete(id){
     return await this.MedicoModel.findByIdAndDelete(id);

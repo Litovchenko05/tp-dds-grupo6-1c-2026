@@ -8,18 +8,17 @@ export class Turno {
   #paciente
   #fechaHora
   #sede
-  #practica
+  #servicio
   #estado
   #historialEstados
   #costo
 
-  constructor(idTurno, medico, fechaHora, sede, practica) {
-    this.#id = idTurno
+  constructor(medico, fechaHora, sede, servicio) {
     this.#medico = medico
     this.#paciente = null // Inicialmente sin paciente asignado
     this.#fechaHora = fechaHora //date
     this.#sede = sede
-    this.#practica = practica //practica o servicio asociado al turno
+    this.#servicio = servicio //practica o especialidad asociado al turno
     this.#estado = EstadoTurno.DISPONIBLE // Estado inicial
     this.#historialEstados = []
     this.#costo = null
@@ -57,8 +56,8 @@ export class Turno {
     return this.#sede
   }
 
-  getPractica() {
-    return this.#practica
+  getServicio() {
+    return this.#servicio
   }
 
   getEstado() {

@@ -39,5 +39,6 @@ router
 router
   .route(":id/:tipoServicio/:servicioId")
   .delete((req,res)=> medicoController.deleteServicio(req,res))
+  .patch((req, res) => medicoController.modificarDisponibilidad(req, res))
 
 export default router

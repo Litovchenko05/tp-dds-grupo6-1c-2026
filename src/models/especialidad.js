@@ -1,42 +1,40 @@
 import { especialidadSchema } from '../schemas/especialidad.schema.js'
 
 export class Especialidad {
-  #id
-  #nombre
-  #duracionTurnoEnMins
-  #costoConsulta
+  id
+  nombre
+  duracionTurnoEnMins
+  costoConsulta
 
-  constructor(id, nombre, duracionTurnoEnMins, costoConsulta) {
-    this.#id = id
-    this.#nombre = nombre
-    this.#duracionTurnoEnMins = duracionTurnoEnMins
-    this.#costoConsulta = costoConsulta
+  constructor(nombre, duracionTurnoEnMins, costoConsulta) {
+    this.nombre = nombre
+    this.duracionTurnoEnMins = duracionTurnoEnMins
+    this.costoConsulta = costoConsulta
   }
   modificarEspecialidad(id,nombre,duracionTurnoEnMins,costoConsulta){
-    this.#id = id
-    this.#nombre = nombre
-    this.#duracionTurnoEnMins = duracionTurnoEnMins
-    this.#costoConsulta = costoConsulta
-    
+    this.id = id
+    this.nombre = nombre
+    this.duracionTurnoEnMins = duracionTurnoEnMins
+    this.costoConsulta = costoConsulta
   }
 
   getId() {
-    return this.#id
+    return this.id
   }
 
   getNombre() {
-    return this.#nombre
+    return this.nombre
   }
 
   getDuracionTurnoEnMins() {
-    return this.#duracionTurnoEnMins
-  }
-
-  getCostoConsulta() {
-    return this.#costoConsulta
+    return this.duracionTurnoEnMins
   }
 
   getCosto() {
-    return this.#costoConsulta // para usar servicio y practica de forma polimorfica en turno
+    return this.costoConsulta
+  }
+
+  getCosto() {
+    return this.costoConsulta // para usar servicio y practica de forma polimorfica en turno
   }
 }

@@ -9,6 +9,7 @@ export const EspecialidadSchema = new mongoose.Schema({
     #costoConsulta
     */
 
+
     nombre:{
         type: String,
         required: true,

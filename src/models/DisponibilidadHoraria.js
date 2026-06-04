@@ -1,51 +1,47 @@
 import { DiasSemana } from './DiaSemana.enum.js'
 export class DisponibilidadHoraria {
-  #diaSemana
-  #horaDesde
-  #horaHasta
-  #fueModificada
+  id
+  diaSemana
+  horaDesde
+  horaHasta
+  fueModificada
 
   constructor(diaSemana, horaDesde, horaHasta) {
-    this.#diaSemana = diaSemana
-    this.#horaDesde = horaDesde
-    this.#horaHasta = horaHasta
-    this.#fueModificada = false
+    this.diaSemana = diaSemana
+    this.horaDesde = horaDesde
+    this.horaHasta = horaHasta
+    this.fueModificada = false
   }
 
+  getId() {
+    return this.id
+  }
+  setId(id){
+      this.id = id;
+  }
   getDiaSemana() {
-    return this.#diaSemana
+    return this.diaSemana
   }
 
   getHoraDesde() {
-    return this.#horaDesde
+    return this.horaDesde
   }
 
   getHoraHasta() {
-    return this.#horaHasta
+    return this.horaHasta
   }
 
   getFueModificada() {
-    return this.#fueModificada
+    return this.fueModificada
   }
 
   actualizarDisponibilidad(diaSemana, horaDesde, horaHasta) {
-    this.#diaSemana = diaSemana
-    this.#horaDesde = horaDesde
-    this.#horaHasta = horaHasta
-    this.#fueModificada = true
+    this.diaSemana = diaSemana
+    this.horaDesde = horaDesde
+    this.horaHasta = horaHasta
+    this.fueModificada = true
   }
 
-  obtenerFecha() {
-    const fecha = new Date()
-
-    while (fecha.getDay() !== this.diaSemana) {
-      fecha.setDate(fecha.getDate() + 1)
-    }
-
-    fecha.setHours(this.horaDesde, 0, 0, 0)
-
-    return fecha
-  }
 
   obtenerNombreDelDiaDeSemana(indice) {
     return Object.keys(DiasSemana).find((key) => DiasSemana[key] === indice)

@@ -1,42 +1,41 @@
 export class Practica {
-  #id
-  #codigo
-  #nombre
-  #duracionTurnoEnMins
-  #costo
+  id
+  codigo
+  nombre
+  duracionTurnoEnMins
+  costo
 
-  constructor(id, codigo, nombre, duracionTurnoEnMins, costo) {
-    this.#id = id
-    this.#codigo = codigo
-    this.#nombre = nombre
-    this.#duracionTurnoEnMins = duracionTurnoEnMins
-    this.#costo = costo
+  constructor(codigo, nombre, duracionTurnoEnMins, costo) {
+    this.codigo = codigo
+    this.nombre = nombre
+    this.duracionTurnoEnMins = duracionTurnoEnMins
+    this.costo = costo
   }
   modificarPractica(id,codigo,nombre,duracionTurnoEnMins,costo){
-    this.#id = id
-    this.#codigo = codigo
-    this.#nombre = nombre
-    this.#duracionTurnoEnMins = duracionTurnoEnMins
-    this.#costo = costo
+    this.id = id
+    this.codigo = codigo
+    this.nombre = nombre
+    this.duracionTurnoEnMins = duracionTurnoEnMins
+    this.costo = costo
   }
 
   getId() {
-    return this.#id
+    return this.id
   }
 
   getCodigo() {
-    return this.#codigo
+    return this.codigo
   }
 
   getNombre() {
-    return this.#nombre
+    return this.nombre
   }
 
   getDuracionTurnoEnMins() {
-    return this.#duracionTurnoEnMins
+    return this.duracionTurnoEnMins
   }
 
   getCosto() {
-    return this.#costo
+    return this.costo
   }
 }

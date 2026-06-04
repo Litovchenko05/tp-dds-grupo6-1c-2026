@@ -1,23 +1,22 @@
 export class Sede {
-  #id
-  #nombre
-  #direccion
+  id
+  nombre
+  direccion
 
-  constructor(idSede, nombreSede, direccionSede) {
-    this.#id = idSede
-    this.#nombre = nombreSede
-    this.#direccion = direccionSede
+  constructor(nombreSede, direccionSede) {
+    this.nombre = nombreSede
+    this.direccion = direccionSede
   }
 
   getId() {
-    return this.#id
+    return this.id
   }
 
   getNombre() {
-    return this.#nombre
+    return this.nombre
   }
 
   getDireccion() {
-    return this.#direccion
+    return this.direccion
   }
 }

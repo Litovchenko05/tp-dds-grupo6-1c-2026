@@ -12,9 +12,8 @@ const notificacionController = new NotificacionController({
 })
 
 const router = express.Router()
-
 router
-  .route('/:id/marcar-leida')
-  .patch((req, res) => notificacionController.marcarComoLeida(req, res))
+  .route('/:id/notificaciones')
+  .get((req, res) => notificacionController.obtenerDeUsuario(req, res))
 
 export default router

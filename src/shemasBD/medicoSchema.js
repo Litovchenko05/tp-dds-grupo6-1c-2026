@@ -6,21 +6,12 @@ import { SedeSchema } from "../shemasBD/sedeSchema.js";
 import { DisponibilidadSchema } from "../shemasBD/disponibilidadSchema.js";
 import {UsuarioSchema} from "../shemasBD/usuarioSchema.js";
 
-const MedicoSchema = new mongoose.Schema({
+export const MedicoSchema = new mongoose.Schema({
 
-    /*
-            #id
-            #usuario
-            #matricula
-            #nombre
-            #especialidades
-            #practicas
-            #sedes
-            #disponibilidades
-            #solicitudesDeCambioDeFecha //este no lo muestro
-
-    */
-
+    medicoId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false
+    },
     usuario: UsuarioSchema,
     matricula:{
         type: String,
@@ -32,10 +23,15 @@ const MedicoSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    especialidades: [EspecialidadSchema],
+    especialidades: [EspecialidadSchema], // [{ type: Schema.Types.ObjectId, ref: 'Especialidad' }]
     practicas:[PracticaSchema],
     sedes:[SedeSchema],
     disponibilidades:[DisponibilidadSchema],
+    solicitudesDeCambioDeFecha:{
+          type: [mongoose.Schema.Types.Mixed],
+          default:[],
+          required:false,
+        }
     },
     {
     timestamps: true,
@@ -43,15 +39,6 @@ const MedicoSchema = new mongoose.Schema({
          
 });
 
-
-// //MIDDLEWARE PARA POPULAR TODOS LOS METODOS QUE TENGAN 'find'
-// MedicoSchema.pre(/^find/, async function(){
-//     this.populate('especialidades');
-//     this.populate('practicas');
-//     this.populate('sedes');
-//     this.populate('disponibilidades');
-    
-// });
 
 MedicoSchema.loadClass(Medico);
 

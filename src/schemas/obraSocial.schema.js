@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { PlanSchema } from './plan.schema'
+import { PlanSchema } from './plan.schema.js'
 
 export const ObraSocialSchema = z.object({
   nombre: z.string().trim().min(1, 'nombre es obligatorio'), // Validación para nombre, el trim le saca los espacios al principio y al final, y el min(1) asegura que no esté vacío
