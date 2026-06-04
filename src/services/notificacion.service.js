@@ -14,7 +14,7 @@ export class NotificacionService {
       notificaciones = await this.notificacionRepository.obtenerNoLeidasDeUsuario(idUsuario)
     }
 
-    return notificaciones.map(this.#mapToDto)
+    return notificaciones
   }
 
   async marcarComoLeida(idNotificacion) {
@@ -24,6 +24,6 @@ export class NotificacionService {
       return null
     }
 
-    return this.#mapToDto(notificacion)
+    return notificacion
   }
 }
