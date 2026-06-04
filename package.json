@@ -9,7 +9,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "jest --experimental-vm-modules",
+    "test:watch": "jest --watch --experimental-vm-modules",
+    "test:coverage": "jest --coverage --experimental-vm-modules"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +30,7 @@
   "devDependencies": {
     "eslint": "^10.4.0",
     "globals": "^17.6.0",
+    "jest": "^29.7.0",
     "prettier": "^3.8.3"
   }
 }
