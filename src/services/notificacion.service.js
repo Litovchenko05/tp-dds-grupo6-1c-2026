@@ -3,22 +3,7 @@ export class NotificacionService {
     this.notificacionRepository = notificacionRepository
   }
 
-  #mapToDto(n) {
-    return {
-      id: n.id,
-      destinatario: {
-        id: n.destinatario?.id,
-        nombre: n.destinatario?.nombre,
-        dni: n.destinatario?.dni,
-        usuario: n.destinatario?.usuario,
-      },
-      remitente: n.remitente,
-      mensaje: n.mensaje,
-      fechaHoraCreacion: n.fechaHoraCreacion,
-      fechaHoraLeida: n.fechaHoraLeida,
-      leida: n.leida,
-    }
-  }
+
 
   async obtenerDeUsuario(idUsuario, filtroLeida = null) {
     let notificaciones
@@ -31,7 +16,7 @@ export class NotificacionService {
       notificaciones = await this.notificacionRepository.obtenerNoLeidasDeUsuario(idUsuario)
     }
 
-    return notificaciones.map(this.#mapToDto)
+    return notificaciones;
   }
 
   async marcarComoLeida(idNotificacion) {
@@ -41,6 +26,6 @@ export class NotificacionService {
       return null
     }
 
-    return this.#mapToDto(notificacion)
+    return notificacion;
   }
 }
