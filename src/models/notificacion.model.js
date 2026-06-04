@@ -10,7 +10,6 @@ export class Notificacion {
   #leida
 
   constructor({ destinatario, remitente, mensaje }) {
-    this.#id = Notificacion.ultimoId++
     this.#destinatario = destinatario
     this.#remitente = remitente
     this.#mensaje = mensaje
