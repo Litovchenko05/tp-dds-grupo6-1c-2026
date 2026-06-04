@@ -1,57 +1,57 @@
 export class Paciente {
-  #id
-  #usuario
-  #dni
-  #nombre
-  #obraSocial
-  #plan
-  #historialDeTurnos
+  id
+  usuario
+  dni
+  nombre
+  obraSocial
+  plan
+  historialDeTurnos
   constructor(usuario, dni, nombre, obraSocial, plan) {
-    this.#usuario = usuario
-    this.#dni = dni
-    this.#nombre = nombre
-    this.#obraSocial = obraSocial // es necesario que los pacientes tengan obra social? puede atender a particulares?
-    this.#plan = plan // cada obraSocial tiene un plan?
-    this.#historialDeTurnos = [] // historial de turnos del paciente
+    this.usuario = usuario
+    this.dni = dni
+    this.nombre = nombre
+    this.obraSocial = obraSocial // es necesario que los pacientes tengan obra social? puede atender a particulares?
+    this.plan = plan // cada obraSocial tiene un plan?
+    this.historialDeTurnos = [] // historial de turnos del paciente
   }
 
   getId() {
-    return this.#id
+    return this.id
   }
 
   getUsuario() {
-    return this.#usuario
+    return this.usuario
   }
 
   getDni() {
-    return this.#dni
+    return this.dni
   }
 
   getNombre() {
-    return this.#nombre
+    return this.nombre
   }
 
   getObraSocial() {
-    return this.#obraSocial
+    return this.obraSocial
   }
 
   getPlan() {
-    return this.#plan
+    return this.plan
   }
 
   getHistorialDeTurnos() {
-    return this.#historialDeTurnos
+    return this.historialDeTurnos
   }
 
   guardarTurnoEnHistorial(turno) {
-    this.#historialDeTurnos.push(turno)
+    this.historialDeTurnos.push(turno)
     console.log(
       'Se guardó el turno ' +
         turno.id +
         ' en el historial del paciente ' +
         this.nombre +
         ': ' +
-        this.#historialDeTurnos.length
+        this.historialDeTurnos.length
     )
   }
 

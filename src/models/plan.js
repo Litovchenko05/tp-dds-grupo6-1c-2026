@@ -1,15 +1,15 @@
 import { CoberturaEspecialidad } from './CoberturaEspecialidad.js'
 import { CoberturaPractica } from './CoberturaPractica.js'
 export class Plan {
-  #id
-  #nombre
-  #coberturasEspecialidad
-  #coberturasPractica
+  id
+  nombre
+  coberturasEspecialidad
+  coberturasPractica
 
   constructor(nombre, coberturasEspecialidad, coberturasPractica) {
-    this.#nombre = nombre
-    this.#coberturasEspecialidad = coberturasEspecialidad
-    this.#coberturasPractica = coberturasPractica
+    this.nombre = nombre
+    this.coberturasEspecialidad = coberturasEspecialidad
+    this.coberturasPractica = coberturasPractica
   }
   obtenerCoberturaEspecialidad(especialidadBuscada) {
     const cobertura = this.coberturasEspecialidad.find(

@@ -29,15 +29,15 @@ export class Medico {
     this.especialidades = especialidadesMedico
     this.practicas = practicasMedico
     this.sedes = sedesMedico
-    this.disponibilidades =  disponibilidadesMedico ?? []
+    this.disponibilidades = disponibilidadesMedico ?? []
     this.solicitudesDeCambioDeFecha = []
   }
 
   getId() {
     return this.id
   }
-  setId(id){
-      this.id = id;
+  setId(id) {
+    this.id = id
   }
 
   getUsuario() {
@@ -69,46 +69,45 @@ export class Medico {
   }
 
   tieneServicio(tipoServicio) {
-    return this.especialidades.some((especialidad) => especialidad.nombre=== tipoServicio) ||
-           this.practicas.some((practica) => practica.nombre === tipoServicio)
+    return (
+      this.especialidades.some((especialidad) => especialidad.nombre === tipoServicio) ||
+      this.practicas.some((practica) => practica.nombre === tipoServicio)
+    )
   }
 
   definirDisponibilidad(disponibilidad) {
     //disponibilidad es un objeto de tipo DisponibilidadHoraria
     this.disponibilidades.push(disponibilidad)
-    // console.log(`Disponibilidad agregada para ${this.nombre}: ${disponibilidad.diaSemana} de ${disponibilidad.horaDesde} a ${disponibilidad.horaHasta}`);
   }
 
-  modificarDisponibilidad(idDisponibilidad, nuevaDisponibilidad){
+  modificarDisponibilidad(idDisponibilidad, nuevaDisponibilidad) {
     this.disponibilidades[idDisponibilidad] = nuevaDisponibilidad
   }
-  tieneTipoTurno(tipoTurno){
+  tieneTipoTurno(tipoTurno) {
     if (tipoTurno instanceof Especialidad) {
-      return this.#especialidades.some(
+      return this.especialidades.some(
         (especialidadMedico) => especialidadMedico.id === tipoTurno.id
       )
     }
     if (tipoTurno instanceof Practica) {
-      return this.#practicas.some((practicaMedico) => practicaMedico.id === tipoTurno.id)
+      return this.practicas.some((practicaMedico) => practicaMedico.id === tipoTurno.id)
     }
   }
 
-  recibirSolicitud(turno, nuevaFechaHora){
+  recibirSolicitud(turno, nuevaFechaHora) {
     this.solicitudesDeCambioDeFecha.push({ turno, nuevaFechaHora })
   }
 
-  agregarDisponibilidad(disponibilidad){
+  agregarDisponibilidad(disponibilidad) {
     this.disponibilidades.push(disponibilidad)
   }
-  
-  obtenerDisponibilidadPorId(idDisponibilidad){
-    return this.disponibilidades[idDisponibilidad];
+
+  obtenerDisponibilidadPorId(idDisponibilidad) {
+    return this.disponibilidades[idDisponibilidad]
   }
 
-  aceptarCambioDeFecha(turno){
-    const solicitud = this.solicitudesDeCambioDeFecha.find(
-      (solicitud) => solicitud.turno === turno
-    )
+  aceptarCambioDeFecha(turno) {
+    const solicitud = this.solicitudesDeCambioDeFecha.find((solicitud) => solicitud.turno === turno)
 
     if (!solicitud) {
       throw new Error('Solicitud no encontrada')
@@ -120,74 +119,61 @@ export class Medico {
     )
   }
 
-  rechazarCambioDeFecha(turno){
+  rechazarCambioDeFecha(turno) {
     this.solicitudesDeCambioDeFecha = this.solicitudesDeCambioDeFecha.filter(
       (solicitud) => solicitud.turno !== turno
     )
   }
-   modificarServicio(servicioAModificar, nuevoServicio){
-      
-     if(nuevoServicio instanceof Practica){
-        this.practicas[this.practicas.indexOf(servicioAModificar)] = nuevoServicio
-      }else if (nuevoServicio instanceof Especialidad){
-        this.especialidades[this.especialidades.indexOf(servicioAModificar)] = nuevoServicio
-      }else {
-        throw new Error(
-            "servicio no esta en formato indicado"
-        )
-      }}
-    darDeAltaServicio(servicio){
-      if(servicio instanceof Practica){
-        this.practicas = this.darDeAlta(servicio,this.practicas)
-      }else if (servicio instanceof Especialidad){
-        this.especialidades = this.darDeAlta(servicio,this.especialidades)
-      }else {
-        throw new Error(
-            "servicio no esta en formato indicado"
-        )
-      }}
-    
-    darDeBajaServicio(servicio){
-      
-      if(servicio instanceof Practica){
-        this.practicas = this.darDeBaja(servicio,this.practicas)
-      }else if (servicio instanceof Especialidad){
-        this.especialidades = this.darDeBaja(servicio,this.especialidades)
-      }else {
-        throw new Error(
-            "servicio no esta en formato indicado"
-        )
-      }
+  modificarServicio(servicioAModificar, nuevoServicio) {
+    if (nuevoServicio instanceof Practica) {
+      this.practicas[this.practicas.indexOf(servicioAModificar)] = nuevoServicio
+    } else if (nuevoServicio instanceof Especialidad) {
+      this.especialidades[this.especialidades.indexOf(servicioAModificar)] = nuevoServicio
+    } else {
+      throw new Error('servicio no esta en formato indicado')
+    }
+  }
+  darDeAltaServicio(servicio) {
+    if (servicio instanceof Practica) {
+      this.practicas = this.darDeAlta(servicio, this.practicas)
+    } else if (servicio instanceof Especialidad) {
+      this.especialidades = this.darDeAlta(servicio, this.especialidades)
+    } else {
+      throw new Error('servicio no esta en formato indicado')
+    }
+  }
 
+  darDeBajaServicio(servicio) {
+    if (servicio instanceof Practica) {
+      this.practicas = this.darDeBaja(servicio, this.practicas)
+    } else if (servicio instanceof Especialidad) {
+      this.especialidades = this.darDeBaja(servicio, this.especialidades)
+    } else {
+      throw new Error('servicio no esta en formato indicado')
     }
-    darDeBaja(servicio,listaServicios){
-      if(!this.servicioExiste(servicio,listaServicios)){
-            throw new Error(
-            "Este servicio no es brindado por el medico"
-        ) 
-        }
-      return listaServicios.filter(p=>p.id !== servicio.id)
+  }
+  darDeBaja(servicio, listaServicios) {
+    if (!this.servicioExiste(servicio, listaServicios)) {
+      throw new Error('Este servicio no es brindado por el medico')
     }
-    servicioExiste(servicio,listaServicios){
-      return listaServicios.some(p=>p.id === servicio.id)
-    }
-  
-     darDeAlta(servicio,listaServicio){
-    if(this.servicioExiste(servicio,listaServicio)){
-      throw new Error(
-            "Servicio ya está dado de alta"
-        )
-    }    
-    else if(!listaServicio){
-      return listaServicio = [servicio]
-           
-    }else{
-      listaServicio.push(servicio) 
+    return listaServicios.filter((p) => p.id !== servicio.id)
+  }
+  servicioExiste(servicio, listaServicios) {
+    return listaServicios.some((p) => p.id === servicio.id)
+  }
+
+  darDeAlta(servicio, listaServicio) {
+    if (this.servicioExiste(servicio, listaServicio)) {
+      throw new Error('Servicio ya está dado de alta')
+    } else if (!listaServicio) {
+      return (listaServicio = [servicio])
+    } else {
+      listaServicio.push(servicio)
       return listaServicio
     }
   }
 
-  toJSON(){
+  toJSON() {
     return {
       id: this.id,
       usuario: this.usuario,
@@ -196,8 +182,7 @@ export class Medico {
       especialidades: this.especialidades,
       practicas: this.practicas,
       sedes: this.sedes,
-      disponibilidades: this.disponibilidades
+      disponibilidades: this.disponibilidades,
     }
   }
-
 }

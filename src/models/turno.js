@@ -14,20 +14,20 @@ export class Turno {
   #costo
 
   constructor(medico, fechaHora, sede, servicio) {
-    this.#medico = medico
-    this.#paciente = null // Inicialmente sin paciente asignado
-    this.#fechaHora = fechaHora //date
-    this.#sede = sede
-    this.#servicio = servicio //practica o especialidad asociado al turno
-    this.#estado = EstadoTurno.DISPONIBLE // Estado inicial
-    this.#historialEstados = []
-    this.#costo = null
+    this.medico = medico
+    this.paciente = null // Inicialmente sin paciente asignado
+    this.fechaHora = fechaHora //date
+    this.sede = sede
+    this.servicio = servicio //practica o especialidad asociado al turno
+    this.estado = EstadoTurno.DISPONIBLE // Estado inicial
+    this.historialEstados = []
+    this.costo = null
   }
 
   actualizarEstado(nuevoEstado, quien, motivo) {
-    this.#estado = nuevoEstado
+    this.estado = nuevoEstado
 
-    this.#historialEstados.push({
+    this.historialEstados.push({
       fechaHoraIngreso: new Date(),
       estado: nuevoEstado,
       turno: this,
@@ -36,60 +36,60 @@ export class Turno {
     })
   }
 
-  quienModifica(id_usuario){
+  quienModifica(id_usuario) {
     if (this.paciente.id === id_usuario) {
       return this.paciente
-      }
-      if (this.medico.id === id_usuario) {
+    }
+    if (this.medico.id === id_usuario) {
       return this.medico
-      }
-      return null
+    }
+    return null
   }
 
-  getContraparte(id_usuario){
+  getContraparte(id_usuario) {
     if (this.paciente.id === id_usuario) {
       return this.medico
-      }
-      if (this.medico.id === id_usuario) {
+    }
+    if (this.medico.id === id_usuario) {
       return this.paciente
-      }
-      return null
+    }
+    return null
   }
 
   getId() {
-    return this.#id
+    return this.id
   }
 
   getMedico() {
-    return this.#medico
+    return this.medico
   }
 
   getPaciente() {
-    return this.#paciente
+    return this.paciente
   }
 
   getFechaHora() {
-    return this.#fechaHora
+    return this.fechaHora
   }
 
   getSede() {
-    return this.#sede
+    return this.sede
   }
 
   getServicio() {
-    return this.#servicio
+    return this.servicio
   }
 
   getEstado() {
-    return this.#estado
+    return this.estado
   }
 
   getHistorialEstados() {
-    return this.#historialEstados
+    return this.historialEstados
   }
 
   getCosto() {
-    return this.#costo
+    return this.costo
   }
 
   getFechaTurno() {
@@ -105,7 +105,7 @@ export class Turno {
   }
 
   reservar(paciente) {
-    this.#paciente = paciente
+    this.paciente = paciente
     this.actualizarEstado(
       EstadoTurno.RESERVADO,
       paciente.usuario,
@@ -114,7 +114,7 @@ export class Turno {
   }
 
   cambiarFechaHora(nuevaFechaHora) {
-    this.#fechaHora = nuevaFechaHora
+    this.fechaHora = nuevaFechaHora
   }
 
   esManiana() {
@@ -127,24 +127,24 @@ export class Turno {
 
   toJSON() {
     return {
-      id: this.#id,
+      id: this.id,
       medico: {
-        id: this.#medico.id,
-        nombre: this.#medico.nombre,
+        id: this.medico.id,
+        nombre: this.medico.nombre,
       },
-      paciente: this.#paciente
+      paciente: this.paciente
         ? {
-            id: this.#paciente.id,
-            nombre: this.#paciente.nombre,
+            id: this.paciente.id,
+            nombre: this.paciente.nombre,
           }
         : null,
-      fechaHora: this.#fechaHora,
-      estado: this.#estado,
-      costo: this.#costo,
+      fechaHora: this.fechaHora,
+      estado: this.estado,
+      costo: this.costo,
     }
   }
 
   getNombreServicio() {
-    return this.#practica.nombre
+    return this.practica.nombre
   }
 }
