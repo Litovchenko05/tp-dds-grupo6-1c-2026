@@ -1,13 +1,9 @@
-import { usuarioSchema } from '../schemas/usuario.schema.js'
-
 export class Usuario {
-  #id
-  #nombreUsuario
-  #password
+  nombreUsuario
+  password
 
-  constructor({ id, nombreUsuario, password }) {
-    this.#id = id
-    this.#nombreUsuario = nombreUsuario
-    this.#password = password
+  constructor({ nombreUsuario, password }) {
+    this.nombreUsuario = nombreUsuario
+    this.password = password
   }
 }
