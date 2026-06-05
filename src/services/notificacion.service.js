@@ -38,4 +38,16 @@ export class NotificacionService {
 
     return await this.notificacionRepository.save(nuevaNotificacion)
   }
+
+  async crearNotificacionesEnLote(listaData) {
+    const loteNotificaciones = listaData.map((data) => {
+      return new Notificacion({
+        destinatario: data.destinatarioId,
+        remitente: data.remitenteId,
+        mensaje: data.mensaje,
+      })
+    })
+
+    return await this.notificacionRepository.saveMany(loteNotificaciones)
+  }
 }

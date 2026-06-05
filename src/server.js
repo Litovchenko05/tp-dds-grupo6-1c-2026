@@ -1,28 +1,37 @@
 import app from './app.js'
 import dotenv from 'dotenv'
-// import { cargarDatosDePruebaEnMemoria } from './repositories/datosPrueba.enMemoria.js'
 import { MongoDBClient } from './config/database.js'
+import { TurnoRepository } from './repositories/turno.repository.js'
+import { NotificacionRepository } from './repositories/notificacion.repository.js'
+import { NotificacionService } from './services/notificacion.service.js'
+import { RecordatorioTask } from './tasks/recordatorio.task.js'
 
 dotenv.config()
 
 const PORT = process.env.PUERTO || 3000
 
-// cargarDatosDePruebaEnMemoria()
-
 const start = async () => {
-    try{
-        //conectar con mongoDB
-        await MongoDBClient.connect()
+  try {
+    await MongoDBClient.connect()
 
-        app.listen(PORT, () => {
-        console.log('--- Sistema Sweet Medical ---')
-        console.log(`Servidor escuchando en: http://localhost:${PORT}`)
-})
-      
-    }
-    catch(error){
-        console.error(error);
-    }
+    const turnoRepository = new TurnoRepository()
+    const notificacionRepository = new NotificacionRepository()
+    const notificacionService = new NotificacionService({ notificacionRepository })
+
+    const recordatorioTask = new RecordatorioTask({
+      turnoRepository,
+      notificacionService,
+    })
+
+    recordatorioTask.iniciar()
+
+    app.listen(PORT, () => {
+      console.log('--- Sistema Sweet Medical ---')
+      console.log(`Servidor escuchando en: http://localhost:${PORT}`)
+    })
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 start()
