@@ -87,9 +87,7 @@ export class NotificacionRepository {
     await this.NotificacionModel.deleteMany({})
   }
 
-  async cargar(notificaciones = []) {
-    for (const notificacion of notificaciones) {
-      await this.guardar(notificacion)
-    }
+  async saveMany(notificaciones) {
+    return await this.NotificacionModel.insertMany(notificaciones)
   }
 }
