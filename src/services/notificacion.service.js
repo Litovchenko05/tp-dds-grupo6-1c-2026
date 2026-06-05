@@ -1,3 +1,5 @@
+import { Notificacion } from '../models/notificacion.model.js'
+
 export class NotificacionService {
   constructor({ notificacionRepository }) {
     this.notificacionRepository = notificacionRepository
@@ -25,5 +27,15 @@ export class NotificacionService {
     }
 
     return notificacion
+  }
+
+  async crearNotificacion(data) {
+    const nuevaNotificacion = new Notificacion({
+      destinatario: data.destinatarioId,
+      remitente: data.remitenteId,
+      mensaje: data.mensaje,
+    })
+
+    return await this.notificacionRepository.save(nuevaNotificacion)
   }
 }
