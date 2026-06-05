@@ -1,3 +1,5 @@
+import { Notificacion } from '../models/notificacion.model.js'
+
 export class NotificacionService {
   constructor({ notificacionRepository }) {
     this.notificacionRepository = notificacionRepository
@@ -14,7 +16,7 @@ export class NotificacionService {
       notificaciones = await this.notificacionRepository.obtenerNoLeidasDeUsuario(idUsuario)
     }
 
-    return notificaciones.map(this.#mapToDto)
+    return notificaciones
   }
 
   async marcarComoLeida(idNotificacion) {
@@ -24,6 +26,16 @@ export class NotificacionService {
       return null
     }
 
-    return this.#mapToDto(notificacion)
+    return notificacion
+  }
+
+  async crearNotificacion(data) {
+    const nuevaNotificacion = new Notificacion({
+      destinatario: data.destinatarioId,
+      remitente: data.remitenteId,
+      mensaje: data.mensaje,
+    })
+
+    return await this.notificacionRepository.save(nuevaNotificacion)
   }
 }
