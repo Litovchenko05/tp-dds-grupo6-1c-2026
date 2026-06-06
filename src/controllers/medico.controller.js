@@ -10,9 +10,10 @@ import { marcarRealizadoSchema } from '../schemas/marcarRealizadoSchema.js'
 import { agregarServicioSchema } from '../schemas/agregarServicioSchema.js'
 import { crearCambioSchema } from '../schemas/cambioFechaTurnoSchema.js'
 export class MedicoController {
-  constructor({ medicoService, turnoService }) {
+  constructor({ medicoService, turnoService, pacienteService }) {
     this.medicoService = medicoService
     this.turnoService = turnoService
+    this.pacienteService = pacienteService /* PARA OBTENER LA CONSULTA DEL HISTORIAL DE TURNOS DEL PACIENTE */
   }
 
   createMedico = async (req, res) => {
@@ -389,11 +390,7 @@ export class MedicoController {
       if (hasta) filtros.hasta = hasta
       if (estado) filtros.estado = estado
 
-      const historial = await this.medicoService.obtenerHistorialPaciente(
-        medicoId,
-        pacienteId,
-        filtros
-      )
+      const historial = await this.pacienteService.consultarHistorial(pacienteId);
 
       return res.status(200).json({
         status: 'success',

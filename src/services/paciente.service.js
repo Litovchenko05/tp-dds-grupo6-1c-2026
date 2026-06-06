@@ -7,30 +7,33 @@ import { Medico } from '../models/Medico.js'
 import { ObraSocial } from '../models/ObraSocial.js'
 import { Plan } from '../models/Plan.js'
 import { MedicoRepository } from '../repositories/medico.repository.js'
+import { TurnoService } from '../services/turno.service.js'
+import { CambioEstadoTurno } from '../models/cambioEstadoTurno.js'
 export class PacienteService {
-  
+
   constructor() {
     this.pacienteRepository = new PacienteRepository()
     this.turnoRepository = new TurnoRepository()
     this.medicoRespository = new MedicoRepository()
+    this.turnoService = new this.TurnoService()  // LO NECESITO PARA CANCELAR Y MODIFICAR UN TURNO
   }
 
-  async createPaciente(pacienteData){
-    
-    const {dni, nombre, obraSocial, usuario ,plan} = pacienteData;
+  async createPaciente(pacienteData) {
 
-       if (!usuario || !dni || !nombre || !obraSocial || !plan) {
-          throw new ValidationError('Todos los campos son requeridos');
-       }
+    const { dni, nombre, obraSocial, usuario, plan } = pacienteData;
 
-    const existente = await this.pacienteRepository.findByDni(pacienteData.dni); 
+    if (!usuario || !dni || !nombre || !obraSocial || !plan) {
+      throw new ValidationError('Todos los campos son requeridos');
+    }
 
-        if (existente) {
-          throw new Error ('El Paciente ya existe');
-        }
+    const existente = await this.pacienteRepository.findByDni(pacienteData.dni);
 
-    const nuevoPaciente = {dni, nombre, obraSocial, usuario ,plan};
-   
+    if (existente) {
+      throw new Error('El Paciente ya existe');
+    }
+
+    const nuevoPaciente = { dni, nombre, obraSocial, usuario, plan };
+
     const pacienteGuardado = await this.pacienteRepository.save(nuevoPaciente);
 
     return pacienteGuardado;
@@ -39,7 +42,7 @@ export class PacienteService {
   async obtenerTodos() {
     const pacientes = await this.pacienteRepository.findAll()
 
-     return pacientes;
+    return pacientes;
   }
 
   async obtenerPorId(id) {
@@ -50,32 +53,52 @@ export class PacienteService {
 
 
   async reservarTurno(pacienteId, turnoId) {
-    
-    const paciente = await  this.pacienteRepository.findById(pacienteId)
-   
+
+    const paciente = await this.pacienteRepository.findById(pacienteId)
+
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
     const turno = await this.turnoRepository.findById(turnoId)
-   
+
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
-   
-    if (turno.estado == "disponible") {
 
-        turno.paciente = paciente;
-        turno.estado = "reservado";
-        turno.save()
+    //TODO DELEGAR EN TURNO SERVICE
+    if (turno.estado == "DISPONIBLE") {
 
-        paciente.historialDeTurnos.push(turno);
-        paciente.save()
+      turno.paciente = paciente;
+      turno.estado = EstadoTurno.DISPONIBLE;
+      turno.save()
+
+      paciente.historialDeTurnos.push(turno);
+      paciente.save()
+
+      return turno;
     } else {
       throw new Error('El turno no está disponible para reservar')
     }
   }
 
-  
+  async cancelarTurno(pacienteId, turnoId, motivo) {
+
+    try {
+      const paciente = await this.pacienteRepository.findById(pacienteId)
+
+      if (!paciente) {
+        throw new Error('Paciente no encontrado')
+      }
+
+      const turnoCancelado = await this.turnoService.cancelar(turnoId, paciente.usuario._id, motivo);
+
+      return turnoCancelado;
+    }
+    catch (error) {
+      throw new Error('El turno no pudo ser cancelado')
+    }
+  }
+
 
   async consultarHistorial(pacienteId) {
     const paciente = await this.pacienteRepository.findById(pacienteId)
@@ -100,18 +123,19 @@ export class PacienteService {
 
     const medico = await this.medicoRespository.findByNombre(turno.medico.nombre);
 
-    medico.solicitudesDeCambioDeFecha.push ({
-        nuevaFechaHora: new Date(nuevaFechaHora),
-        estado: 'pendiente'
+
+    medico.solicitudesDeCambioDeFecha.push({
+      nuevaFechaHora: new Date(nuevaFechaHora),
+      estado: 'pendiente'
     });
 
     await medico.save();
-    
+
   }
 
   async findAllPaginated(page, limit) {
-      return await this.pacienteRepository
-          .findAllPaginated(page, limit)
+    return await this.pacienteRepository
+      .findAllPaginated(page, limit)
   }
 
 }

@@ -4,6 +4,7 @@ import { EstadoTurno } from '../models/estadoTurno.enum.js'
 import { Medico } from '../models/Medico.js'
 import { NotificacionService } from './notificacion.service.js'
 import { NotificacionRepository } from './repositories/.js'
+import { CambioEstadoTurno } from '../models/cambioEstadoTurno.js'
 
 export class TurnoService {
   constructor() {
@@ -16,49 +17,6 @@ export class TurnoService {
 
   async obtenerPorId(id) {
     return await this.turnoRepository.findById(id)
-  }
-
-  async cancelarTurno(turnoId, medicoId, motivo) {
-    try {
-      const turno = await this.turnoRepository.findById(turnoId)
-
-      if (!turno) {
-        throw new Error('Turno no encontrado')
-      }
-
-      // Validar que el turno pertenece al médico
-      if (turno.medico._id.toString() !== medicoId) {
-        throw new Error('Este turno no pertenece al médico')
-      }
-
-      // Validar que el turno no esté ya cancelado
-      if (turno.estado === EstadoTurno.CANCELADO) {
-        throw new Error('El turno ya está cancelado')
-      }
-
-      // Validar que el turno esté en estado DISPONIBLE o RESERVADO
-      if (turno.estado !== EstadoTurno.DISPONIBLE && turno.estado !== EstadoTurno.RESERVADO) {
-        throw new Error(`No se puede cancelar un turno en estado ${turno.estado}`)
-      }
-
-      // Crear registro de cambio de estado
-      const cambioEstado = {
-        fechaHoraIngreso: new Date(),
-        estado: EstadoTurno.CANCELADO,
-        usuario: medicoId,
-        motivo: motivo || 'Sin motivo especificado',
-      }
-
-      // Actualizar turno
-      const turnoActualizado = await this.turnoRepository.update(turnoId, {
-        estado: EstadoTurno.CANCELADO,
-        $push: { historialEstados: cambioEstado },
-      })
-
-      return turnoActualizado
-    } catch (error) {
-      throw error
-    }
   }
 
   async marcarRealizadoTurno(turnoId, medicoId, notas = '') {
@@ -142,16 +100,22 @@ export class TurnoService {
   }
 
   obtenerPorId(id) {
-    const turno = this.turnoRepository.obtenerPorId(Number(id))
+    const turno = this.turnoRepository.obtenerPorId(id)
   }
 
-  cancelar(id_turno, id_usuario, motivo) {
-    const turno = this.turnoRepository.obtenerPorId(Number(turnoId))
+  async cancelar(id_turno, id_usuario, motivo) {
+    const turno = this.turnoRepository.obtenerPorId(turnoId)
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
-    if (turno.estado === 'cancelado') {
+    if (turno.estado === EstadoTurno.CANCELADO) {
       throw new Error('El turno ya está cancelado')
+    }
+
+    const cancelador = turno.quienModifica(id_usuario)
+
+    if (!cancelador) {
+      throw new Error('No tiene permiso para cancelar este turno.')
     }
 
     const unaHoraEnMs = 60 * 60 * 1000
@@ -161,26 +125,20 @@ export class TurnoService {
       throw new Error('Debe cancelar con al menos 1 hora de anticipación')
     }
 
-    const cancelador = turno.quienModifica(id_usuario)
+    turno.actualizarEstado(EstadoTurno.CANCELADO, cancelador._id, motivo)
 
-    if (!cancelador) {
-      throw new Error('No tiene permiso para cancelar este turno.')
-    }
-
-    turno.actualizarEstado(EstadoTurno.CANCELADO, cancelador, motivo)
-
-    this.turnoRepository.guardar(turno)
+    this.turnoRepository.save(turno)
 
     this.servicioNotificacion.generarNotificacion(
       turno.getContraparte(id_usuario),
       cancelador,
-      'El turno ha sido cancelado. Motivo: ' + motivo
+      'El turno : ' + turno._id + 'ha sido cancelado. Motivo: ' + motivo
     )
-    return this.#mapToDto(turno)
+    return turno;
   }
 
-  solicitarCambioDeFecha(idUsuario, idTurno, nuevaFechaHora) {
-    const turno = this.turnoRepository.obtenerPorId(Number(idTurno))
+  async solicitarCambioDeFecha(idUsuario, idTurno, nuevaFechaHora) {
+    const turno = this.turnoRepository.obtenerPorId(idTurno)
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
@@ -217,7 +175,7 @@ export class TurnoService {
 
     turno.actualizarEstado(EstadoTurno.REALIZADO, turno.medico, 'El turno ha sido realizado')
     this.turnoRepository.guardar(turno)
-    return this.#mapToDto(turno)
+    return turno;
   }
 
   obtenerHistorial(id_usuario) {

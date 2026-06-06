@@ -8,6 +8,7 @@ import { EspecialidadRepository } from '../repositories/especialidad.repository.
 import { PracticaRepository } from '../repositories/practica.repository.js'
 import { SedeRepository } from '../repositories/sede.repository.js'
 import { TurnoService } from '../services/turno.service.js'
+import { pacienteService } from '../services/paciente.service.js'
 
 const turnoRepository = new TurnoRepository()
 const especialidadRepository = new EspecialidadRepository()
@@ -20,12 +21,13 @@ const medicoService = new MedicoService({
   agendaService: agendaService,
   especialidadRepository: especialidadRepository,
   practicaRepository: practicaRepository,
-  sedeRepository: sedeRepository
+  sedeRepository: sedeRepository,
   turnoService: turnoService,
 })
 const medicoController = new MedicoController({
   medicoService: medicoService,
   turnoService: turnoService,
+  pacienteService: pacienteService
 })
 
 const router = express.Router()
@@ -67,8 +69,8 @@ router
   .post((req, res) => medicoController.solicitarCambioFecha(req, res))
 
   .route('/:medicoId/turnos/:turnoId')
-  .delete((req, res) => medicoController.cancelarTurno(req, res))
-  .patch((req, res) => medicoController.actualizarTurno(req, res))
+  .patch((req, res) => medicoController.cancelarTurno(req, res))
+  .put((req, res) => medicoController.actualizarTurno(req, res))
 
 router
   .route('/:medicoId/turnos/:turnoId/cambios')
@@ -83,9 +85,6 @@ router
   .route('/:medicoId/servicios/:servicioId')
   .delete((req, res) => medicoController.removerServicio(req, res))
 
-router
-  .route('/:medicoId/disponibilidad')
-  .get((req, res) => medicoController.obtenerDisponibilidad(req, res))
 
 router
   .route('/:medicoId/pacientes/:pacienteId/historial')
@@ -119,8 +118,5 @@ router
   .route('/:medicoId/disponibilidad')
   .get((req, res) => medicoController.obtenerDisponibilidad(req, res))
 
-router
-  .route('/:medicoId/pacientes/:pacienteId/historial')
-  .get((req, res) => medicoController.obtenerHistorialPaciente(req, res))
 
 export default router
