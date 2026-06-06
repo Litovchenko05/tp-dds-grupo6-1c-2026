@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
 import { Medico } from "../models/Medico.js";
-import { PracticaSchema } from "../shemasBD/practicaSchema.js";
-import { EspecialidadSchema } from "../shemasBD/especialidadSchema.js";
-import { SedeSchema } from "../shemasBD/sedeSchema.js";
-import { DisponibilidadSchema } from "../shemasBD/disponibilidadSchema.js";
-import { UsuarioSchema } from "../shemasBD/usuarioSchema.js";
+import { DisponibilidadSchema } from "../schemasBD/disponibilidadSchema.js";
+import { UsuarioSchema } from "../schemasBD/usuarioSchema.js";
+
 const Schema = mongoose.Schema;
 export const MedicoSchema = new mongoose.Schema({
 
