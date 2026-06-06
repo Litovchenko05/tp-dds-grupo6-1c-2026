@@ -1,11 +1,12 @@
 import { TurnoModel } from '../shemasBD/turnoSchema.js'
+import { EstadoTurno } from '../models/estadoTurno.enum.js'
 export class TurnoRepository {
-  constructor(datosIniciales = []) {
+  constructor() {
     this.TurnoModel = TurnoModel
   }
 
   async findAll() {
-    return await this.TurnoModel.find()
+    return await this.TurnoModel.find().populate('servicio').populate('sede')
   }
 
   async findByFilters(filtros = {}) {
@@ -16,8 +17,8 @@ export class TurnoRepository {
     return await this.TurnoModel.findById(id)
   }
 
-  async findByMedicoId(idMedico) {
-    return await this.TurnoModel.find({ 'medico.id': idMedico })
+  async findByTurnoId(idMedico) {
+    return await this.TurnoModel.find({ 'medico.id': idMedico }).populate('servicio')
   }
 
   async save(turno) {
@@ -29,6 +30,41 @@ export class TurnoRepository {
       returnDocument: 'after',
       runValidators: true,
       upsert: true,
+    })
+  }
+
+  async obtenerTurnosPorProfesional(nombreDeProfesional) {
+    return await this.TurnoModel.find({ 'medico.nombre': nombreDeProfesional })
+  }
+
+  async obtenerTurnosPorEspecialidad(nombreDeEspecialidad) {
+    return (await this.findAll()).filter(
+      (t) =>
+        t.servicio.nombre.toLowerCase() == nombreDeEspecialidad.toLowerCase() &&
+        t.tipoDeServicio == 'Especialidad'
+    )
+  }
+
+  async obtenerTurnosPorPractica(nombreDePractica) {
+    return (await this.findAll()).filter(
+      (t) =>
+        t.servicio.nombre.toLowerCase() == nombreDePractica.toLowerCase() &&
+        t.tipoDeServicio == 'Practica'
+    )
+  }
+
+  async obtenerTurnosPorSede(nombreSede) {
+    return (await this.findAll()).filter(
+      (t) => t.sede.nombre.toLowerCase() == nombreSede.toLowerCase()
+    )
+  }
+
+  async obtenerTurnosPorRango(fechaIncial, fechaFinal) {
+    return await this.TurnoModel.find({
+      fechaHora: {
+        $gte: new Date(fechaIncial),
+        $lte: new Date(fechaFinal),
+      },
     })
   }
 
@@ -46,6 +82,25 @@ export class TurnoRepository {
 
   async count() {
     return this.TurnoModel.countDocuments()
+  }
+
+  async obtenerTurnosParaManiana() {
+    const hoy = new Date()
+    const maniana = new Date(hoy)
+    maniana.setDate(maniana.getDate() + 1)
+
+    const inicioManiana = new Date(maniana)
+    inicioManiana.setHours(0, 0, 0, 0)
+    const finManiana = new Date(maniana)
+    finManiana.setHours(23, 59, 59, 999)
+
+    return await this.TurnoModel.find({
+      fechaHora: {
+        $gte: inicioManiana,
+        $lte: finManiana,
+      },
+      estado: EstadoTurno.RESERVADO,
+    })
   }
 
   async buscarTurnosPaginated({
@@ -121,26 +176,26 @@ export class TurnoRepository {
   //paginado
   //GET ALL PAGINADO
   async findAllPaginated(page = 1, limit = 5) {
-      //cuantos documentos hay que saltar
-      const skip = (page - 1) * limit
+    //cuantos documentos hay que saltar
+    const skip = (page - 1) * limit
 
-      const turnos =
-          await this.TurnoModel
-              .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
-              .skip(skip)
-              .limit(limit)
+    const turnos =
+      await this.TurnoModel
+        .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
+        .skip(skip)
+        .limit(limit)
 
-      const total =
-          await this.TurnoModel.countDocuments({
-              //eliminado: false
-          })
+    const total =
+      await this.TurnoModel.countDocuments({
+        //eliminado: false
+      })
 
-      return {
-            turnos,
-            total,
-            page,
-            // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
-            totalPages: Math.ceil(total / limit)
-        }
+    return {
+      turnos,
+      total,
+      page,
+      // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
+      totalPages: Math.ceil(total / limit)
     }
+  }
 }

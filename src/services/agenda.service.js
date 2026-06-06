@@ -3,16 +3,16 @@ import { Agenda } from '../models/Agenda.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 
 export class AgendaService {
-  
+
   constructor({ turnoRepository }) {
     this.turnoRepository = turnoRepository
   }
 
 
   //generar turnos mediante un proceso batch
-  async generarTurnosParaDisponibilidad(medico, disponibilidad, sede, servicio) {
+  async generarTurnosParaDisponibilidad(medico, disponibilidad, sede, servicio, tipoDeServicio) {
 
-    const todosLosTurnosGenerados = Agenda.generarTurnos(medico, disponibilidad, sede, servicio) //acá me llegan todos los turnos con estado DISPONIBLE, para una disponibilidad del médico
+    const todosLosTurnosGenerados = Agenda.generarTurnos(medico, disponibilidad, sede, servicio, tipoDeServicio) //acá me llegan todos los turnos con estado DISPONIBLE, para una disponibilidad del médico
 
     const TAMANIO_BATCH = 10 // Defino que el tamaño del lote a procesar, va a ser de a 10 turnos por vez
 
@@ -28,43 +28,36 @@ export class AgendaService {
     disponibilidadAnterior,
     disponibilidadModificada
   ) {
-    try{
-      
-      const fechaPosterior = new Date();
-      fechaPosterior.setDate(fechaPosterior.getDate() + 1);
+    try {
 
-  
+      const fechaPosterior = new Date()
+      fechaPosterior.setDate(fechaPosterior.getDate() + 1)
+
+
       const turnosDelMedicoAModificar = await this.turnoRepository.findByFilters(({
-      "medico.usuario._id": medico.usuario._id,
-      fechaHora: { $gte: fechaPosterior },
-      estado: "disponible"
-  }))
+        "medico.usuario._id": medico.usuario._id,
+        fechaHora: { $gte: fechaPosterior },
+        estado: "disponible"
+      }))
 
-      // console.log(turnosDelMedicoAModificar);
 
-    
+      for (const turno of turnosDelMedicoAModificar) {
 
-      for(const turno of turnosDelMedicoAModificar){
-      
-        // const diaTurno = new Date(turno.fechaHora).getDay();
-  
-        // const diaDisponibilidad = disponibilidadAnterior.obtenerIndiceDelDiaDeSemana(disponibilidadAnterior.getDiaSemana());
-        
         const nuevaFechaHora = Agenda.obtenerNuevaFechaDelTurno(
-              turno.fechaHora,
-              disponibilidadAnterior,
-              disponibilidadModificada
-            );
+          turno.fechaHora,
+          disponibilidadAnterior,
+          disponibilidadModificada
+        )
 
-            turno.fechaHora = nuevaFechaHora;
-            console.log("nueva fecha turno " + nuevaFechaHora.toLocaleString('es-AR'));
-            turno.save();  
+        turno.fechaHora = nuevaFechaHora
+
+        turno.save()
       }
-      
-    }catch(error){
-      throw new Error(error.message);
+
+    } catch (error) {
+      throw new Error(error.message)
     }
-   
+
   }
 
   obtenerDisponiblesSegunMedico(medicoId) {
@@ -73,13 +66,13 @@ export class AgendaService {
     return turnosFiltrados
   }
 
-  obtenerDisponiblesSegunServicio(nombreServicio){
+  obtenerDisponiblesSegunServicio(nombreServicio) {
     const turnosTotales = this.turnoRepository.obtenerTodos()
     const turnosFiltrados = turnosTotales.filter((turno) => turno.getNombreServicio() === nombreServicio && turno.estado === EstadoTurno.DISPONIBLE)
     return turnosFiltrados
   }
 
-  obtenerDisponiblesSegunMedicoYServicio(medicoId, nombreServicio){
+  obtenerDisponiblesSegunMedicoYServicio(medicoId, nombreServicio) {
     const turnosTotales = this.turnoRepository.obtenerPorMedicoId(medicoId)
     const turnosFiltrados = turnosTotales.filter((turno) => turno.getNombreServicio() === nombreServicio && turno.estado === EstadoTurno.DISPONIBLE)
     return turnosFiltrados
@@ -89,9 +82,9 @@ export class AgendaService {
     const turnosTotales = this.turnoRepository.obtenerPorMedicoId(medicoId)
     return turnosTotales
   }
-  
+
   async findAllPaginated(page, limit) {
-      return await this.turnoRepository
-          .findAllPaginated(page, limit)
+    return await this.turnoRepository
+      .findAllPaginated(page, limit)
   }
 }

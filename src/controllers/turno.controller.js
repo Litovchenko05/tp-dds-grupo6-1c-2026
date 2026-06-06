@@ -29,7 +29,41 @@ export class TurnoController {
       }
 
       return res.status(200).json({ status: 'success', data: turno })
+
     } catch (error) {
+      return res.status(400).json({ data: error.message })
+    }
+  }
+
+  findTurnosByProfesional = async (req, res) => {
+    try {
+      const nombreDeProfesional = req.query.profesional
+      if (!nombreDeProfesional) {
+        const turnos = await this.turnoService.obtenerTodos()
+
+        return res.status(200).json({ status: 'succes', data: turnos })
+      }
+      const turnosFiltradosPorProfesional = await this.turnoService.obtenerTurnosPorProfesional(nombreDeProfesional)
+
+      return res.status(200).json({ status: 'success', data: turnosFiltradosPorProfesional })
+    }
+    catch (error) {
+      return res.status(400).json({ data: error.message })
+    }
+  }
+
+  findTurnosByEspecialidad = async (req, res) => {
+    try {
+      const nombreDeEspecialidad = req.query.especialidad
+      if (!nombreDeEspecialidad) {
+        const turnos = await this.turnoService.obtenerTodos()
+        return res.status(200).json({ status: 'succes', data: turnos })
+      }
+
+      const turnosFiltradosEspecialidad = await this.turnoService.obtenerTurnosPorEspecialidad(nombreDeEspecialidad)
+      return res.status(200).json({ status: 'success', data: turnosFiltradosEspecialidad })
+    }
+    catch (error) {
       return res.status(400).json({ data: error.message })
     }
   }
@@ -54,7 +88,7 @@ export class TurnoController {
     } catch (error) {
       const status = error.message.includes('no encontrado') ? 404
         : error.message.includes('anticipación') ? 400
-        : 500
+          : 500
 
       return res.status(status).json({
         status: 'error',
@@ -76,8 +110,8 @@ export class TurnoController {
     } catch (error) {
       const status = error.message.includes('no encontrado') ? 404
         : error.message.includes('no tiene permiso') ? 403
-        : error.message.includes('solo se pueden marcar como realizado un turno confirmado') ? 409
-        : 500
+          : error.message.includes('solo se pueden marcar como realizado un turno confirmado') ? 409
+            : 500
 
       return res.status(status).json({
         status: 'error',
@@ -106,20 +140,66 @@ export class TurnoController {
   }
 
   //GET ALL PAGINADO
-    async findAllPaginated(req, res) {
-        try {
-            const page = Number(req.query.page) || 1
-            const limit = Number(req.query.limit) || 5
-            const resultado =  await this.turnoService.findAllPaginated(page, limit)
-            return res.status(200).json({
-            status: 'success',
-            data: resultado,
-        })
-        } catch(error) {
-          return res.status(500).json({
-          status: 'error',
-          message: 'Error interno del servidor',
-        })
-        }
+  async findAllPaginated(req, res) {
+    try {
+      const page = Number(req.query.page) || 1
+      const limit = Number(req.query.limit) || 5
+      const resultado = await this.turnoService.findAllPaginated(page, limit)
+      return res.status(200).json({
+        status: 'success',
+        data: resultado,
+      })
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Error interno del servidor',
+      })
+    }
   }
+  findTurnosByPractica = async (req, res) => {
+    try {
+      const nombreDePractica = req.query.practica
+      if (!nombreDePractica) {
+        const turnos = await this.turnoService.obtenerTodos()
+        return res.status(200).json({ status: 'succes', data: turnos })
+      }
+
+      const turnosFiltradosPractica = await this.turnoService.obtenerTurnosPorPractica(nombreDePractica)
+      return res.status(200).json({ status: 'success', data: turnosFiltradosPractica })
+    } catch (error) {
+      return res.status(400).json({ data: error.message })
+    }
+  }
+
+  findTurnosBySede = async (req, res) => {
+    try {
+      const nombreDeSede = req.query.sede
+      if (!nombreDeSede) {
+        const turnos = await this.turnoService.obtenerTodos()
+        return res.status(200).json({ status: 'succes', data: turnos })
+      }
+
+      const turnosFiltradosSede = await this.turnoService.obtenerTurnosPorSede(nombreDeSede)
+      return res.status(200).json({ status: 'success', data: turnosFiltradosSede })
+    } catch (error) {
+      return res.status(400).json({ data: error.message })
+    }
+  }
+
+  findTurnosByRangoDeFechas = async (req, res) => {
+    try {
+      const fechaIncial = req.query.LI
+      const fechaFinal = req.query.FF
+
+      if (!fechaIncial || !fechaFinal) {
+        const turnos = await this.turnoService.obtenerTodos()
+        return res.status(200).json({ status: 'succes', data: turnos })
+      }
+      const turnosFiltradosRango = await this.turnoService.obtenerTurnosPorRango(fechaIncial, fechaFinal)
+      return res.status(200).json({ status: 'success', data: turnosFiltradosRango })
+    } catch (error) {
+      return res.status(400).json({ data: error.message })
+    }
+  }
+
 }

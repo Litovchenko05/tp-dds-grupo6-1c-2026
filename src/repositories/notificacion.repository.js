@@ -14,26 +14,24 @@ export class NotificacionRepository {
       return consulta
     }
 
-    return consulta.where('destinatario').equals(idUsuario)
+    return consulta.find({
+      $or: [{ destinatario: idUsuario }, { 'destinatario._id': idUsuario }],
+    })
   }
 
-  async guardar(notificacion) {
+  async save(notificacion) {
     if (!notificacion) {
       throw new Error('La notificacion no puede ser nula')
     }
 
     const datos = typeof notificacion.toJSON === 'function' ? notificacion.toJSON() : notificacion
-    const identificador = datos.id ?? datos._id
-
-    if (identificador == null) {
-      throw new Error('La notificacion debe tener un id para guardarse')
-    }
+    const query = datos.id != null ? { _id: datos.id } : { _id: new this.NotificacionModel()._id }
 
     const restoDatos = { ...datos }
     delete restoDatos.id
     delete restoDatos._id
 
-    return await this.NotificacionModel.findOneAndUpdate({ _id: identificador }, restoDatos, {
+    return await this.NotificacionModel.findOneAndUpdate(query, restoDatos, {
       returnDocument: 'after',
       runValidators: true,
       upsert: true,
@@ -89,9 +87,7 @@ export class NotificacionRepository {
     await this.NotificacionModel.deleteMany({})
   }
 
-  async cargar(notificaciones = []) {
-    for (const notificacion of notificaciones) {
-      await this.guardar(notificacion)
-    }
+  async saveMany(notificaciones) {
+    return await this.NotificacionModel.insertMany(notificaciones)
   }
 }

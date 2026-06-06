@@ -3,17 +3,18 @@ import { Agenda } from './Agenda.js'
 import { FactoryNotificacion } from './Notificacion.factory.js'
 import { EstadoTurno } from './EstadoTurno.enum.js'
 export class Turno {
-  #id
-  #medico
-  #paciente
-  #fechaHora
-  #sede
-  #servicio
-  #estado
-  #historialEstados
-  #costo
+  id
+  medico
+  paciente
+  fechaHora
+  sede
+  servicio
+  estado
+  historialEstados
+  costo
+  tipoDeServicio
 
-  constructor(medico, fechaHora, sede, servicio) {
+  constructor(medico, fechaHora, sede, servicio, tipoDeServicio) {
     this.medico = medico
     this.paciente = null // Inicialmente sin paciente asignado
     this.fechaHora = fechaHora //date
@@ -22,6 +23,7 @@ export class Turno {
     this.estado = EstadoTurno.DISPONIBLE // Estado inicial
     this.historialEstados = []
     this.costo = null
+    this.tipoDeServicio = tipoDeServicio
   }
 
   actualizarEstado(nuevoEstado, quien, motivo) {
@@ -122,25 +124,6 @@ export class Turno {
     if (Agenda.buscarTurnoParaGenerarNotificacionesDeRecordatorio(this)) {
       this.recordarTurno = true
       return true
-    }
-  }
-
-  toJSON() {
-    return {
-      id: this.id,
-      medico: {
-        id: this.medico.id,
-        nombre: this.medico.nombre,
-      },
-      paciente: this.paciente
-        ? {
-            id: this.paciente.id,
-            nombre: this.paciente.nombre,
-          }
-        : null,
-      fechaHora: this.fechaHora,
-      estado: this.estado,
-      costo: this.costo,
     }
   }
 

@@ -9,4 +9,8 @@ export const disponibilidadDetalladaSchema = z.object({
   disponibilidadHoraria: disponibilidadHorariaSchema,
   sede: sedeSchema,
   servicio: practicaSchema.or(especialidadSchema),
+  tipoDeServicio: z.enum([
+  'Especialidad',
+  'Practica',
+])
 })

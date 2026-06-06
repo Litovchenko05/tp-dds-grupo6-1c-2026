@@ -15,34 +15,6 @@ export class PacienteService {
     this.medicoRespository = new MedicoRepository()
   }
 
-  #mapToDto(paciente) {
-      return {
-        id: paciente.id || paciente._id,
-        dni: paciente.dni,
-        usuario:paciente.usuario,
-        nombre: paciente.nombre,
-        obraSocial:{
-            id: paciente.obraSocial._id,
-            codigo: paciente.obraSocial.nombre,
-            planes: Array.isArray(paciente.obraSocial.planes)
-            ? paciente.obraSocial.planes.map((plan) => ({
-            id: plan._id,
-            nombre: plan.nombre,
-            coberturasEspecialidad: plan.duracionTurnoEnMins,
-            coberturasPractica: plan.coberturasPractica,
-            }))
-          :[],
-          },
-        plan: {
-            id: paciente.plan._id,
-            nombre: paciente.plan.nombre,
-            coberturasEspecialidad: paciente.plan.duracionTurnoEnMins,
-            coberturasPractica: paciente.plan.coberturasPractica,
-        }
-      };
-  }
-
-  
   async createPaciente(pacienteData){
     
     const {dni, nombre, obraSocial, usuario ,plan} = pacienteData;
@@ -51,7 +23,7 @@ export class PacienteService {
           throw new ValidationError('Todos los campos son requeridos');
        }
 
-    const existente = await this.pacienteRepository.findByDni(dni); 
+    const existente = await this.pacienteRepository.findByDni(pacienteData.dni); 
 
         if (existente) {
           throw new Error ('El Paciente ya existe');
@@ -61,23 +33,19 @@ export class PacienteService {
    
     const pacienteGuardado = await this.pacienteRepository.save(nuevoPaciente);
 
-    return this.#mapToDto(pacienteGuardado);
+    return pacienteGuardado;
   }
 
   async obtenerTodos() {
     const pacientes = await this.pacienteRepository.findAll()
 
-    const pacientesEnDTO = pacientes.map(p => {
-     return this.#mapToDto(p);
-    });
-    
-     return pacientesEnDTO;
+     return pacientes;
   }
 
   async obtenerPorId(id) {
     const paciente = await this.pacienteRepository.findById(id)
 
-    return paciente ? this.#mapToDto(paciente) : null
+    return paciente;
   }
 
 

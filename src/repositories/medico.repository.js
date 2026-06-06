@@ -1,48 +1,50 @@
-import {MedicoModel} from '../shemasBD/medicoSchema.js';
+import { MedicoModel } from '../shemasBD/medicoSchema.js'
 
 export class MedicoRepository {
 
-  constructor(datosIniciales = []){
-    this.MedicoModel = MedicoModel;
+  constructor(datosIniciales = []) {
+    this.MedicoModel = MedicoModel
   }
 
-  async findAll(){
-    return await this.MedicoModel.find(); 
+  async findAll() {
+    return await this.MedicoModel.find()
   }
 
-  async findByFilters(filtros = {}){
-    return await this.MedicoModel.find(filtros);
+  async findByFilters(filtros = {}) {
+    return await this.MedicoModel.find(filtros)
   }
 
-  
-  async findById(id){
-    return await this.MedicoModel.findById(id);
+  async findById(id) {
+    return await this.MedicoModel.findById(id)
+      .populate('especialidades')
+      .populate('practicas')
+      .populate('sedes')
   }
 
-  async findByNombre(nombreMedico){
-    return await this.MedicoModel.findOne({ nombre: nombreMedico });
+  async findByNombre(nombreMedico) {
+    return await this.MedicoModel.findOne({ nombre: nombreMedico })
   }
 
-  async save(medico){
+  async save(medico) {
     //Si tiene id es update, si no es create
-    const query = medico.id ? { _id: medico.id } : { _id: new this.MedicoModel()._id };
-        
+    const query = medico.id ? { _id: medico.id } : { _id: new this.MedicoModel()._id }
+
     //Busca un medico con ese _id y la actualiza con los datos de medico.
     //Si no existe, la crea (por upsert: true).
     return await this.MedicoModel.findOneAndUpdate(
       query,
       medico,
-      { 
-        new: true,
+      {
+        returnDocument: 'after',
         runValidators: true,
         upsert: true
       }
-      );
+    )
   }
-  //medico.toJSON(),
 
-  async delete(id){
-    return await this.MedicoModel.findByIdAndDelete(id);
+
+  async delete(id) {
+    return await this.MedicoModel.findByIdAndDelete(id)
   }
 
   async findAllPaginated(page = 1, limit = 5) {
@@ -50,60 +52,22 @@ export class MedicoRepository {
     const skip = (page - 1) * limit
 
     const medicos =
-        await this.MedicoModel
-          .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
-          .skip(skip)
-          .limit(limit)
-  
+      await this.MedicoModel
+        .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
+        .skip(skip)
+        .limit(limit)
+
     const total =
-        await this.MedicoModel.countDocuments({
-            //eliminado: false
-        })
-  
+      await this.MedicoModel.countDocuments({
+        //eliminado: false
+      })
+
     return {
-          medicos,
-          total,
-          page,
-          // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
-          totalPages: Math.ceil(total / limit)
-      }
+      medicos,
+      total,
+      page,
+      // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
+      totalPages: Math.ceil(total / limit)
+    }
   }
-
-  // guardar(medico) {
-  //   if (!medico || medico.id == null) {
-  //     throw new Error('El medico debe tener un id para guardarse en memoria')
-  //   }
-
-  //   const indiceExistente = this.#medicos.findIndex((m) => m.id === medico.id)
-
-  //   if (indiceExistente >= 0) {
-  //     this.#medicos[indiceExistente] = medico
-  //   } else {
-  //     this.#medicos.push(medico)
-  //   }
-
-  //   return medico
-  // }
-
-  // obtenerTodos() {
-  //   return [...this.#medicos]
-  // }
-
-  // obtenerPorId(idMedico) {
-  //   return this.#medicos.find((medico) => medico.id === idMedico) ?? null
-  // }
-
-  // eliminarPorId(idMedico) {
-  //   const cantidadInicial = this.#medicos.length
-  //   this.#medicos = this.#medicos.filter((medico) => medico.id !== idMedico)
-  //   return this.#medicos.length < cantidadInicial
-  // }
-
-  // limpiar() {
-  //   this.#medicos = []
-  // }
-
-  // cargar(medicos = []) {
-  //   medicos.forEach((medico) => this.guardar(medico))
-  // }
 }

@@ -1,6 +1,4 @@
 export class Notificacion {
-  static ultimoId = 0
-
   id
   destinatario
   remitente
@@ -10,7 +8,6 @@ export class Notificacion {
   leida
 
   constructor({ destinatario, remitente, mensaje }) {
-    this.id = Notificacion.ultimoId++
     this.destinatario = destinatario
     this.remitente = remitente
     this.mensaje = mensaje
@@ -22,33 +19,5 @@ export class Notificacion {
   marcarComoLeida() {
     this.leida = true
     this.fechaHoraLeida = new Date()
-  }
-
-  getId() {
-    return this.id
-  }
-
-  getDestinatario() {
-    return this.destinatario
-  }
-
-  getRemitente() {
-    return this.remitente
-  }
-
-  getMensaje() {
-    return this.mensaje
-  }
-
-  getFechaHoraCreacion() {
-    return this.fechaHoraCreacion
-  }
-
-  getFechaHoraLeida() {
-    return this.fechaHoraLeida
-  }
-
-  getLeida() {
-    return this.leida
   }
 }
