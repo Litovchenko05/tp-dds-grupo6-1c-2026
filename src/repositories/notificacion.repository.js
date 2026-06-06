@@ -1,4 +1,4 @@
-import { NotificacionModel } from '../shemasBD/notificacionSchema.js'
+import { NotificacionModel } from '../schemasBD/notificacionSchema.js'
 
 export class NotificacionRepository {
   constructor() {
