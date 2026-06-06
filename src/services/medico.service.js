@@ -10,9 +10,15 @@ import { Especialidad } from '../models/Especialidad.js'
 import { Practica } from '../models/Practica.js'
 import { Sede } from '../models/Sede.js'
 
-
 export class MedicoService {
-  constructor({ medicoRepository, agendaService, turnoService, especialidadRepository, practicaRepository, sedeRepository }) {
+  constructor({
+    medicoRepository,
+    agendaService,
+    turnoService,
+    especialidadRepository,
+    practicaRepository,
+    sedeRepository,
+  }) {
     this.medicoRepository = medicoRepository
     this.turnoService = turnoService
     this.agendaService = agendaService
@@ -21,10 +27,17 @@ export class MedicoService {
     this.sedeRepository = sedeRepository
   }
 
-
   async createMedico(medicoData) {
-    if (!medicoData.usuario || !medicoData.matricula || !medicoData.nombre || !medicoData.especialidades || !medicoData.practicas || !medicoData.sedes || !medicoData.disponibilidades) {
-      throw new ValidationError('Todos los campos son requeridos')
+    if (
+      !medicoData.usuario ||
+      !medicoData.matricula ||
+      !medicoData.nombre ||
+      !medicoData.especialidades ||
+      !medicoData.practicas ||
+      !medicoData.sedes ||
+      !medicoData.disponibilidades
+    ) {
+      throw new Error('Todos los campos son requeridos')
     }
 
     const existente = await this.medicoRepository.findByNombre(medicoData.nombre)
@@ -36,9 +49,16 @@ export class MedicoService {
     const practicasIds = await this.obtenerIdsPracticas(medicoData.practicas)
     const sedesIds = await this.obtenerIdsSedes(medicoData.sedes)
 
-    const nuevoMedico = new Medico(medicoData.usuario, medicoData.matricula, medicoData.nombre, especialidadesIds, practicasIds, sedesIds, medicoData.disponibilidades)
+    const nuevoMedico = new Medico(
+      medicoData.usuario,
+      medicoData.matricula,
+      medicoData.nombre,
+      especialidadesIds,
+      practicasIds,
+      sedesIds,
+      medicoData.disponibilidades
+    )
 
-    // const nuevoMedico = {usuario, matricula, nombre, especialidades, practicas, sedes, disponibilidades};
     const medicoGuardado = await this.medicoRepository.save(nuevoMedico)
 
     return medicoGuardado
@@ -48,17 +68,12 @@ export class MedicoService {
     const especialidadesIds = []
 
     for (const e of especialidades) {
-
       const existe = await this.especialidadRepository.findByNombre(e.nombre)
 
       if (existe) {
         especialidadesIds.push(existe._id)
       } else {
-        const especialidad = new Especialidad(
-          e.nombre,
-          e.duracionTurnoEnMins,
-          e.costoConsulta
-        )
+        const especialidad = new Especialidad(e.nombre, e.duracionTurnoEnMins, e.costoConsulta)
 
         const guardada = await this.especialidadRepository.save(especialidad)
         especialidadesIds.push(guardada._id)
@@ -72,19 +87,12 @@ export class MedicoService {
     const practicasIds = []
 
     for (const p of practicas) {
-
       const existe = await this.practicaRepository.findByCodigoYNombre(p.codigo, p.nombre)
 
       if (existe) {
         practicasIds.push(existe._id)
-      }
-      else {
-        const practica = new Practica(
-          p.codigo,
-          p.nombre,
-          p.duracionTurnoEnMins,
-          p.costo
-        )
+      } else {
+        const practica = new Practica(p.codigo, p.nombre, p.duracionTurnoEnMins, p.costo)
 
         const guardada = await this.practicaRepository.save(practica)
         practicasIds.push(guardada._id)
@@ -97,16 +105,12 @@ export class MedicoService {
     const sedesIds = []
 
     for (const s of sedes) {
-
       const existe = await this.sedeRepository.findByNombre(s.nombre)
 
       if (existe) {
         sedesIds.push(existe._id)
       } else {
-        const sede = new Sede(
-          s.nombre,
-          s.direccion
-        )
+        const sede = new Sede(s.nombre, s.direccion)
 
         const guardada = await this.sedeRepository.save(sede)
         sedesIds.push(guardada._id)
@@ -116,7 +120,6 @@ export class MedicoService {
   }
 
   async obtenerTodos() {
-
     const medicos = await this.medicoRepository.findAll()
     return medicos
   }
@@ -128,24 +131,19 @@ export class MedicoService {
 
   async agregarServicio(medicoId, servicio) {
     try {
-
       const medico = await this.medicoRepository.findById(medicoId)
-
 
       if (!medico) {
         throw new Error('Medico no encontrado')
       }
       let nuevoServicio
-      if ("codigo" in servicio) {
-        console.log('entre al if de servicio')
+      if ('codigo' in servicio) {
         nuevoServicio = new Practica(
           servicio.codigo,
           servicio.nombre,
           servicio.duracionTurnoEnMins,
           servicio.costo
-
         )
-        console.log('se creo practica', nuevoServicio)
       } else {
         nuevoServicio = new Especialidad(
           servicio.nombre,
@@ -158,28 +156,24 @@ export class MedicoService {
     } catch (error) {
       throw new Error('error en agregar servicio para el médico')
     }
-
   }
   async agregarServicio(medicoId, servicio) {
     try {
-
       const medico = await this.medicoRepository.findById(medicoId)
-
 
       if (!medico) {
         throw new Error('Medico no encontrado')
       }
       let nuevoServicio
-      if ("codigo" in servicio) {
-        console.log('entre al if de servicio')
+      if ('codigo' in servicio) {
+
         nuevoServicio = new Practica(
           servicio.codigo,
           servicio.nombre,
           servicio.duracionTurnoEnMins,
           servicio.costo
-
         )
-        console.log('se creo practica', nuevoServicio)
+
       } else {
         nuevoServicio = new Especialidad(
           servicio.nombre,
@@ -192,7 +186,6 @@ export class MedicoService {
     } catch (error) {
       throw new Error('error en agregar servicio para el médico')
     }
-
   }
 
   async agregarDisponibilidad(medicoId, disponibilidadCompleta) {
@@ -208,7 +201,6 @@ export class MedicoService {
 
       medico.agregarDisponibilidad(nuevaDisponibilidad)
 
-
       //persisto en mongo
       await medico.save()
 
@@ -216,23 +208,36 @@ export class MedicoService {
       const objSede = await this.sedeRepository.findByNombre(disponibilidadCompleta.sede.nombre)
       const tipoDeServicio = disponibilidadCompleta.tipoDeServicio
 
-
       if (disponibilidadCompleta.servicio.codigo == undefined) {
-        const especialidadObj = await this.especialidadRepository.findByNombre(disponibilidadCompleta.servicio.nombre)
+        const especialidadObj = await this.especialidadRepository.findByNombre(
+          disponibilidadCompleta.servicio.nombre
+        )
         setImmediate(() => {
-          this.generarTurnosPorAnio(medico, nuevaDisponibilidadObj, objSede, especialidadObj, tipoDeServicio)
+          this.generarTurnosPorAnio(
+            medico,
+            nuevaDisponibilidadObj,
+            objSede,
+            especialidadObj,
+            tipoDeServicio
+          )
         })
-
       } else {
-
-        const practicaObj = await this.practicaRepository.findByCodigoYNombre(disponibilidadCompleta.servicio.codigo, disponibilidadCompleta.servicio.nombre)
+        const practicaObj = await this.practicaRepository.findByCodigoYNombre(
+          disponibilidadCompleta.servicio.codigo,
+          disponibilidadCompleta.servicio.nombre
+        )
         setImmediate(() => {
-          this.generarTurnosPorAnio(medico, nuevaDisponibilidadObj, objSede, practicaObj, tipoDeServicio)
+          this.generarTurnosPorAnio(
+            medico,
+            nuevaDisponibilidadObj,
+            objSede,
+            practicaObj,
+            tipoDeServicio
+          )
         })
       }
 
       return medico
-
     } catch (error) {
       throw new Error(error.message)
     }
@@ -240,7 +245,13 @@ export class MedicoService {
 
   async generarTurnosPorAnio(medico, disponibilidad, sede, servicio, tipoDeServicio) {
     try {
-      this.agendaService.generarTurnosParaDisponibilidad(medico, disponibilidad, sede, servicio, tipoDeServicio)
+      this.agendaService.generarTurnosParaDisponibilidad(
+        medico,
+        disponibilidad,
+        sede,
+        servicio,
+        tipoDeServicio
+      )
     } catch (error) {
       throw new Error('error al delegar la generación de turnos por disponibildad al serviceAgenda')
     }
@@ -255,8 +266,6 @@ export class MedicoService {
       }
 
       const disponibilidad = medico.disponibilidades.id(disponibilidadId)
-
-
 
       if (!disponibilidad) {
         throw new Error('Disponibilidad no encontrada')
@@ -305,10 +314,8 @@ export class MedicoService {
         throw new Error('Médico no encontrado')
       }
       let index
-      if ("codigo" in nuevoServicio) {
-
-
-        const practicaAnterior = medico.practicas.find(n => n.nombre == servicioNombre)
+      if ('codigo' in nuevoServicio) {
+        const practicaAnterior = medico.practicas.find((n) => n.nombre == servicioNombre)
 
         const servicioNuevo = new Practica(
           nuevoServicio.codigo,
@@ -317,93 +324,48 @@ export class MedicoService {
           nuevoServicio.costo
         )
 
-        console.log(
-          'Practica existente antes de la modificación: ',
-          practicaAnterior.codigo +
-          ' ' +
-          practicaAnterior.nombre +
-          ' ' +
-          practicaAnterior.duracionTurnoEnMins +
-          ' ' +
-          practicaAnterior.costo
-        )
-
-
-        index = medico.practicas.findIndex(
-          p => p.nombre === (practicaAnterior.nombre)
-        )
+        index = medico.practicas.findIndex((p) => p.nombre === practicaAnterior.nombre)
 
         medico.practicas[index].codigo = nuevoServicio.codigo
         medico.practicas[index].nombre = nuevoServicio.nombre
         medico.practicas[index].duracionTurnoEnMins = nuevoServicio.duracionTurnoEnMins
         medico.practicas[index].costo = nuevoServicio.costo
 
-
-
-
-
-
         await medico.save()
-
-
       } else {
-
-
-
-        const especialidadAnterior = medico.especialidades.find(n => n.nombre == servicioNombre)
+        const especialidadAnterior = medico.especialidades.find((n) => n.nombre == servicioNombre)
 
         const servicioNuevo = new Especialidad(
           nuevoServicio.nombre,
           nuevoServicio.duracionTurnoEnMins,
           nuevoServicio.costoConsulta
         )
-        console.log(
-          'Especialidad existente antes de la modificación: ',
-          especialidadAnterior.nombre +
-          ' ' +
-          especialidadAnterior.duracionTurnoEnMins +
-          ' ' +
-          especialidadAnterior.costoConsulta
-        )
-        index = medico.especialidades.findIndex(
-          p => p.nombre === (especiaidadAnterior.nombre)
-        )
+
+        index = medico.especialidades.findIndex((p) => p.nombre === especialidadAnterior.nombre)
         medico.especialidades[index].nombre = nuevoServicio.nombre
         medico.especialidades[index].duracionTurnoEnMins = nuevoServicio.duracionTurnoEnMins
         medico.especialidades[index].costoConsulta = nuevoServicio.costoConsulta
         await medico.save()
-
       }
-
-
-
-    }
-    catch (error) {
+    } catch (error) {
       throw new Error('Error en modificar servicio para el médico')
     }
   }
   async eliminarServicio(nombreServicio, tipoDeServicio, medicoId) {
-
     try {
       const medico = await this.medicoRepository.findById(medicoId)
       let servicio
 
-      if (tipoDeServicio == "practica") {
-
-        servicio = medico.practicas.find(n => n.nombre == nombreServicio)
-
-        console.log(servicio)
-
-      } else if (tipoDeServicio == "especialidad") {
-        servicio = medico.especialidades.find(n => n.nombre == nombreServicio)
+      if (tipoDeServicio == 'practica') {
+        servicio = medico.practicas.find((n) => n.nombre == nombreServicio)
+      } else if (tipoDeServicio == 'especialidad') {
+        servicio = medico.especialidades.find((n) => n.nombre == nombreServicio)
       }
 
       medico.darDeBajaServicio(servicio)
       await medico.save()
-
-    }
-    catch (error) {
-      throw new Error("error al eliminar el servicio para el medico")
+    } catch (error) {
+      throw new Error('error al eliminar el servicio para el medico')
     }
   }
   generarTurnosPorAnioParaDisponibilidadModificada(
@@ -417,7 +379,4 @@ export class MedicoService {
       disponibilidadModificada
     )
   }
-
-
-
 }

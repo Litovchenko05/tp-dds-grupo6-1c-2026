@@ -10,50 +10,46 @@ import { MedicoRepository } from '../repositories/medico.repository.js'
 import { TurnoService } from '../services/turno.service.js'
 import { CambioEstadoTurno } from '../models/cambioEstadoTurno.js'
 export class PacienteService {
-
   constructor() {
     this.pacienteRepository = new PacienteRepository()
     this.turnoRepository = new TurnoRepository()
     this.medicoRespository = new MedicoRepository()
-    this.turnoService = new this.TurnoService()  // LO NECESITO PARA CANCELAR Y MODIFICAR UN TURNO
+    this.turnoService = new this.TurnoService() // LO NECESITO PARA CANCELAR Y MODIFICAR UN TURNO
   }
 
   async createPaciente(pacienteData) {
-
-    const { dni, nombre, obraSocial, usuario, plan } = pacienteData;
+    const { dni, nombre, obraSocial, usuario, plan } = pacienteData
 
     if (!usuario || !dni || !nombre || !obraSocial || !plan) {
-      throw new ValidationError('Todos los campos son requeridos');
+      throw new Error('Todos los campos son requeridos')
     }
 
-    const existente = await this.pacienteRepository.findByDni(pacienteData.dni);
+    const existente = await this.pacienteRepository.findByDni(pacienteData.dni)
 
     if (existente) {
-      throw new Error('El Paciente ya existe');
+      throw new Error('El Paciente ya existe')
     }
 
-    const nuevoPaciente = { dni, nombre, obraSocial, usuario, plan };
+    const nuevoPaciente = { dni, nombre, obraSocial, usuario, plan }
 
-    const pacienteGuardado = await this.pacienteRepository.save(nuevoPaciente);
+    const pacienteGuardado = await this.pacienteRepository.save(nuevoPaciente)
 
-    return pacienteGuardado;
+    return pacienteGuardado
   }
 
   async obtenerTodos() {
     const pacientes = await this.pacienteRepository.findAll()
 
-    return pacientes;
+    return pacientes
   }
 
   async obtenerPorId(id) {
     const paciente = await this.pacienteRepository.findById(id)
 
-    return paciente;
+    return paciente
   }
 
-
   async reservarTurno(pacienteId, turnoId) {
-
     const paciente = await this.pacienteRepository.findById(pacienteId)
 
     if (!paciente) {
@@ -66,23 +62,21 @@ export class PacienteService {
     }
 
     //TODO DELEGAR EN TURNO SERVICE
-    if (turno.estado == "DISPONIBLE") {
-
-      turno.paciente = paciente;
-      turno.estado = EstadoTurno.DISPONIBLE;
+    if (turno.estado == 'DISPONIBLE') {
+      turno.paciente = paciente
+      turno.estado = EstadoTurno.DISPONIBLE
       turno.save()
 
-      paciente.historialDeTurnos.push(turno);
+      paciente.historialDeTurnos.push(turno)
       paciente.save()
 
-      return turno;
+      return turno
     } else {
       throw new Error('El turno no está disponible para reservar')
     }
   }
 
   async cancelarTurno(pacienteId, turnoId, motivo) {
-
     try {
       const paciente = await this.pacienteRepository.findById(pacienteId)
 
@@ -90,22 +84,20 @@ export class PacienteService {
         throw new Error('Paciente no encontrado')
       }
 
-      const turnoCancelado = await this.turnoService.cancelar(turnoId, paciente.usuario._id, motivo);
+      const turnoCancelado = await this.turnoService.cancelar(turnoId, paciente.usuario._id, motivo)
 
-      return turnoCancelado;
-    }
-    catch (error) {
+      return turnoCancelado
+    } catch (error) {
       throw new Error('El turno no pudo ser cancelado')
     }
   }
-
 
   async consultarHistorial(pacienteId) {
     const paciente = await this.pacienteRepository.findById(pacienteId)
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
-    const historial = paciente.historialDeTurnos;
+    const historial = paciente.historialDeTurnos
     return historial
   }
 
@@ -121,21 +113,17 @@ export class PacienteService {
       throw new Error('Turno no encontrado')
     }
 
-    const medico = await this.medicoRespository.findByNombre(turno.medico.nombre);
-
+    const medico = await this.medicoRespository.findByNombre(turno.medico.nombre)
 
     medico.solicitudesDeCambioDeFecha.push({
       nuevaFechaHora: new Date(nuevaFechaHora),
-      estado: 'pendiente'
-    });
+      estado: 'pendiente',
+    })
 
-    await medico.save();
-
+    await medico.save()
   }
 
   async findAllPaginated(page, limit) {
-    return await this.pacienteRepository
-      .findAllPaginated(page, limit)
+    return await this.pacienteRepository.findAllPaginated(page, limit)
   }
-
 }
