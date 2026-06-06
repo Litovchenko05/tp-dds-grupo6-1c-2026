@@ -5,56 +5,38 @@ export class TurnoService {
     this.turnoRepository = new TurnoRepository()
   }
 
-  #mapToDto(t) {
-    return {
-      id: t.id,
-      medico: t.medico
-        ? {
-            id: t.medico.id,
-            nombre: t.medico.nombre,
-            matricula: t.medico.matricula,
-            usuario: t.medico.usuario,
-          }
-        : null,
-      paciente: t.paciente
-        ? {
-            id: t.paciente.id,
-            nombre: t.paciente.nombre,
-            dni: t.paciente.dni,
-            usuario: t.paciente.usuario,
-          }
-        : null,
-      fechaHora: t.fechaHora,
-      sede: t.sede
-        ? {
-            id: t.sede.id,
-            nombre: t.sede.nombre,
-            direccion: t.sede.direccion,
-          }
-        : null,
-      practica: t.practica
-        ? {
-            id: t.practica.id,
-            codigo: t.practica.codigo,
-            nombre: t.practica.nombre,
-            duracionTurnoEnMins: t.practica.duracionTurnoEnMins,
-            costo: t.practica.costo,
-          }
-        : null,
-      estado: t.estado,
-      historialEstados: t.historialEstados,
-      costo: t.costo,
-    }
-  }
 
   async obtenerTodos() {
     const turnos = await this.turnoRepository.findAll()
-    return turnos.map(this.#mapToDto)
+    return turnos;
   }
 
   obtenerPorId(id) {
     const turno = this.turnoRepository.findById(id)
 
-    return turno ? this.#mapToDto(turno) : null
+    return turno;
+  }
+
+  async obtenerTurnosPorProfesional(nombreDeProfesional){
+    const turnos = await this.turnoRepository.obtenerTurnosPorProfesional(nombreDeProfesional)
+    return turnos;
+  }
+
+  async obtenerTurnosPorEspecialidad(nombreDeEspecialidad){
+    const turnos = await this.turnoRepository.obtenerTurnosPorEspecialidad(nombreDeEspecialidad)
+    return turnos;
+  }
+  async obtenerTurnosPorPractica(nombreDePractica){
+    const turnos = await this.turnoRepository.obtenerTurnosPorPractica(nombreDePractica)
+    return turnos;
+  }
+
+  async obtenerTurnosPorSede(nombreSede){
+    const turnos = await this.turnoRepository.obtenerTurnosPorSede(nombreSede)
+    return turnos;
+  }
+  async obtenerTurnosPorRango(fechaIncial, fechaFinal){
+    const turnos = await this.turnoRepository.obtenerTurnosPorRango(fechaIncial, fechaFinal)
+    return turnos;
   }
 }

@@ -37,7 +37,7 @@ export class Medico {
     return this.id
   }
   setId(id) {
-    this.id = id;
+    this.id = id
   }
 
   getUsuario() {
@@ -78,7 +78,7 @@ export class Medico {
   }
 
   obtenerDisponibilidadPorId(idDisponibilidad) {
-    return this.disponibilidades[idDisponibilidad];
+    return this.disponibilidades[idDisponibilidad]
   }
 
   aceptarCambioDeFecha(turno) {
@@ -178,7 +178,7 @@ export class Medico {
     ]
     console.log("pase", servicios)
 
-    const servicio = servicios.find(s => s._id === servicioId);
+    const servicio = servicios.find(s => s._id === servicioId)
     console.log("pase", servicio)
     return servicio
   }
@@ -201,19 +201,6 @@ export class Medico {
       listaServicio.push(servicio)
 
       return listaServicio
-    }
-  }
-
-  toJSON() {
-    return {
-      id: this.id,
-      usuario: this.usuario,
-      matricula: this.matricula,
-      nombre: this.nombre,
-      especialidades: this.especialidades,
-      practicas: this.practicas,
-      sedes: this.sedes,
-      disponibilidades: this.disponibilidades
     }
   }
 

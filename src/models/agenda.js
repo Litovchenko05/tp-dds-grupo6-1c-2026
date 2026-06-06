@@ -11,7 +11,7 @@ import { Paciente } from './Paciente.js'
 
 export class Agenda {
   
-  static generarTurnos(medico, disponibilidad, sede, servicio) {
+  static generarTurnos(medico, disponibilidad, sede, servicio, tipoDeServicio) {
 
     const nuevosTurnos = []
     const fechaActual = new Date()
@@ -29,7 +29,7 @@ export class Agenda {
 
       if (nombreDelDia == disponibilidad.getDiaSemana()) {
         // hora inicial del cual arrancan los turnos
-        let fechaHora = new Date(
+        let fechaHoraInicial = new Date(
           año,
           fechaActual.getMonth(),
           fechaActual.getDate(),
@@ -38,7 +38,7 @@ export class Agenda {
         )
 
         // hora final para que terminen los turnos
-        const fechaLimite = new Date(
+        const fechaHoraFinal = new Date(
           año,
           fechaActual.getMonth(),
           fechaActual.getDate(),
@@ -46,16 +46,16 @@ export class Agenda {
           minutoHasta
         )
 
-        while (fechaHora <= fechaLimite) {
+        while (fechaHoraInicial <= fechaHoraFinal) {
           // console.log('La fecha del siguiente turno es ' + fechaHora.toLocaleString('es-AR'))
 
-          const fechaTurno = new Date(fechaHora);
-          const nuevoTurno = new Turno(medico, fechaTurno, sede, servicio);
-          const nuevoTurnoJSON = Agenda.#mapToJSON(nuevoTurno);
+          const fechaTurno = new Date(fechaHoraInicial);
+          const nuevoTurno = new Turno(medico, fechaTurno, sede, servicio, tipoDeServicio);
+          // const nuevoTurnoJSON = Agenda.#mapToJSON(nuevoTurno);
 
-          nuevosTurnos.push(nuevoTurnoJSON)
+          nuevosTurnos.push(nuevoTurno)
           //le sumo 30 min a la hora inicial de la fecha inicial para generar los turnos
-          fechaHora.setMinutes(fechaHora.getMinutes() + 30)
+          fechaHoraInicial.setMinutes(fechaHoraInicial.getMinutes() + 30)
         }
       }
 
@@ -77,115 +77,95 @@ export class Agenda {
   }
 
 
-  static #mapToJSON(turno){
-    return{
-      medico:{
-            id: turno.getMedico().getId(),
-            nombre: turno.getMedico().getNombre(),
-            usuario: turno.getMedico().getUsuario(),
-            matricula: turno.getMedico().getMatricula(),
-            especialidades: Array.isArray(
-              turno.getMedico().getEspecialidades()
-            )
-              ? turno.getMedico()
-                  .getEspecialidades()
-                  .map((e) => ({
-                    id: e.getId(),
+  // static #mapToJSON(turno){
+  //   return{
+  //     medico:{
+  //           id: turno.getMedico().getId(),
+  //           nombre: turno.getMedico().getNombre(),
+  //           usuario: turno.getMedico().getUsuario(),
+  //           matricula: turno.getMedico().getMatricula(),
+  //           especialidades: Array.isArray(
+  //             turno.getMedico().getEspecialidades()
+  //           )
+  //             ? turno.getMedico()
+  //                 .getEspecialidades()
+  //                 .map((e) => ({
+  //                   id: e.getId(),
 
-                    nombre: e.getNombre(),
+  //                   nombre: e.getNombre(),
 
-                    duracionTurnoEnMins:
-                      e.getDuracionTurnoEnMins(),
+  //                   duracionTurnoEnMins:
+  //                     e.getDuracionTurnoEnMins(),
 
-                    costo:
-                      e.getCostoConsulta(),
-                  }))
-              : [],
+  //                   costo:
+  //                     e.getCostoConsulta(),
+  //                 }))
+  //             : [],
 
-            practicas: Array.isArray(
-              turno.getMedico().getPracticas()
-            )
-              ? turno.getMedico()
-                  .getPracticas()
-                  .map((p) => ({
+  //           practicas: Array.isArray(
+  //             turno.getMedico().getPracticas()
+  //           )
+  //             ? turno.getMedico()
+  //                 .getPracticas()
+  //                 .map((p) => ({
                     
-                    codigo: p.getCodigo(),
-                    nombre: p.getNombre(),
-                    duracionTurnoEnMins: p.getDuracionTurnoEnMins(),
-                    costo: p.getCosto(),
-                  }))
-              : [],
+  //                   codigo: p.getCodigo(),
+  //                   nombre: p.getNombre(),
+  //                   duracionTurnoEnMins: p.getDuracionTurnoEnMins(),
+  //                   costo: p.getCosto(),
+  //                 }))
+  //             : [],
 
-            sedes: Array.isArray(
-              turno.getMedico().getSedes()
-            )
-              ? turno.getMedico()
-                  .getSedes()
-                  .map((s) => ({
+  //           sedes: Array.isArray(
+  //             turno.getMedico().getSedes()
+  //           )
+  //             ? turno.getMedico()
+  //                 .getSedes()
+  //                 .map((s) => ({
                    
 
-                    nombre: s.getNombre(),
+  //                   nombre: s.getNombre(),
 
-                    direccion: s.getDireccion(),
-                  }))
-              : [],
+  //                   direccion: s.getDireccion(),
+  //                 }))
+  //             : [],
 
-            disponibilidades: Array.isArray(
-              turno.getMedico().getDisponibilidades()
-            )
-              ? turno.getMedico()
-                  .getDisponibilidades()
-                  .map((d) => ({
-                    diaSemana: d.getDiaSemana(),
+  //           disponibilidades: Array.isArray(
+  //             turno.getMedico().getDisponibilidades()
+  //           )
+  //             ? turno.getMedico()
+  //                 .getDisponibilidades()
+  //                 .map((d) => ({
+  //                   diaSemana: d.getDiaSemana(),
 
-                    horaDesde: d.getHoraDesde(),
+  //                   horaDesde: d.getHoraDesde(),
 
-                    horaHasta: d.getHoraHasta(),
-                  }))
-              : [],
-          },
-      paciente: null,
-      fechaHora:turno.getFechaHora(),
-      sede:{
-        nombre:turno.getSede().getNombre(),
-        direccion:turno.getSede().getDireccion(),
-      },
-      servicio:{
-        nombre:turno.getServicio().getNombre(),
-      },
-      estado:turno.getEstado(),
-      historialDeEstados: Array.isArray(turno.getHistorialEstados())
-        ? turno.getHistorialEstados().map((cambio) => ({
-            fechaHoraIngreso: cambio.fechaHoraIngreso,
-            estado: cambio.estado,
-            motivo: cambio.motivo,
-          }))
-        : [],
-      costo: turno.getServicio().getCosto(),
+  //                   horaHasta: d.getHoraHasta(),
+  //                 }))
+  //             : [],
+  //         },
+  //     paciente: null,
+  //     fechaHora:turno.getFechaHora(),
+  //     sede:{
+  //       nombre:turno.getSede().getNombre(),
+  //       direccion:turno.getSede().getDireccion(),
+  //     },
+  //     servicio:{
+  //       nombre:turno.getServicio().getNombre(),
+  //     },
+  //     estado:turno.getEstado(),
+  //     historialDeEstados: Array.isArray(turno.getHistorialEstados())
+  //       ? turno.getHistorialEstados().map((cambio) => ({
+  //           fechaHoraIngreso: cambio.fechaHoraIngreso,
+  //           estado: cambio.estado,
+  //           motivo: cambio.motivo,
+  //         }))
+  //       : [],
+  //     costo: turno.getServicio().getCosto(),
      
-    }
-  }
+  //   }
+  // }
 
 
-  static buscarTurnoParaGenerarNotificacionesDeRecordatorio(unTurno) {
-    const fechaManiana = new Date()
-    fechaManiana.setDate(fechaManiana.getDate() + 1)
-
-    const medico = new Medico(1, 'usuarioMedico', 'matriculaMedica', 'nombreMedico', [], [], [])
-
-    const turno1 = new Turno(1, medico, new Date(), null, null)
-    const turno2 = new Turno(2, medico, fechaManiana, null, null)
-    const turno3 = new Turno(3, medico, new Date(), null, null)
-
-    const turnos = [turno1, turno2, turno3]
-
-    let resultado = turnos.some(
-      (turno) =>
-        turno.fechaHora.toDateString() === fechaManiana.toDateString() &&
-        unTurno.estadoActual === EstadoTurno.ACEPTADO &&
-        unTurno.id === turno.id
-    )
-
-    return resultado
-  }
+  
 }

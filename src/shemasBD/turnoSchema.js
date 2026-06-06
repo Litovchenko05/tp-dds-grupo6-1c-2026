@@ -23,14 +23,23 @@ export const TurnoSchema = new mongoose.Schema(
       required: true,
     },
     sede: {
-      type: SedeSchema,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Sede',
+      required: true
     },
     servicio: {
-      type: mongoose.Schema.Types.Mixed,
+      type: mongoose.Schema.Types.ObjectId,
       default: null,
-      required: false,
+      refPath: 'tipoDeServicio',
+      required:true
     },
+
+    tipoDeServicio: {
+      type: String,
+      required: true,
+      enum: ['Especialidad', 'Practica']
+    },
+
     estado: {
       type: String,
       required: true,
