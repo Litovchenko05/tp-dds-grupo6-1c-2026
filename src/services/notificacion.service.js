@@ -50,4 +50,15 @@ export class NotificacionService {
 
     return await this.notificacionRepository.saveMany(loteNotificaciones)
   }
+
+  generarNotificacion(destinatario, remitente, mensaje) {
+    const nuevaNotificacion = {
+      destinatario,
+      remitente,
+      mensaje,
+      fechaHoraCreacion: new Date(),
+      leida: false,
+    }
+  this.notificacionRepository.crear(nuevaNotificacion)
+  }
 }

@@ -109,4 +109,9 @@ export class PacienteService {
     
   }
 
+  async findAllPaginated(page, limit) {
+      return await this.pacienteRepository
+          .findAllPaginated(page, limit)
+  }
+
 }

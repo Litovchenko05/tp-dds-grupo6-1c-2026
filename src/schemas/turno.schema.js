@@ -6,6 +6,11 @@ import {sedeSchema} from './sede.schema.js'
 import {practicaSchema} from './practica.schema.js'
 import { especialidadSchema } from './especialidad.schema.js'
 
+ // Enum para tipo de usuario
+ const TipoUsuarioEnum = z.enum(['PACIENTE', 'MEDICO', 'ADMIN'], {
+     errorMap: () => ({ message: 'Tipo de usuario inválido' })
+ })
+
 export const turnoSchema = z.object({
   id: z.string().optional, // Valida que el id sea un string opcionable recibirlo
   medico: medicoSchema, // Valida que el médico cumpla con el schema de médico
@@ -16,4 +21,16 @@ export const turnoSchema = z.object({
   estado: EstadoTurnoSchema, // Valida que el estado sea uno de los valores definidos en estadoTurno
   historialEstados: z.array(EstadoTurnoSchema.nullable()), // Valida que sea un valor posible de estadoTurno o null
   costo: z.number().int().positive(), // Valida que el costo sea un número entero positivo
+})
+
+export const cancelarTurnoSchema = z.object({
+    id: z.number()
+        .int().positive('ID de usuario inválido'),
+
+    tipoUsuario: TipoUsuarioEnum,
+
+    motivo: z.string()
+        .min(1, 'El motivo es obligatorio')
+        .max(500, 'El motivo no puede exceder 500 caracteres')
+        .trim()
 })

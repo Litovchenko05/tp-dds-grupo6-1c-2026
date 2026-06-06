@@ -38,6 +38,26 @@ export class Turno {
     })
   }
 
+  quienModifica(id_usuario) {
+    if (this.paciente.id === id_usuario) {
+      return this.paciente
+    }
+    if (this.medico.id === id_usuario) {
+      return this.medico
+    }
+    return null
+  }
+
+  getContraparte(id_usuario) {
+    if (this.paciente.id === id_usuario) {
+      return this.medico
+    }
+    if (this.medico.id === id_usuario) {
+      return this.paciente
+    }
+    return null
+  }
+
   getId() {
     return this.id
   }
@@ -107,22 +127,7 @@ export class Turno {
     }
   }
 
-  // toJSON() {
-  //   return {
-  //     id: this.#id,
-  //     medico: {
-  //       id: this.#medico.id,
-  //       nombre: this.#medico.nombre,
-  //     },
-  //     paciente: this.#paciente
-  //       ? {
-  //           id: this.#paciente.id,
-  //           nombre: this.#paciente.nombre,
-  //         }
-  //       : null,
-  //     fechaHora: this.#fechaHora,
-  //     estado: this.#estado,
-  //     costo: this.#costo,
-  //   }
-  // }
+  getNombreServicio() {
+    return this.practica.nombre
+  }
 }

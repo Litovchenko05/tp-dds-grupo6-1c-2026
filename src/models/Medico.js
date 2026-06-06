@@ -68,6 +68,31 @@ export class Medico {
     return this.disponibilidades
   }
 
+  tieneServicio(tipoServicio) {
+    return (
+      this.especialidades.some((especialidad) => especialidad.nombre === tipoServicio) ||
+      this.practicas.some((practica) => practica.nombre === tipoServicio)
+    )
+  }
+
+  definirDisponibilidad(disponibilidad) {
+    //disponibilidad es un objeto de tipo DisponibilidadHoraria
+    this.disponibilidades.push(disponibilidad)
+  }
+
+  modificarDisponibilidad(idDisponibilidad, nuevaDisponibilidad) {
+    this.disponibilidades[idDisponibilidad] = nuevaDisponibilidad
+  }
+  tieneTipoTurno(tipoTurno) {
+    if (tipoTurno instanceof Especialidad) {
+      return this.especialidades.some(
+        (especialidadMedico) => especialidadMedico.id === tipoTurno.id
+      )
+    }
+    if (tipoTurno instanceof Practica) {
+      return this.practicas.some((practicaMedico) => practicaMedico.id === tipoTurno.id)
+    }
+  }
 
   recibirSolicitud(turno, nuevaFechaHora) {
     this.solicitudesDeCambioDeFecha.push({ turno, nuevaFechaHora })

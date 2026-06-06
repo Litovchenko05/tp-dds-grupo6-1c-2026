@@ -3,7 +3,7 @@ import { Agenda } from '../models/Agenda.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 
 export class AgendaService {
-  
+
   constructor({ turnoRepository }) {
     this.turnoRepository = turnoRepository
   }
@@ -28,35 +28,63 @@ export class AgendaService {
     disponibilidadAnterior,
     disponibilidadModificada
   ) {
-    try{
-      
-      const fechaPosterior = new Date();
-      fechaPosterior.setDate(fechaPosterior.getDate() + 1);
+    try {
 
-  
+      const fechaPosterior = new Date()
+      fechaPosterior.setDate(fechaPosterior.getDate() + 1)
+
+
       const turnosDelMedicoAModificar = await this.turnoRepository.findByFilters(({
-      "medico.usuario._id": medico.usuario._id,
-      fechaHora: { $gte: fechaPosterior },
-      estado: "disponible"
-  }))
+        "medico.usuario._id": medico.usuario._id,
+        fechaHora: { $gte: fechaPosterior },
+        estado: "disponible"
+      }))
 
-  
-      for(const turno of turnosDelMedicoAModificar){
-        
+
+      for (const turno of turnosDelMedicoAModificar) {
+
         const nuevaFechaHora = Agenda.obtenerNuevaFechaDelTurno(
-              turno.fechaHora,
-              disponibilidadAnterior,
-              disponibilidadModificada
-            );
+          turno.fechaHora,
+          disponibilidadAnterior,
+          disponibilidadModificada
+        )
 
-            turno.fechaHora = nuevaFechaHora;
+        turno.fechaHora = nuevaFechaHora
 
-            turno.save();  
+        turno.save()
       }
-      
-    }catch(error){
-      throw new Error(error.message);
+
+    } catch (error) {
+      throw new Error(error.message)
     }
-   
+
+  }
+
+  obtenerDisponiblesSegunMedico(medicoId) {
+    const turnosTotales = this.turnoRepository.obtenerPorMedicoId(medicoId)
+    const turnosFiltrados = turnosTotales.filter((turno) => turno.estado === EstadoTurno.DISPONIBLE)
+    return turnosFiltrados
+  }
+
+  obtenerDisponiblesSegunServicio(nombreServicio) {
+    const turnosTotales = this.turnoRepository.obtenerTodos()
+    const turnosFiltrados = turnosTotales.filter((turno) => turno.getNombreServicio() === nombreServicio && turno.estado === EstadoTurno.DISPONIBLE)
+    return turnosFiltrados
+  }
+
+  obtenerDisponiblesSegunMedicoYServicio(medicoId, nombreServicio) {
+    const turnosTotales = this.turnoRepository.obtenerPorMedicoId(medicoId)
+    const turnosFiltrados = turnosTotales.filter((turno) => turno.getNombreServicio() === nombreServicio && turno.estado === EstadoTurno.DISPONIBLE)
+    return turnosFiltrados
+  }
+
+  obtenerTurnosPorMedico(medicoId) {
+    const turnosTotales = this.turnoRepository.obtenerPorMedicoId(medicoId)
+    return turnosTotales
+  }
+
+  async findAllPaginated(page, limit) {
+    return await this.turnoRepository
+      .findAllPaginated(page, limit)
   }
 }

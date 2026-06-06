@@ -4,14 +4,17 @@ import { PracticaRepository } from '../repositories/practica.repository.js'
 import { SedeRepository } from '../repositories/sede.repository.js'
 import { Medico } from '../models/Medico.js'
 import { DisponibilidadHoraria } from '../models/disponibilidadHoraria.js'
+import { TurnoService } from './turno.service.js'
+import { turnoRepository } from '../repositories/datosPrueba.enMemoria.js'
 import { Especialidad } from '../models/Especialidad.js'
 import { Practica } from '../models/Practica.js'
 import { Sede } from '../models/Sede.js'
 
 
 export class MedicoService {
-  constructor({ medicoRepository, agendaService, especialidadRepository, practicaRepository, sedeRepository }) {
-    this.medicoRepository = new medicoRepository()
+  constructor({ medicoRepository, agendaService, turnoService, especialidadRepository, practicaRepository, sedeRepository }) {
+    this.medicoRepository = medicoRepository
+    this.turnoService = turnoService
     this.agendaService = agendaService
     this.especialidadRepository = especialidadRepository
     this.practicaRepository = practicaRepository
@@ -196,7 +199,6 @@ export class MedicoService {
     try {
       const medico = await this.medicoRepository.findById(medicoId)
 
-
       if (!medico) {
         throw new Error('Médico no encontrado')
       }
@@ -260,9 +262,16 @@ export class MedicoService {
         throw new Error('Disponibilidad no encontrada')
       }
 
-      const disponibilidadAnteriorObj = new DisponibilidadHoraria(disponibilidad.diaSemana, disponibilidad.horaDesde, disponibilidad.horaHasta)
-      const nuevaDisponibilidadObj = new DisponibilidadHoraria(nuevaDisponibilidad.diaSemana, nuevaDisponibilidad.horaDesde, nuevaDisponibilidad.horaHasta)
-
+      const disponibilidadAnteriorObj = new DisponibilidadHoraria(
+        disponibilidad.diaSemana,
+        disponibilidad.horaDesde,
+        disponibilidad.horaHasta
+      )
+      const nuevaDisponibilidadObj = new DisponibilidadHoraria(
+        nuevaDisponibilidad.diaSemana,
+        nuevaDisponibilidad.horaDesde,
+        nuevaDisponibilidad.horaHasta
+      )
 
       if (nuevaDisponibilidad.diaSemana != undefined) {
         disponibilidad.diaSemana = nuevaDisponibilidad.diaSemana
@@ -284,7 +293,6 @@ export class MedicoService {
       })
 
       return medico
-
     } catch (error) {
       throw new Error(error.message)
     }
