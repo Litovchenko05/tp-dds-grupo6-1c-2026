@@ -1,7 +1,6 @@
 import { especialidadSchema } from '../schemas/especialidad.schema.js'
 import { medicoSchema } from '../schemas/medico.schema.js'
 import { practicaSchema } from '../schemas/practica.schema.js'
-import { PracticaSchema } from '../shemasBD/practicaSchema.js'
 
 import { disponibilidadHorariaSchema } from '../schemas/disponibilidadHoraria.schema.js'
 import { disponibilidadDetalladaSchema } from '../schemas/disponibilidadPorSedeyServicio.js'
@@ -115,7 +114,7 @@ export class MedicoController {
       const { idMedico } = req.params
 
       const { nombreServicio, estadoTurno } = req.query
-      const disponibilidades
+      const disponibilidades = []
       if (estadoTurno && estadoTurno == 'DISPONIBLE') {
         disponibilidades = this.medicoService.obtenerDisponiblesSegunMedicoYServicio(
           idMedico,
@@ -390,7 +389,7 @@ export class MedicoController {
       if (hasta) filtros.hasta = hasta
       if (estado) filtros.estado = estado
 
-      const historial = await this.pacienteService.consultarHistorial(pacienteId);
+      const historial = await this.pacienteService.consultarHistorial(pacienteId)
 
       return res.status(200).json({
         status: 'success',

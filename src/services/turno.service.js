@@ -1,14 +1,10 @@
-import { TurnoRepository } from './repositories/turno.repository.js'
-import { Turno } from './models/turno.js'
+import { TurnoRepository } from '../repositories/turno.repository.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
-import { Medico } from '../models/Medico.js'
-import { NotificacionService } from './notificacion.service.js'
-import { NotificacionRepository } from './repositories/.js'
-import { CambioEstadoTurno } from '../models/cambioEstadoTurno.js'
 
 export class TurnoService {
-  constructor() {
-    this.turnoRepository = new TurnoRepository()
+  constructor({ turnoRepository, notificacionService }) {
+    this.turnoRepository = turnoRepository
+    this.servicioNotificacion = notificacionService
   }
 
   async obtenerTodos() {
@@ -134,7 +130,7 @@ export class TurnoService {
       cancelador,
       'El turno : ' + turno._id + 'ha sido cancelado. Motivo: ' + motivo
     )
-    return turno;
+    return turno
   }
 
   async solicitarCambioDeFecha(idUsuario, idTurno, nuevaFechaHora) {
@@ -175,7 +171,7 @@ export class TurnoService {
 
     turno.actualizarEstado(EstadoTurno.REALIZADO, turno.medico, 'El turno ha sido realizado')
     this.turnoRepository.guardar(turno)
-    return turno;
+    return turno
   }
 
   obtenerHistorial(id_usuario) {
