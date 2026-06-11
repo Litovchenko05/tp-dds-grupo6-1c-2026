@@ -5,7 +5,6 @@ import { SedeRepository } from '../repositories/sede.repository.js'
 import { Medico } from '../models/Medico.js'
 import { DisponibilidadHoraria } from '../models/disponibilidadHoraria.js'
 import { TurnoService } from './turno.service.js'
-import { turnoRepository } from '../repositories/datosPrueba.enMemoria.js'
 import { Especialidad } from '../models/Especialidad.js'
 import { Practica } from '../models/Practica.js'
 import { Sede } from '../models/Sede.js'
@@ -166,14 +165,12 @@ export class MedicoService {
       }
       let nuevoServicio
       if ('codigo' in servicio) {
-
         nuevoServicio = new Practica(
           servicio.codigo,
           servicio.nombre,
           servicio.duracionTurnoEnMins,
           servicio.costo
         )
-
       } else {
         nuevoServicio = new Especialidad(
           servicio.nombre,
@@ -365,7 +362,7 @@ export class MedicoService {
       medico.darDeBajaServicio(servicio)
       await medico.save()
     } catch (error) {
-      throw new Error('error al eliminar el servicio para el medico')
+      throw error;
     }
   }
   generarTurnosPorAnioParaDisponibilidadModificada(

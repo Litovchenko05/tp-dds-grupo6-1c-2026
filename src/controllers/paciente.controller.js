@@ -1,5 +1,6 @@
-import { EstadoTurno } from '../models/estadoTurno.enum.js'
-import { pacienteSchema } from '../schemas/paciente.schema.js'
+import { EstadoTurno } from '../models/estadoTurno.enum.js';
+import { pacienteSchema } from '../schemas/paciente.schema.js';
+import { nuevoEstadoTurno } from '../schemas/nuevoEstadoTurnoSchema.js';
 export class PacienteController {
 
   constructor({ pacienteService }) {
@@ -72,8 +73,8 @@ export class PacienteController {
     try {
       const { pacienteId, turnoId } = req.params
       const body = req.body
-      const resultado = nuevoEstadoTurnoSchema.safeParse(body)
-      const turnoModificado;
+      const resultado = nuevoEstadoTurno.safeParse(body)
+      const turnoModificado = null;
 
       if (resultado.nuevoEstado == EstadoTurno.RESERVADO) {
         turnoModificado = this.pacienteService.reservarTurno(pacienteId, turnoId);
@@ -128,7 +129,7 @@ export class PacienteController {
     } catch (error) {
       return res.status(400).json({
         status: 'error',
-        message: 'Error interno del servidor',
+        message: error.message,
       })
     }
   }

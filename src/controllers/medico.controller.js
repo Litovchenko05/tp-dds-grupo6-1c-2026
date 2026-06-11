@@ -1,7 +1,7 @@
 import { especialidadSchema } from '../schemas/especialidad.schema.js'
 import { medicoSchema } from '../schemas/medico.schema.js'
 import { practicaSchema } from '../schemas/practica.schema.js'
-import { PracticaSchema } from '../shemasBD/practicaSchema.js'
+
 
 import { disponibilidadHorariaSchema } from '../schemas/disponibilidadHoraria.schema.js'
 import { disponibilidadDetalladaSchema } from '../schemas/disponibilidadPorSedeyServicio.js'
@@ -23,7 +23,6 @@ export class MedicoController {
       const resultado = medicoSchema.safeParse(body)
 
       if (!resultado.success) {
-        console.log('el resultado dio error (incorrecto)')
         return res.status(400).json({ status: 'error', message: resultado.error.message })
       }
 
@@ -72,7 +71,6 @@ export class MedicoController {
       const resultado = disponibilidadDetalladaSchema.safeParse(body)
 
       if (!resultado.success) {
-        console.log('el resultado dio error')
         return res.status(400).json({ status: 'error', message: resultado.error.errors })
       }
 
@@ -92,7 +90,6 @@ export class MedicoController {
       const resultado = disponibilidadHorariaSchema.safeParse(body)
 
       if (!resultado.success) {
-        console.log('el resultado dio error')
         return res.status(400).json({ status: 'error', message: resultado.error.errors })
       }
       const medicoId = req.params.id
@@ -115,12 +112,11 @@ export class MedicoController {
       const { idMedico } = req.params
 
       const { nombreServicio, estadoTurno } = req.query
-      const disponibilidades
+
+      const disponibilidades = [];
+
       if (estadoTurno && estadoTurno == 'DISPONIBLE') {
-        disponibilidades = this.medicoService.obtenerDisponiblesSegunMedicoYServicio(
-          idMedico,
-          nombreServicio
-        )
+        disponibilidades = this.medicoService.obtenerDisponiblesSegunMedicoYServicio(idMedico, nombreServicio)
       }
       return res.status(200).json({
         status: 'success',
@@ -154,6 +150,11 @@ export class MedicoController {
       const { idTurno } = req.params
       const { nuevaFechaHora } = req.body
       const resultado = this.medicoService.solicitarCambioDeFecha(id, idTurno, nuevaFechaHora)
+
+      if (!resultado.success) {
+        return res.status(400).json({ status: 'error', message: resultado.error.errors })
+      }
+
     } catch (error) {
       if (error.message === 'Turno no encontrado') {
         return res.status(404).json({
@@ -382,7 +383,7 @@ export class MedicoController {
 
   obtenerHistorialPaciente = async (req, res) => {
     try {
-      const { medicoId, pacienteId } = req.params
+      const { pacienteId } = req.params
       const { desde, hasta, estado } = req.query
 
       const filtros = {}
@@ -411,7 +412,6 @@ export class MedicoController {
       if (!resultado.success) {
         resultado = especialidadSchema.safeParse(body)
         if (!resultado.success) {
-          console.log('el resultado dio error')
           return res.status(400).json({ status: 'error', message: resultado.error.errors })
         }
       }
@@ -426,31 +426,7 @@ export class MedicoController {
       return res.status(500).json({ data: error.message })
     }
   }
-  createServicio = async (req, res) => {
-    try {
-      const body = req.body
-      let resultado = practicaSchema.safeParse(body)
 
-
-
-      if (!resultado.success) {
-
-        resultado = especialidadSchema.safeParse(body)
-        if (!resultado.success) {
-          console.log('el resultado dio error')
-          return res.status(400).json({ status: 'error', message: resultado.error.errors })
-        }
-      }
-      const medicoId = req.params.id
-
-      await this.medicoService.agregarServicio(medicoId, resultado.data)
-      return res.status(201).json({ status: 'success', data: resultado.data })
-    }
-    catch (error) {
-      return res.status(500).json({ data: error.message })
-    }
-
-  }
   deleteServicio = async (req, res) => {
     try {
 

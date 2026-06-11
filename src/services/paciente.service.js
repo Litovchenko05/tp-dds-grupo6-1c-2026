@@ -14,7 +14,7 @@ export class PacienteService {
     this.pacienteRepository = new PacienteRepository()
     this.turnoRepository = new TurnoRepository()
     this.medicoRespository = new MedicoRepository()
-    this.turnoService = new this.TurnoService() // LO NECESITO PARA CANCELAR Y MODIFICAR UN TURNO
+    this.turnoService = new TurnoService() // LO NECESITO PARA CANCELAR Y MODIFICAR UN TURNO
   }
 
   async createPaciente(pacienteData) {
@@ -88,7 +88,7 @@ export class PacienteService {
 
       return turnoCancelado
     } catch (error) {
-      throw new Error('El turno no pudo ser cancelado')
+      throw error;
     }
   }
 

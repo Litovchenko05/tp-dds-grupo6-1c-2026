@@ -1,9 +1,8 @@
-import { TurnoRepository } from './repositories/turno.repository.js'
-import { Turno } from './models/turno.js'
+import { TurnoRepository } from '../repositories/turno.repository.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 import { Medico } from '../models/Medico.js'
 import { NotificacionService } from './notificacion.service.js'
-import { NotificacionRepository } from './repositories/.js'
+import { NotificacionRepository } from '../repositories/notificacion.repository.js'
 import { CambioEstadoTurno } from '../models/cambioEstadoTurno.js'
 
 export class TurnoService {
@@ -95,12 +94,14 @@ export class TurnoService {
 
       return turnoActualizado
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
   obtenerPorId(id) {
     const turno = this.turnoRepository.obtenerPorId(id)
+
+    return turno;
   }
 
   async cancelar(id_turno, id_usuario, motivo) {
