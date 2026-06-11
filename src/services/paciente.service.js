@@ -101,27 +101,7 @@ export class PacienteService {
     return historial
   }
 
-  async solicitarCambioDeFecha(pacienteId, turnoId, nuevaFechaHora) {
-    const paciente = await this.pacienteRepository.findById(pacienteId)
 
-    if (!paciente) {
-      throw new Error('Paciente no encontrado')
-    }
-    const turno = await this.turnoRepository.findById(turnoId)
-
-    if (!turno) {
-      throw new Error('Turno no encontrado')
-    }
-
-    const medico = await this.medicoRespository.findByNombre(turno.medico.nombre)
-
-    medico.solicitudesDeCambioDeFecha.push({
-      nuevaFechaHora: new Date(nuevaFechaHora),
-      estado: 'pendiente',
-    })
-
-    await medico.save()
-  }
 
   async findAllPaginated(page, limit) {
     return await this.pacienteRepository.findAllPaginated(page, limit)

@@ -99,22 +99,7 @@ export class PacienteController {
     }
   }
 
-  solicitarCambioDeFecha = async (req, res) => {
-    try {
-      const pacienteId = req.params.pacienteId
-      const turnoId = req.params.turnoId
-      const nuevaFecha = req.body.nuevaFecha
 
-      this.pacienteService.solicitarCambioDeFecha(pacienteId, turnoId, nuevaFecha)
-
-      return res.status(200).json({
-        status: 'success',
-        message: 'Solicitud de cambio de fecha enviada exitosamente, espera la confirmación',
-      })
-    } catch (error) {
-      return res.status(200).json({ data: error.message })
-    }
-  }
 
   //GET ALL PAGINADO
   async findAllPaginated(req, res) {

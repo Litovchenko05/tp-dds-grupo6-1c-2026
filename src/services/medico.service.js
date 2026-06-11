@@ -153,7 +153,7 @@ export class MedicoService {
       medico.darDeAltaServicio(nuevoServicio)
       await medico.save()
     } catch (error) {
-      throw new Error('error en agregar servicio para el médico')
+      throw error;
     }
   }
   async agregarServicio(medicoId, servicio) {
@@ -181,7 +181,7 @@ export class MedicoService {
       medico.darDeAltaServicio(nuevoServicio)
       await medico.save()
     } catch (error) {
-      throw new Error('error en agregar servicio para el médico')
+      throw error;
     }
   }
 
@@ -250,7 +250,7 @@ export class MedicoService {
         tipoDeServicio
       )
     } catch (error) {
-      throw new Error('error al delegar la generación de turnos por disponibildad al serviceAgenda')
+      throw error;
     }
   }
 
@@ -300,7 +300,7 @@ export class MedicoService {
 
       return medico
     } catch (error) {
-      throw new Error(error.message)
+      throw error;
     }
   }
   async modificarServicio(medicoId, servicioNombre, nuevoServicio) {
@@ -345,7 +345,7 @@ export class MedicoService {
         await medico.save()
       }
     } catch (error) {
-      throw new Error('Error en modificar servicio para el médico')
+      throw error;
     }
   }
   async eliminarServicio(nombreServicio, tipoDeServicio, medicoId) {

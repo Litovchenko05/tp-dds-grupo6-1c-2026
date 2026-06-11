@@ -36,7 +36,7 @@ const router = express.Router()
 
 router
   .route('/')
-  .get((req, res) => medicoController.findAll(req, res))
+  .get((req, res) => medicoController.findAllPaginated(req, res))
   .post((req, res) => medicoController.createMedico(req, res))
 
 router

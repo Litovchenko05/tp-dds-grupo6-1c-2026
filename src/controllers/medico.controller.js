@@ -1,14 +1,13 @@
 import { especialidadSchema } from '../schemas/especialidad.schema.js'
 import { medicoSchema } from '../schemas/medico.schema.js'
 import { practicaSchema } from '../schemas/practica.schema.js'
-
-
 import { disponibilidadHorariaSchema } from '../schemas/disponibilidadHoraria.schema.js'
 import { disponibilidadDetalladaSchema } from '../schemas/disponibilidadPorSedeyServicio.js'
 import { cancelarTurnoSchema } from '../schemas/cancelarTurnoSchema.js'
 import { marcarRealizadoSchema } from '../schemas/marcarRealizadoSchema.js'
 import { agregarServicioSchema } from '../schemas/agregarServicioSchema.js'
 import { crearCambioSchema } from '../schemas/cambioFechaTurnoSchema.js'
+
 export class MedicoController {
   constructor({ medicoService, turnoService, pacienteService }) {
     this.medicoService = medicoService
@@ -177,7 +176,7 @@ export class MedicoController {
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        message: 'Error interno del servidor',
+        message: error.message,
       })
     }
   }

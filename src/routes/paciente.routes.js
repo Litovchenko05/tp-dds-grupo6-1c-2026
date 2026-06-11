@@ -15,23 +15,23 @@ const pacienteController = new PacienteController({
 
 const router = express.Router()
 
-router.route('/').get((req, res) => pacienteController.findAll(req, res))
-
-router.route('/:id').get((req, res) => pacienteController.findById(req, res))
-
 router
-  .route('/nuevoPaciente')
+  .route('/')
+  .get((req, res) => pacienteController.findAllPaginated(req, res))
   .post((req, res) => pacienteController.createPaciente(req, res))
 
+
+router.
+  route('/:id')
+  .get((req, res) => pacienteController.findById(req, res))
+
+
 router
-  .route('/:pacienteId/turnos/:turnoId')
+  .route('/:id/turnos/:turnoId')
   .patch((req, res) => pacienteController.cambiarEstadoDeTurno(req, res))
 router
-  .route('/:pacienteId/consultarHistorial')
+  .route('/:id/historial')
   .get((req, res) => pacienteController.consultarHistorial(req, res))
-router
-  .route('/:pacienteId/solicitarCambioDeFecha/:turnoId')
-  .put((req, res) => pacienteController.solicitarCambioDeFecha(req, res))
 
 
 export default router
