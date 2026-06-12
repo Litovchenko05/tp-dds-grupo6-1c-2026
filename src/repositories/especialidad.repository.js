@@ -1,47 +1,47 @@
-import {EspecialidadModel} from '../shemasBD/especialidadSchema.js';
+import { EspecialidadModel } from '../schemasBD/especialidadSchema.js'
 
 export class EspecialidadRepository {
 
-  constructor(datosIniciales = []){
-    this.EspecialidadModel = EspecialidadModel;
+  constructor() {
+    this.EspecialidadModel = EspecialidadModel
   }
 
-  async findAll(){
-    return await this.EspecialidadModel.find(); 
+  async findAll() {
+    return await this.EspecialidadModel.find()
   }
 
-  async findByFilters(filtros = {}){
-    return await this.EspecialidadModel.find(filtros);
+  async findByFilters(filtros = {}) {
+    return await this.EspecialidadModel.find(filtros)
   }
 
-  
-  async findById(id){
-    return await this.EspecialidadModel.findById(id);
+
+  async findById(id) {
+    return await this.EspecialidadModel.findById(id)
   }
 
-  async findByNombre(nombreEspecialidad){
-    return await this.EspecialidadModel.findOne({ nombre: nombreEspecialidad });
+  async findByNombre(nombreEspecialidad) {
+    return await this.EspecialidadModel.findOne({ nombre: nombreEspecialidad })
   }
 
-  async save(especialidad){
+  async save(especialidad) {
     //Si tiene id es update, si no es create
-    const query = especialidad.id ? { _id: especialidad.id } : { _id: new this.EspecialidadModel()._id };
-        
+    const query = especialidad.id ? { _id: especialidad.id } : { _id: new this.EspecialidadModel()._id }
+
 
     return await this.EspecialidadModel.findOneAndUpdate(
       query,
       especialidad,
-      { 
+      {
         returnDocument: 'after',
         runValidators: true,
         upsert: true
       }
-      );
+    )
   }
-  
 
-  async delete(id){
-    return await this.EspecialidadModel.findByIdAndDelete(id);
+
+  async delete(id) {
+    return await this.EspecialidadModel.findByIdAndDelete(id)
   }
 
 }

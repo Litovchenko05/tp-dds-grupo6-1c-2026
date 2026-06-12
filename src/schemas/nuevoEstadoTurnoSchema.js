@@ -1,8 +1,8 @@
 import { z } from 'zod'
-import { EstadoTurnoSchema } from './estadoTurno.schema'
+import { EstadoTurnoSchema } from './estadoTurno.schema.js'
 
-export const nuevoEstado = z.object({
+export const nuevoEstadoTurno = z.object({
     nuevoEstado: EstadoTurnoSchema,
-    motivo: z.String()
+    motivo: z.string().trim()
 
 })

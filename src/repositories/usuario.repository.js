@@ -1,4 +1,4 @@
-import { UsuarioModel } from '../shemasBD/usuarioSchema.js'
+import { UsuarioModel } from '../schemasBD/usuarioSchema.js'
 
 export class UsuarioRepository {
   constructor() {
