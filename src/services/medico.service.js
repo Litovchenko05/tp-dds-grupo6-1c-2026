@@ -1,10 +1,5 @@
-import { MedicoRepository } from '../repositories/medico.repository.js'
-import { EspecialidadRepository } from '../repositories/especialidad.repository.js'
-import { PracticaRepository } from '../repositories/practica.repository.js'
-import { SedeRepository } from '../repositories/sede.repository.js'
 import { Medico } from '../models/Medico.js'
 import { DisponibilidadHoraria } from '../models/disponibilidadHoraria.js'
-import { TurnoService } from './turno.service.js'
 import { Especialidad } from '../models/Especialidad.js'
 import { Practica } from '../models/Practica.js'
 import { Sede } from '../models/Sede.js'
@@ -153,7 +148,7 @@ export class MedicoService {
       medico.darDeAltaServicio(nuevoServicio)
       await medico.save()
     } catch (error) {
-      throw error;
+      throw error
     }
   }
   async agregarServicio(medicoId, servicio) {
@@ -181,7 +176,7 @@ export class MedicoService {
       medico.darDeAltaServicio(nuevoServicio)
       await medico.save()
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
@@ -250,7 +245,7 @@ export class MedicoService {
         tipoDeServicio
       )
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
@@ -300,7 +295,7 @@ export class MedicoService {
 
       return medico
     } catch (error) {
-      throw error;
+      throw error
     }
   }
   async modificarServicio(medicoId, servicioNombre, nuevoServicio) {
@@ -345,7 +340,7 @@ export class MedicoService {
         await medico.save()
       }
     } catch (error) {
-      throw error;
+      throw error
     }
   }
   async eliminarServicio(nombreServicio, tipoDeServicio, medicoId) {
@@ -362,7 +357,7 @@ export class MedicoService {
       medico.darDeBajaServicio(servicio)
       await medico.save()
     } catch (error) {
-      throw error;
+      throw error
     }
   }
   generarTurnosPorAnioParaDisponibilidadModificada(

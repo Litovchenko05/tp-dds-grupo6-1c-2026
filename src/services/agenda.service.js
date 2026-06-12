@@ -1,4 +1,3 @@
-import { TurnoRepository } from '../repositories/turno.repository.js'
 import { Agenda } from '../models/Agenda.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 
