@@ -1,17 +1,5 @@
 import express from 'express'
-import { PacienteService } from '../services/paciente.service.js'
-import { TurnoRepository } from '../repositories/turno.repository.js'
-import { PacienteRepository } from '../repositories/paciente.repository.js'
-import { PacienteController } from '../controllers/paciente.controller.js'
-
-const pacienteRepository = new PacienteRepository()
-const pacienteService = new PacienteService({
-  pacienteRepository: pacienteRepository,
-  turnoRepository: TurnoRepository,
-})
-const pacienteController = new PacienteController({
-  pacienteService: pacienteService,
-})
+import { pacienteController } from '../config/dependencies.js'
 
 const router = express.Router()
 

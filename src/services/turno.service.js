@@ -1,13 +1,9 @@
-import { TurnoRepository } from '../repositories/turno.repository.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
-import { Medico } from '../models/Medico.js'
-import { NotificacionService } from './notificacion.service.js'
-import { NotificacionRepository } from '../repositories/notificacion.repository.js'
-import { CambioEstadoTurno } from '../models/cambioEstadoTurno.js'
 
 export class TurnoService {
-  constructor() {
-    this.turnoRepository = new TurnoRepository()
+  constructor({ turnoRepository, notificacionService }) {
+    this.turnoRepository = turnoRepository
+    this.servicioNotificacion = notificacionService
   }
 
   async obtenerTodos() {
@@ -94,14 +90,14 @@ export class TurnoService {
 
       return turnoActualizado
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
   obtenerPorId(id) {
     const turno = this.turnoRepository.obtenerPorId(id)
 
-    return turno;
+    return turno
   }
 
   async cancelar(id_turno, id_usuario, motivo) {
@@ -135,7 +131,7 @@ export class TurnoService {
       cancelador,
       'El turno : ' + turno._id + 'ha sido cancelado. Motivo: ' + motivo
     )
-    return turno;
+    return turno
   }
 
   async solicitarCambioDeFecha(idUsuario, idTurno, nuevaFechaHora) {
@@ -159,7 +155,7 @@ export class TurnoService {
 
   marcarComoRealizado(id_turno, id_usuario) {
     if (turno.estado === 'realizado') {
-      return turno;
+      return turno
     }
     const turno = this.turnoRepository.obtenerPorId(id_turno)
     if (!turno) {
@@ -176,13 +172,13 @@ export class TurnoService {
 
     turno.actualizarEstado(EstadoTurno.REALIZADO, turno.medico, 'El turno ha sido realizado')
     this.turnoRepository.guardar(turno)
-    return turno;
+    return turno
   }
 
   obtenerHistorial(id_usuario) {
     let turnos = this.turnoRepository.obtenerPorUsuario(id_usuario)
     let turnosFiltrados = turnos.filter((t) => t.estado === EstadoTurno.REALIZADO)
-    return turnosFiltrados;
+    return turnosFiltrados
   }
 
   //paginado

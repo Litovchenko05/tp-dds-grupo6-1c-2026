@@ -111,9 +111,7 @@ export class MedicoController {
       const { idMedico } = req.params
 
       const { nombreServicio, estadoTurno } = req.query
-
-      const disponibilidades = [];
-
+      const disponibilidades = []
       if (estadoTurno && estadoTurno == 'DISPONIBLE') {
         disponibilidades = this.medicoService.obtenerDisponiblesSegunMedicoYServicio(idMedico, nombreServicio)
       }
@@ -390,7 +388,7 @@ export class MedicoController {
       if (hasta) filtros.hasta = hasta
       if (estado) filtros.estado = estado
 
-      const historial = await this.pacienteService.consultarHistorial(pacienteId);
+      const historial = await this.pacienteService.consultarHistorial(pacienteId)
 
       return res.status(200).json({
         status: 'success',

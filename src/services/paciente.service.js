@@ -1,23 +1,15 @@
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
-import { Paciente } from '../models/paciente.js'
-import { Turno } from '../models/turno.js'
-import { PacienteRepository } from '../repositories/paciente.repository.js'
-import { TurnoRepository } from '../repositories/turno.repository.js'
-import { Medico } from '../models/Medico.js'
-import { ObraSocial } from '../models/ObraSocial.js'
-import { Plan } from '../models/Plan.js'
-import { MedicoRepository } from '../repositories/medico.repository.js'
-import { TurnoService } from '../services/turno.service.js'
-import { CambioEstadoTurno } from '../models/cambioEstadoTurno.js'
 export class PacienteService {
-  constructor() {
-    this.pacienteRepository = new PacienteRepository()
-    this.turnoRepository = new TurnoRepository()
-    this.medicoRespository = new MedicoRepository()
-    this.turnoService = new TurnoService() // LO NECESITO PARA CANCELAR Y MODIFICAR UN TURNO
+
+  constructor({ pacienteRepository, turnoRepository, medicoRepository, turnoService }) {
+    this.pacienteRepository = pacienteRepository
+    this.turnoRepository = turnoRepository
+    this.medicoRepository = medicoRepository
+    this.turnoService = turnoService
   }
 
   async createPaciente(pacienteData) {
+
     const { dni, nombre, obraSocial, usuario, plan } = pacienteData
 
     if (!usuario || !dni || !nombre || !obraSocial || !plan) {
@@ -88,7 +80,7 @@ export class PacienteService {
 
       return turnoCancelado
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
