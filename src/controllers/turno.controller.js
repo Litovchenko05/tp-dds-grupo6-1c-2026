@@ -152,7 +152,7 @@ export class TurnoController {
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        message: 'Error interno del servidor',
+        message: error.message,
       })
     }
   }

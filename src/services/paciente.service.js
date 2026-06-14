@@ -13,7 +13,7 @@ export class PacienteService {
     const { dni, nombre, obraSocial, usuario, plan } = pacienteData
 
     if (!usuario || !dni || !nombre || !obraSocial || !plan) {
-      throw new ValidationError('Todos los campos son requeridos')
+      throw new Error('Todos los campos son requeridos')
     }
 
     const existente = await this.pacienteRepository.findByDni(pacienteData.dni)
@@ -41,9 +41,7 @@ export class PacienteService {
     return paciente
   }
 
-
   async reservarTurno(pacienteId, turnoId) {
-
     const paciente = await this.pacienteRepository.findById(pacienteId)
 
     if (!paciente) {
@@ -56,8 +54,7 @@ export class PacienteService {
     }
 
     //TODO DELEGAR EN TURNO SERVICE
-    if (turno.estado == "DISPONIBLE") {
-
+    if (turno.estado == 'DISPONIBLE') {
       turno.paciente = paciente
       turno.estado = EstadoTurno.DISPONIBLE
       turno.save()
@@ -72,7 +69,6 @@ export class PacienteService {
   }
 
   async cancelarTurno(pacienteId, turnoId, motivo) {
-
     try {
       const paciente = await this.pacienteRepository.findById(pacienteId)
 
@@ -83,12 +79,10 @@ export class PacienteService {
       const turnoCancelado = await this.turnoService.cancelar(turnoId, paciente.usuario._id, motivo)
 
       return turnoCancelado
-    }
-    catch (error) {
-      throw new Error('El turno no pudo ser cancelado')
+    } catch (error) {
+      throw error
     }
   }
-
 
   async consultarHistorial(pacienteId) {
     const paciente = await this.pacienteRepository.findById(pacienteId)
@@ -99,33 +93,9 @@ export class PacienteService {
     return historial
   }
 
-  async solicitarCambioDeFecha(pacienteId, turnoId, nuevaFechaHora) {
-    const paciente = await this.pacienteRepository.findById(pacienteId)
 
-    if (!paciente) {
-      throw new Error('Paciente no encontrado')
-    }
-    const turno = await this.turnoRepository.findById(turnoId)
-
-    if (!turno) {
-      throw new Error('Turno no encontrado')
-    }
-
-    const medico = await this.medicoRespository.findByNombre(turno.medico.nombre)
-
-
-    medico.solicitudesDeCambioDeFecha.push({
-      nuevaFechaHora: new Date(nuevaFechaHora),
-      estado: 'pendiente'
-    })
-
-    await medico.save()
-
-  }
 
   async findAllPaginated(page, limit) {
-    return await this.pacienteRepository
-      .findAllPaginated(page, limit)
+    return await this.pacienteRepository.findAllPaginated(page, limit)
   }
-
 }

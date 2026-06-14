@@ -1,4 +1,3 @@
-import { TurnoRepository } from '../repositories/turno.repository.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 
 export class TurnoService {
@@ -97,10 +96,12 @@ export class TurnoService {
 
   obtenerPorId(id) {
     const turno = this.turnoRepository.obtenerPorId(id)
+
+    return turno
   }
 
   async cancelar(id_turno, id_usuario, motivo) {
-    const turno = this.turnoRepository.obtenerPorId(turnoId)
+    const turno = this.turnoRepository.obtenerPorId(id_turno)
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
@@ -154,7 +155,7 @@ export class TurnoService {
 
   marcarComoRealizado(id_turno, id_usuario) {
     if (turno.estado === 'realizado') {
-      return this.#mapToDto(turno)
+      return turno
     }
     const turno = this.turnoRepository.obtenerPorId(id_turno)
     if (!turno) {
@@ -177,7 +178,7 @@ export class TurnoService {
   obtenerHistorial(id_usuario) {
     let turnos = this.turnoRepository.obtenerPorUsuario(id_usuario)
     let turnosFiltrados = turnos.filter((t) => t.estado === EstadoTurno.REALIZADO)
-    return turnosFiltrados.map(this.#mapToDto)
+    return turnosFiltrados
   }
 
   //paginado
@@ -215,7 +216,7 @@ export class TurnoService {
     })
 
     return {
-      data: resultado.turnos.map((turno) => this.#mapToDto(turno)),
+      data: resultado,
 
       pagination: {
         total: resultado.total,

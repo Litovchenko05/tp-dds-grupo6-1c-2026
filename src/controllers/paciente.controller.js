@@ -1,5 +1,6 @@
-import { EstadoTurno } from '../models/estadoTurno.enum.js'
-import { pacienteSchema } from '../schemas/paciente.schema.js'
+import { EstadoTurno } from '../models/estadoTurno.enum.js';
+import { pacienteSchema } from '../schemas/paciente.schema.js';
+import { nuevoEstadoTurno } from '../schemas/nuevoEstadoTurnoSchema.js';
 export class PacienteController {
 
   constructor({ pacienteService }) {
@@ -72,8 +73,8 @@ export class PacienteController {
     try {
       const { pacienteId, turnoId } = req.params
       const body = req.body
-      const resultado = nuevoEstadoTurnoSchema.safeParse(body)
-      const turnoModificado;
+      const resultado = nuevoEstadoTurno.safeParse(body)
+      const turnoModificado = null;
 
       if (resultado.nuevoEstado == EstadoTurno.RESERVADO) {
         turnoModificado = this.pacienteService.reservarTurno(pacienteId, turnoId);
@@ -98,22 +99,7 @@ export class PacienteController {
     }
   }
 
-  solicitarCambioDeFecha = async (req, res) => {
-    try {
-      const pacienteId = req.params.pacienteId
-      const turnoId = req.params.turnoId
-      const nuevaFecha = req.body.nuevaFecha
 
-      this.pacienteService.solicitarCambioDeFecha(pacienteId, turnoId, nuevaFecha)
-
-      return res.status(200).json({
-        status: 'success',
-        message: 'Solicitud de cambio de fecha enviada exitosamente, espera la confirmación',
-      })
-    } catch (error) {
-      return res.status(200).json({ data: error.message })
-    }
-  }
 
   //GET ALL PAGINADO
   async findAllPaginated(req, res) {
@@ -128,7 +114,7 @@ export class PacienteController {
     } catch (error) {
       return res.status(400).json({
         status: 'error',
-        message: 'Error interno del servidor',
+        message: error.message,
       })
     }
   }

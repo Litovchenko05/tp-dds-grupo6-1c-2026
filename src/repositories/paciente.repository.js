@@ -1,8 +1,8 @@
-import { PacienteModel } from '../shemasBD/pacienteSchema.js'
+import { PacienteModel } from '../schemasBD/pacienteSchema.js'
 
 export class PacienteRepository {
-  
-  constructor(datosIniciales = []) {
+
+  constructor() {
     this.PacienteModel = PacienteModel
   }
 
@@ -49,26 +49,26 @@ export class PacienteRepository {
   }
 
   async findAllPaginated(page = 1, limit = 5) {
-      //cuantos documentos hay que saltar
-      const skip = (page - 1) * limit
+    //cuantos documentos hay que saltar
+    const skip = (page - 1) * limit
 
-      const pacientes =
-          await this.PacienteModel
-            .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
-            .skip(skip)
-            .limit(limit)
-  
-      const total =
-          await this.PacienteModel.countDocuments({
-              //eliminado: false
-          })
-  
-      return {
-            pacientes,
-            total,
-            page,
-            // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
-            totalPages: Math.ceil(total / limit)
-        }
+    const pacientes =
+      await this.PacienteModel
+        .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
+        .skip(skip)
+        .limit(limit)
+
+    const total =
+      await this.PacienteModel.countDocuments({
+        //eliminado: false
+      })
+
+    return {
+      pacientes,
+      total,
+      page,
+      // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
+      totalPages: Math.ceil(total / limit)
     }
+  }
 }

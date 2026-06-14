@@ -1,4 +1,4 @@
-import { TurnoModel } from '../shemasBD/turnoSchema.js'
+import { TurnoModel } from '../schemasBD/turnoSchema.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 export class TurnoRepository {
   constructor() {

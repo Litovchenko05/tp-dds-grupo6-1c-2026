@@ -1,8 +1,8 @@
-import { MedicoModel } from '../shemasBD/medicoSchema.js'
+import { MedicoModel } from '../schemasBD/medicoSchema.js'
 
 export class MedicoRepository {
 
-  constructor(datosIniciales = []) {
+  constructor() {
     this.MedicoModel = MedicoModel
   }
 
