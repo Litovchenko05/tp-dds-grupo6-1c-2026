@@ -1,0 +1,19 @@
+.drawer{
+    width: 250;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0;
+ }
+
+.drawer-logo{
+    width: 100px;
+    height: auto;
+}
+
+.drawer-title {
+    margin-top: 8px;
+    color: rgb(121, 29, 29);
+    font-weight: bold;
+    
+}
