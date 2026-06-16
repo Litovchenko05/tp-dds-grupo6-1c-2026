@@ -90,15 +90,19 @@
 }
 
 .agregar{
-  background-color: red;
+  background-color: rgb(162, 10, 10);
   color: white;
   padding: 8px 16px;
   border-radius: 6px;
-  border-color: red;
+  border-color: rgb(124, 6, 6);
   font-size: 18px;
   font-weight: 700;
   margin: 1rem;
   cursor: pointer;
+  transition: 0.3s ease;
+}
+.agregar:hover{
+  background-color: #e70f0f;
 }
 
 .agregar-container{
@@ -117,13 +121,15 @@
   height: 40px;
   border: none;
   border-radius: 8px;
-  background-color: #e70f0f;
+  background-color: #c00404;
   color: white;
   font-size: 22px;
   font-weight: bold;
   cursor: pointer;
   transition: 0.2s ease;
 }
+
+
 
 
 .cantidad {

@@ -40,13 +40,15 @@ const TurnDetailPage = () => {
 
       if (obraSocial === "OSDE" && plan === "BASICO") {
         costoFinal *= 0.8*unidades;
+        return costoFinal;
       }
 
       if (obraSocial === "PAMI" && plan === "PREMIUM") {
         costoFinal *= 0.9*unidades;
+        return costoFinal;
       }
 
-      return costoFinal;
+      return turno.costo*unidades;
   };
 
   if (!turno) {
@@ -59,6 +61,8 @@ const TurnDetailPage = () => {
       </div>
     );
   }
+
+   const costo = calcularCosto(obraSocial, plan);
 
   return (
 
@@ -110,12 +114,12 @@ const TurnDetailPage = () => {
               <button className="btn-carrito" onClick={decrementarUnidades} disabled={unidades === 0}>-</button>   
           </div>
 
-          {obraSocial.trim() !== "" && plan.trim() !== "" && (
+  
+          {costo !== null && (
             <div className="turn-price-section">
-              <div className="turn-precio">
-                Costo: ${" "}
-                {calcularCosto(obraSocial,plan).toLocaleString("es-AR")}
-              </div>
+                <div className="turn-precio">
+                   Costo: $ {costo.toLocaleString("es-AR")}
+                </div>
             </div>
           )}
          
@@ -123,17 +127,16 @@ const TurnDetailPage = () => {
       </div>
 
       <div className="agregar-container">
-              <button
-                className="agregar"
-                onClick={agregarAlCarrito}
-                disabled={
-                  unidades === 0 ||
-                  obraSocial.trim() === "" ||
-                  plan.trim() === ""
-                }
-              >
-                Agregar al carrito
-              </button>
+          <button
+            className="agregar"
+            onClick={agregarAlCarrito}
+            disabled={
+            unidades === 0 ||
+            obraSocial.trim() === "" ||
+            plan.trim() === ""
+            }>
+            Agregar al carrito
+          </button>
       </div>
 
    </div>
