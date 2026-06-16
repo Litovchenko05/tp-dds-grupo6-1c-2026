@@ -18,7 +18,7 @@ const HistorialTurnosPage = () => {
     <div class="turno-cuerpo">
       <h3>Consulta con Cardiología</h3>
       <p><strong>Médico:</strong> Dra. Violeta Martínez</p>
-      <p><strong>Sede:</strong> Centro Médico Central</p>
+      <p><strong>Sede:</strong> Av. Callao 850</p>
       <p><strong>Hora:</strong> 10:00 hs</p>
       <p><strong>Costo:</strong> $30000 </p>
     </div>
@@ -32,7 +32,7 @@ const HistorialTurnosPage = () => {
     <div class="turno-cuerpo">
       <h3>Consulta con Ginecología</h3>
       <p><strong>Médico:</strong> Dra. Estelea Rosas</p>
-      <p><strong>Sede:</strong> Centro Médico Central</p>
+      <p><strong>Sede:</strong> Av. Callao 850</p>
       <p><strong>Hora:</strong> 11:00 hs</p>
       <p><strong>Costo:</strong> $40000 </p>
     </div>
