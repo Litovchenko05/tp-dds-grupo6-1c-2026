@@ -7,7 +7,8 @@ import TurnDetailPage from './features/turn/turnDetailPage.jsx';
 import Checkout from './features/checkout/Checkout.jsx';
 import ReservarTurnosPage from './features/reservarTurnosPage/reservarTurnosPage.jsx';
 import { CarritoProvider } from './context/CarritoContext.jsx';
-
+import HistorialTurnosPage from './features/historial/historial.jsx';
+import MisTurnosPage from './features/misTurnos/misTurnosPage.jsx';
 
 function App() {
 
@@ -18,8 +19,10 @@ function App() {
         <Route path="/" element={<Layout/>}>
         <Route index element={<Home />} />
         <Route path="/turnos/:id" element={<TurnDetailPage/>} />
-        <Route path="/reservar-turnos" element={<ReservarTurnosPage />} />
+        <Route path="/reserva-de-turnos" element={<ReservarTurnosPage />} />
         <Route path="/checkout" element={<Checkout/>}/>
+        <Route path="/historial" element={<HistorialTurnosPage/>}/>
+        <Route path="/mis-turnos" element={<MisTurnosPage/>}/>
         </Route>
   </Routes>
   </CarritoProvider>  

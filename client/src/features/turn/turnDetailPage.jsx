@@ -12,10 +12,12 @@ const TurnDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const turno = turnos.find((t) => t.id === parseInt(id));
-  const [unidades, setUnidades] = useState(0);
 
-  useEffect(() => {
-    setUnidades(0);
+  const [unidades, setUnidades] = useState(0);
+  const [obraSocial, setObraSocial] = useState("");
+  const [plan, setPlan] = useState("");
+
+  useEffect(() => { setUnidades(0); 
   }, [id, carrito])
 
   const agregarAlCarrito = () => {
@@ -31,6 +33,20 @@ const TurnDetailPage = () => {
     if (unidades > 0) {
       setUnidades(unidades - 1);
     }
+  };
+
+  const calcularCosto = (obraSocial, plan) => {
+      let costoFinal = turno.costo;
+
+      if (obraSocial === "OSDE" && plan === "BASICO") {
+        costoFinal *= 0.8*unidades;
+      }
+
+      if (obraSocial === "PAMI" && plan === "PREMIUM") {
+        costoFinal *= 0.9*unidades;
+      }
+
+      return costoFinal;
   };
 
   if (!turno) {
@@ -71,12 +87,20 @@ const TurnDetailPage = () => {
 
           <div className="input-obra-social">
             <label>Obra Social</label>
-            <input type="text"></input>
+            <input
+              type="text"
+              value={obraSocial}
+              onChange={(e) => setObraSocial(e.target.value)}
+            />
           </div>
 
           <div className="input-plan">
             <label>Plan</label>
-            <input type="text"></input>
+            <input
+              type="text"
+              value={plan}
+              onChange={(e) => setPlan(e.target.value)}
+            />
           </div>
 
           <label>Cantidad de turnos</label>
@@ -86,20 +110,33 @@ const TurnDetailPage = () => {
               <button className="btn-carrito" onClick={decrementarUnidades} disabled={unidades === 0}>-</button>   
           </div>
 
-          <div className="turn-price-section">
-            <div className="turn-precio">Costo: $ {turno.costo?.toLocaleString("es-AR")}</div>
-          </div>
+          {obraSocial.trim() !== "" && plan.trim() !== "" && (
+            <div className="turn-price-section">
+              <div className="turn-precio">
+                Costo: ${" "}
+                {calcularCosto(obraSocial,plan).toLocaleString("es-AR")}
+              </div>
+            </div>
+          )}
          
         </div>
       </div>
 
-    
       <div className="agregar-container">
-        <button className="agregar" onClick={agregarAlCarrito} disabled={unidades === 0}>
-          Agregar al carrito
-        </button>
+              <button
+                className="agregar"
+                onClick={agregarAlCarrito}
+                disabled={
+                  unidades === 0 ||
+                  obraSocial.trim() === "" ||
+                  plan.trim() === ""
+                }
+              >
+                Agregar al carrito
+              </button>
       </div>
-    </div>
+
+   </div>
    
   );
 };
