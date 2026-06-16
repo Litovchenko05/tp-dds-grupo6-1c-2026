@@ -6,91 +6,94 @@ const TurnSearchBar = () => {
 
 return (
 
-  <div className="turn-search">
+  <div className='banner'>
+    <div className="turn-search">
  
-      <div className="search-row">
+        <div className="search-row">
 
-      <div className="input-buscador">
-        <FaStethoscope className="search-icon" />
-        <input
-          type="text"
-          className="search-input"
-          placeholder="¿Qué servicio buscas?"
-        />
+        <div className="input-buscador">
+          <FaStethoscope className="search-icon" />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="¿Qué servicio buscas?"
+          />
+        </div>
+
+        <Button
+          variant="contained"
+          className="search-button"
+          startIcon={<FaSearch />}
+          sx={{
+            backgroundColor: '#c62828',
+            '&:hover': {
+              backgroundColor: '#b71c1c'
+            }
+          }}
+        >
+          Buscar
+        </Button>
+
       </div>
 
-      <Button
-        variant="contained"
-        className="search-button"
-        startIcon={<FaSearch />}
-        sx={{
-          backgroundColor: '#c62828',
-          '&:hover': {
-            backgroundColor: '#b71c1c'
-          }
-        }}
-      >
-        Buscar
-      </Button>
+      <div className="filters-grid">
 
-    </div>
+        <div className="input-wrapper">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Profesional"
+          />
+        </div>
 
-    <div className="filters-grid">
+        <div className="input-wrapper">
+          <select className="search-input">
+            <option value="">Especialidad</option>
+            <option>Cardiología</option>
+            <option>Clínica Médica</option>
+            <option>Pediatría</option>
+          </select>
+        </div>
 
-      <div className="input-wrapper">
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Profesional"
-        />
+        <div className="input-wrapper">
+          <select className="search-input">
+            <option value="">Práctica</option>
+            <option>Electrocardiograma</option>
+            <option>Radiografía</option>
+            <option>Análisis Clínico</option>
+          </select>
+        </div>
+
+        <div className="input-wrapper">
+          <select className="search-input">
+            <option value="">Sede</option>
+            <option>Caballito</option>
+            <option>Palermo</option>
+            <option>Belgrano</option>
+          </select>
+        </div>
+
+        <div className="input-wrapper">
+          <label>Desde</label>
+          <input
+            type="date"
+            className="search-input" 
+          />
+        </div>
+
+        <div className="input-wrapper">
+          <label>Hasta</label>
+          <input
+            type="date"
+            className="search-input"
+          />
+        </div>
+
       </div>
 
-      <div className="input-wrapper">
-        <select className="search-input">
-          <option value="">Especialidad</option>
-          <option>Cardiología</option>
-          <option>Clínica Médica</option>
-          <option>Pediatría</option>
-        </select>
-      </div>
-
-      <div className="input-wrapper">
-        <select className="search-input">
-          <option value="">Práctica</option>
-          <option>Electrocardiograma</option>
-          <option>Radiografía</option>
-          <option>Análisis Clínico</option>
-        </select>
-      </div>
-
-      <div className="input-wrapper">
-        <select className="search-input">
-          <option value="">Sede</option>
-          <option>Caballito</option>
-          <option>Palermo</option>
-          <option>Belgrano</option>
-        </select>
-      </div>
-
-      <div className="input-wrapper">
-        <label>Desde</label>
-        <input
-          type="date"
-          className="search-input" 
-        />
-      </div>
-
-      <div className="input-wrapper">
-         <label>Hasta</label>
-        <input
-          type="date"
-          className="search-input"
-        />
-      </div>
-
-    </div>
-
+   </div>
   </div>
+
 );
 };
 
