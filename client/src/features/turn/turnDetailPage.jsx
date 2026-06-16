@@ -1,10 +1,37 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate} from "react-router-dom";
+import { useState, useEffect } from "react";
 import { turnos } from "../../mockData/turnosMock.js";
+import { useCarrito } from '../../context/CarritoContext.jsx';
 import "./turnDetailPage.css";
 
+const conUnidades = (unidades, turno) => ({...turno, unidades})
+
 const TurnDetailPage = () => {
+
+  const { carrito, actualizarCarrito } = useCarrito();
+  const navigate = useNavigate();
   const { id } = useParams();
   const turno = turnos.find((t) => t.id === parseInt(id));
+  const [unidades, setUnidades] = useState(0);
+
+  useEffect(() => {
+    setUnidades(0);
+  }, [id, carrito])
+
+  const agregarAlCarrito = () => {
+    actualizarCarrito(conUnidades(unidades, turno));
+    navigate('/');
+  };
+
+  const incrementarUnidades = () => {
+    setUnidades(unidades + 1);
+  };
+
+  const decrementarUnidades = () => {
+    if (unidades > 0) {
+      setUnidades(unidades - 1);
+    }
+  };
 
   if (!turno) {
     return (
@@ -52,21 +79,25 @@ const TurnDetailPage = () => {
             <input type="text"></input>
           </div>
 
+          <label>Cantidad de turnos</label>
+          <div className="unidades">
+              <button className="btn-carrito" onClick={incrementarUnidades}>+</button>
+              <button  className="cantidad"   disabled>{unidades}</button>
+              <button className="btn-carrito" onClick={decrementarUnidades} disabled={unidades === 0}>-</button>   
+          </div>
+
           <div className="turn-price-section">
             <div className="turn-precio">Costo: $ {turno.costo?.toLocaleString("es-AR")}</div>
           </div>
-          
+         
         </div>
-
       </div>
 
     
-      <div className="points-section">
-        Recuerda siempre revisar tus notificicaciones ante algún cambio
-      </div>
-
       <div className="agregar-container">
-        <button className="agregar">Agregar al carrito</button>
+        <button className="agregar" onClick={agregarAlCarrito} disabled={unidades === 0}>
+          Agregar al carrito
+        </button>
       </div>
     </div>
    

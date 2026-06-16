@@ -53,7 +53,7 @@
   background-color: #1d4ed8;
 }
 
-/* Tablets */
+
 @media (max-width: 768px) {
   .card-turno {
     max-width: 100%;
@@ -69,7 +69,6 @@
   }
 }
 
-/* Celulares */
 @media (max-width: 480px) {
   .card-turno {
     padding: 1rem;

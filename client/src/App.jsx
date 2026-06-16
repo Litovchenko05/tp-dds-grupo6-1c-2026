@@ -1,21 +1,28 @@
 import { Routes, Route } from 'react-router-dom';
-import './App.css';
+import { useState } from 'react';
 import Home from './features/home/Home.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Layout from './features/layout/Layout.jsx';
 import TurnDetailPage from './features/turn/turnDetailPage.jsx';
 import Checkout from './features/checkout/Checkout.jsx';
 import ReservarTurnosPage from './features/reservarTurnosPage/reservarTurnosPage.jsx';
+import { CarritoProvider } from './context/CarritoContext.jsx';
+
+
 function App() {
+
+
   return (
+  <CarritoProvider>
   <Routes>
-      <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout/>}>
         <Route index element={<Home />} />
-        <Route path="/turnos/:id" element={<TurnDetailPage />} />
+        <Route path="/turnos/:id" element={<TurnDetailPage/>} />
         <Route path="/reservar-turnos" element={<ReservarTurnosPage />} />
-        <Route path="/checkout" element={<Checkout/>}></Route>
-      </Route>
+        <Route path="/checkout" element={<Checkout/>}/>
+        </Route>
   </Routes>
+  </CarritoProvider>  
   );
 }
 

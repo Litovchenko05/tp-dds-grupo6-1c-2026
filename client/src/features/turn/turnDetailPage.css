@@ -105,6 +105,37 @@
   display: flex;
   justify-content: right;
 }
+.unidades {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-carrito {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e70f0f;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+
+.cantidad {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #ce0d0d;
+  border-radius: 8px;
+  background-color: white;
+  color: #d70303f0;
+  font-size: 18px;
+  font-weight: bold;
+}
 .input-obra-social,
 .input-plan {
     display: flex;

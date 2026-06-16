@@ -1,14 +1,35 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import './Navbar.css';
 import '../../index.css';
 import IconButton from '@mui/material/IconButton';
 import Badge  from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import TemporaryDrawer from '../menuLateral/Drawer.jsx';
+import { useCarrito } from '../../context/CarritoContext.jsx';
+
 
 const Navbar = () => {
 
-  
+  const navigate = useNavigate();
+  const { carrito } = useCarrito();
+  const [cantUnidades, setCantUnidades] = useState(0);
+
+  const irACheckout = () => {
+    navigate('/checkout');
+  }
+  const cantUnidadesEnCarrito = () =>{
+    let suma = 0;
+    for (const turno of carrito){
+        suma +=turno.unidades;
+    }
+    return suma;
+  }
+
+  useEffect(() => {
+    setCantUnidades(cantUnidadesEnCarrito());
+  }, [carrito])
+
   return (
     <header className="navbar-bg">
       <nav className="navbar">
@@ -29,8 +50,8 @@ const Navbar = () => {
      
 
         <div className="navbar-section right">
-          <IconButton aria-label="view cart with 2 items">
-            <Badge badgeContent={2} color="primary">
+          <IconButton aria-label="view cart with 2 items" onClick={irACheckout}>
+            <Badge badgeContent={cantUnidades} color="primary">
               <ShoppingCartIcon  sx={{ fontSize: 35 }}/>
             </Badge>
           </IconButton>
