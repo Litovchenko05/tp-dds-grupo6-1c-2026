@@ -55,7 +55,7 @@ export default function TemporaryDrawer() {
 
   return (
     <div>
-      <IconButton onClick={toggleDrawer(true)}> <MenuIcon sx={{ fontSize: 35 }} /></IconButton>
+      <IconButton onClick={toggleDrawer(true)}> <MenuIcon id="iconoDeMenu" /></IconButton>
       <Drawer open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>

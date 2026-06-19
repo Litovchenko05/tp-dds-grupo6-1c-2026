@@ -61,3 +61,43 @@
   background-color: #073caf;
   color: white;
 }
+
+@media(max-width:946px){
+ .conteiner{
+    padding: 40px;
+ }
+ h1{
+    font-size: 17px;
+ }
+}
+@media(max-width:440px){
+.conteiner{
+    padding: 15px;
+ }
+ h1{
+    font-size: 11px;
+ }
+ p{
+    font-size: 9px;
+ }
+.input-div label{
+    font-size: 8px;
+
+}
+
+.btn{
+  width: 60px;
+  margin: 5px;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #051a7ae4;
+  color: white;
+  font-size: 9px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+}
+

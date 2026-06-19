@@ -44,3 +44,19 @@
 .btn-cancelar:hover {
   background-color: #eb1212;
 }
+
+@media(max-width:685px){
+  .btn-cancelar {
+    width: 100px;
+    height: 50px;
+    padding: 3px;
+    border-radius: 8px;
+    background-color: #c30909;
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ;
+    font-size: 15px;
+}
+}

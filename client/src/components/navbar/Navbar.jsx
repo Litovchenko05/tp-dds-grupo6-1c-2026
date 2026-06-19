@@ -41,7 +41,7 @@ const Navbar = () => {
 
         <div className="navbar-section center">
           <div className="brand">
-            <img src={'../../../images/logo-sweet-medical.png'} alt="Sweet Medical" className="drawer-logo" />
+            <img src={'../../../images/logo-sweet-medical.png'} alt="Sweet Medical" className="nav-logo" />
             <Link to={`/`} className="link-no-style">
             <h1 className="brand-text"> Sweet Medical <br>
             </br> Plataforma de Seguro de la Salud </h1></Link>
@@ -50,9 +50,9 @@ const Navbar = () => {
      
 
         <div className="navbar-section right">
-          <IconButton aria-label="view cart with 2 items" onClick={irACheckout}>
+          <IconButton aria-label="view cart with items" onClick={irACheckout}>
             <Badge badgeContent={cantUnidades} color="primary">
-              <ShoppingCartIcon  sx={{ fontSize: 35 }}/>
+              <ShoppingCartIcon  id="iconoDeCart"/>
             </Badge>
           </IconButton>
         </div>

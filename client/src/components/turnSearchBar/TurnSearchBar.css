@@ -10,19 +10,16 @@
   
 }
 .banner{
-  width: 100%;                 
-  height: 400px;                
+  width: 100%;                               
   background-image:
     linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
     url('../../../public/images/banner-principal.avif');
-
   background-size: cover;       
   background-position: center;  
   background-repeat: no-repeat; 
   object-position: bottom;
   margin-top: 30px;
 }
-
 
 .search-header {
   width: 100%;
@@ -41,24 +38,21 @@
 
 .input-wrapper {
   display: flex;
-  align-items: center;
+  align-items: end;
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 0.75rem;
   background-color: white;
 }
 
-
 .search-input,
-select {
+  select {
   width: 100%;
   border: none;
   outline: none;
   background: transparent;
   font-size: 1rem;
 }
-
-
 
 .search-field {
   font-family:Verdana;
@@ -128,7 +122,7 @@ select {
 .div-search-button{
    margin-top: 30px;
 }
-.search-button {
+#search-button {
   min-width: 180px ;
   border-radius: 8px ;
 
@@ -156,17 +150,6 @@ select {
   font-size: 0.9rem;
 }
 
-@media (max-width: 768px) {
-  .product-search {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .search-button {
-    justify-content: center;
-    margin-top: 0.5rem;
-  }
-}
 
 @media (max-width: 992px) {
   .filters-grid {
@@ -180,14 +163,53 @@ select {
 
 @media (max-width: 768px) {
   .filters-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .div-search-button {
     justify-content: center;
   }
 
-  .search-button {
-    width: 100%;
+  #search-button {
+    width: 20%;
   }
+}
+
+@media (max-width: 549px) {
+  .turn-search {
+    width: 95%;
+  }
+  .search-row {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .div-search-button {
+    margin-top: 0;
+  }
+
+  #search-button {
+    width: 20%;
+    min-width: unset;
+    padding-top: 5px;
+    padding-right: 5px;
+  }
+
+  .text-buscador {
+    font-size: 0px;
+  }
+
+  #search-button{
+    display: flex;
+    flex-direction: row;
+  }
+  #iconoBotonSearch {
+    font-size: 20px;
+    
+  }
+
 }

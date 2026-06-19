@@ -22,8 +22,8 @@ return (
 
         <Button
           variant="contained"
-          className="search-button"
-          startIcon={<FaSearch />}
+          id="search-button"
+          startIcon={<FaSearch id='iconoBotonSearch' />}
           sx={{
             backgroundColor: '#c62828',
             '&:hover': {
@@ -31,7 +31,7 @@ return (
             }
           }}
         >
-          Buscar
+        <span className='text-buscador'>Buscar</span>
         </Button>
 
       </div>
