@@ -1,0 +1,29 @@
+.contenedor-turnos {
+  min-height: 60vh;
+  margin: 0 auto;
+  display: grid;
+  background: linear-gradient(
+  90deg,
+  rgba(180, 0, 0, 0.8) 0%,
+  rgba(140, 41, 41, 0.5) 80%,
+  rgba(180, 0, 0, 0.8) 100%
+ );
+  padding: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+
+}
+.contenedor-turnos {
+  flex: 1;
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+  padding: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(180, 0, 0, 0.8) 0%,
+    rgba(140, 41, 41, 0.5) 80%,
+    rgba(180, 0, 0, 0.8) 100%
+  );
+}

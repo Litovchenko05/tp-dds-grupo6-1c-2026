@@ -1,0 +1,200 @@
+.turn-detail-container {
+  width: 50%;
+  margin: 40px auto;
+  background-color: rgba(255, 255, 255, 0.889);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.496);
+  border: 1px solid #e2dbdb;
+}
+
+
+.turn-header {
+  padding: 20px 24px 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  font-family: 'Trebuchet MS';
+}
+
+.turn-nombre {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.turn-categoria {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+
+.turn-content {
+  display: flex;
+  padding: 0;
+}
+
+.turn-image-section {
+  flex: 0 0 300px;
+  position: relative;
+}
+
+.turn-imagen {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.turn-info-section {
+  flex: 1;
+  padding: 20px 24px;
+  position: relative;
+}
+
+.turn-description {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 16px;
+  font-weight: 500;
+  width: 90%;
+}
+
+.turn-price-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.turn-precio {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.price-details {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.points-section {
+  padding: 16px 24px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #f0f0f0;
+  font-size: 13px;
+  color: #666;
+}
+
+.agregar{
+  background-color: rgb(162, 10, 10);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border-color: rgb(124, 6, 6);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.agregar:hover{
+  background-color: #e70f0f;
+}
+
+.agregar-container{
+  display: flex;
+  justify-content: right;
+}
+.unidades {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-carrito {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background-color: #c00404;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+
+
+
+.cantidad {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #ce0d0d;
+  border-radius: 8px;
+  background-color: white;
+  color: #d70303f0;
+  font-size: 18px;
+  font-weight: bold;
+}
+.input-obra-social,
+.input-plan {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+    max-width: 200px;
+}
+
+.input-obra-social label,
+.input-plan label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.input-obra-social input,
+.input-plan input {
+    padding: 4px 10px;
+    font-size: 16px;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    background-color: #fff;
+    transition: all 0.2s ease;
+}
+
+.input-obra-social input:focus,
+.input-plan input:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(234, 0, 0, 0.126);
+}
+
+@media (max-width: 768px) {
+  .turn-content {
+    flex-direction: column;
+  }
+
+  .turn-image-section {
+    flex: none;
+  }
+
+  .turn-imagen {
+    height: 180px;
+  }
+
+  .turn-detail-container {
+    margin: 10px;
+    border-radius: 8px;
+  }
+
+  .turn-header,
+  .turn-info-section {
+    padding: 16px 20px;
+  }
+}
