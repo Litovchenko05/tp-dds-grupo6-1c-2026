@@ -1,19 +1,19 @@
-# TODO - UI Médico (Entrega 3)
+# TODO - UX Loading + Feedback + Estandarización de Cards
 
-- [x] Definir estructura inicial de carpetas y archivos para módulo médico
-- [x] Crear scaffold en `client/src/features/medico/*`
-- [x] Crear soporte transversal (`apiClient.js`, `medico.routes.jsx`)
-- [ ] Verificar que el frontend compile con la estructura creada
-- [x] Marcar avance final en este TODO
-- [x] Crear Home del médico con estructura similar al home existente
-- [x] Integrar Home del médico en `App.jsx` para preview
-- [ ] Validar visualmente consistencia del Home del médico (desktop/mobile)
-
-## Fase 1 - UX y no funcionales en Agenda Médico
-- [ ] Agregar mensaje guía en Agenda (sobre filtros/listado)
-- [ ] Agregar estados visuales: loading, error y empty-state mejorado
-- [ ] Agregar feedback de acciones del menú (confirmación/resultado en UI)
-- [ ] Mejorar accesibilidad del menú (ARIA/foco/teclado básico)
-- [ ] Ajustar responsive del menú para evitar desborde en mobile
-- [ ] Estandarizar textos visibles de estados y acciones
-- [ ] Verificar visualmente Agenda (desktop/tablet/mobile)
+- [x] Analizar proyecto actual y confirmar dependencias MUI
+- [ ] Crear componentes reutilizables:
+  - [ ] LoadingSpinner.jsx
+  - [ ] TurnGridSkeleton.jsx
+  - [ ] AppSnackbar.jsx
+- [ ] Integrar loading/success/error en:
+  - [ ] TurnsGrid
+  - [ ] TurnDetailPage
+  - [ ] MisTurnosPage
+  - [ ] HistorialPage
+  - [ ] ReservarTurnosPage
+  - [ ] MedicoAgenda
+- [ ] Agregar CircularProgress en botones de acciones/búsquedas
+- [ ] Estandarizar tipografía y formato de fecha en cards
+- [ ] Alinear colores por estado en cards según criterio médico
+- [ ] Revisar consistencia de estilos sin romper estética actual
+- [ ] Validación final estática de cambios

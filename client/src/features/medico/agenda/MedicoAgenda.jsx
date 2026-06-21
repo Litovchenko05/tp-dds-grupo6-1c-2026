@@ -155,7 +155,7 @@ const MedicoAgenda = () => {
       ) : (
         <>
           <section className="agenda-desktop">
-            <AgendaTurnosTable turnos={turnosFiltrados} />
+            <AgendaTurnosTable turnos={turnosFiltrados} onAction={handleAccionTurno} />
           </section>
 
           <section className="agenda-mobile">
