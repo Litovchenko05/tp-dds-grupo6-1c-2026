@@ -1,0 +1,26 @@
+.status-banner {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.status-banner--success {
+  background: var(--color-success-surface);
+  border: 1px solid var(--color-success-border);
+  color: var(--color-success-ink);
+}
+
+.status-banner--error {
+  background: var(--color-error-surface);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error);
+}
+
+.status-banner__icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}

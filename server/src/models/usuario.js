@@ -1,9 +1,9 @@
 export class Usuario {
-  nombreUsuario
-  password
+  username
+  keycloakId
 
-  constructor({ nombreUsuario, password }) {
-    this.nombreUsuario = nombreUsuario
-    this.password = password
+  constructor({ username, keycloakId }) {
+    this.username = username
+    this.keycloakId = keycloakId
   }
 }

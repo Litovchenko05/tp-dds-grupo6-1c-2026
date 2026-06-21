@@ -1,0 +1,38 @@
+@startuml 'Despliegue - Sweet Medical'
+
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam padding 10
+
+actor "Cliente/Navegador" as user
+
+node "Localhost (Entorno de Desarrollo)" {
+    
+    component "Frontend (React)\n(Puerto: 3000)" as front
+    
+    interface "HTTP - API REST" as iKeycloak
+    component "Keycloak IAM\n(Puerto: 8080)" as keycloak
+    
+    interface "HTTP - API REST" as iBack
+    component "Backend API (Express)\n(Puerto: 3001)" as back
+    
+    database "MongoDB\n(Puerto: 27017)" as mongo
+}
+
+user --> front
+
+keycloak -up- iKeycloak
+back -up- iBack
+
+front -( iKeycloak
+front -( iBack
+
+back -( iKeycloak
+
+back -- mongo : TCP
+
+
+back -[hidden]right- keycloak
+front -[hidden]down- back
+
+@enduml
