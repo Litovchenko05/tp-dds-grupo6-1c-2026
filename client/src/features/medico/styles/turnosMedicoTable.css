@@ -1,0 +1,15 @@
+.turnos-medico-table {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 1rem;
+}
+
+.turnos-medico-table__header {
+  margin-bottom: 0.75rem;
+}
+
+.turnos-medico-table__empty {
+  color: #666;
+  font-size: 0.95rem;
+}

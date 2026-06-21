@@ -1,0 +1,12 @@
+.medico-turnos-page {
+  padding: 1rem;
+}
+
+.medico-turnos-page__title {
+  margin-bottom: 0.5rem;
+}
+
+.medico-turnos-page__subtitle {
+  margin-bottom: 1rem;
+  color: #555;
+}

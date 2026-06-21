@@ -1,19 +1,20 @@
-import { Routes, Route } from 'react-router-dom';
-import './App.css';
-import Home from './features/home/Home.jsx';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Layout from './features/layout/Layout.jsx';
-// import ProductDetailPage from './features/products/ProductDetailPage.jsx';
+import './App.css'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import MedicoDrawer from './components/menuLateral/MedicoDrawer'
+import MedicoAgenda from './features/medico/agenda/MedicoAgenda'
+import MedicoHome from './features/medico/home/MedicoHome'
 
 function App() {
   return (
-  <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
-        {/* <Route path="/productos/:id" element={<ProductDetailPage />} /> */}
-      </Route>
-  </Routes>
-  );
+    <>
+      <MedicoDrawer />
+      <Routes>
+        <Route path="/" element={<Navigate to="/medico/home" replace />} />
+        <Route path="/medico/home" element={<MedicoHome />} />
+        <Route path="/medico/agenda" element={<MedicoAgenda />} />
+      </Routes>
+    </>
+  )
 }
 
-export default App;
+export default App

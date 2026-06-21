@@ -1,0 +1,340 @@
+.medico-agenda {
+  margin-top: 64px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.medico-agenda__hero h1 {
+  margin: 0;
+  color: #1b1f3b;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.agenda-filtros {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 12px;
+}
+
+.agenda-filtros input,
+.agenda-filtros select {
+  width: 100%;
+  border: 1px solid #d9dbe8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.agenda-filtros input:focus,
+.agenda-filtros select:focus {
+  border-color: #4656d6;
+}
+
+.agenda-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #edf0f7;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.agenda-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 820px;
+}
+
+.agenda-table thead th {
+  text-align: left;
+  font-size: 0.9rem;
+  color: #47506a;
+  background: #f7f8fc;
+  border-bottom: 1px solid #eceef6;
+  padding: 12px;
+}
+
+.agenda-table tbody td {
+  border-bottom: 1px solid #f0f2f8;
+  padding: 12px;
+  font-size: 0.95rem;
+  color: #21263a;
+}
+
+.agenda-table tbody tr.estado-confirmado {
+  background: rgba(64, 173, 95, 0.14);
+}
+
+.agenda-table tbody tr.estado-disponible {
+  background: rgba(128, 128, 128, 0.14);
+}
+
+.agenda-table tbody tr.estado-cancelado {
+  background: rgba(219, 58, 58, 0.14);
+}
+
+.agenda-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.agenda-actions button,
+.agenda-card__actions button {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  background: #2f6fec;
+  color: #fff;
+}
+
+.agenda-actions button.cancelar,
+.agenda-card__actions button.cancelar {
+  background: #c93838;
+}
+
+.agenda-empty {
+  color: #5a627c;
+  margin: 8px 0 0;
+}
+
+.agenda-tools {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.agenda-tools button {
+  border: 1px solid #d8dcef;
+  background: #fff;
+  color: #243054;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.agenda-tools button:hover {
+  background: #f6f8ff;
+}
+
+.agenda-feedback {
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(36, 100, 230, 0.1);
+  color: #1b3f93;
+  border: 1px solid rgba(36, 100, 230, 0.22);
+  margin-top: 8px;
+}
+
+.agenda-feedback--error {
+  color: #9f1c1c;
+  background: rgba(255, 97, 97, 0.22);
+  border: 1px solid rgba(199, 33, 33, 0.35);
+  box-shadow: 0 4px 14px rgba(199, 33, 33, 0.15);
+}
+
+.agenda-mobile {
+  display: none;
+}
+
+.agenda-card {
+  border: 1px solid #e8ebf5;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+  margin-bottom: 10px;
+}
+
+.agenda-card.estado-confirmado {
+  background: rgb(121, 29, 29);
+  border-color: rgb(121, 29, 29);
+}
+
+.agenda-card.estado-confirmado .agenda-card__col p,
+.agenda-card.estado-confirmado .agenda-card__col strong,
+.agenda-card.estado-confirmado .agenda-card__header h3 {
+  color: #fff;
+}
+
+.agenda-card.estado-disponible {
+  background: #fff;
+  border: 2px solid rgb(121, 29, 29);
+}
+
+.agenda-card.estado-cancelado {
+  background: rgba(219, 58, 58, 0.14);
+}
+
+.agenda-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.agenda-card__header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #1d2340;
+}
+
+.agenda-card__menu-container {
+  position: relative;
+}
+
+.agenda-card__menu-trigger {
+  border: none;
+  background: transparent;
+  color: #293154;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.agenda-card__menu {
+  position: absolute;
+  top: 22px;
+  right: 0;
+  min-width: 185px;
+  border: 1px solid #e4e8f3;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 12px 22px rgba(12, 18, 44, 0.14);
+  z-index: 20;
+  overflow: hidden;
+}
+
+.agenda-card__menu button {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  color: #212842;
+  cursor: pointer;
+}
+
+.agenda-card__menu button:hover {
+  background: #f4f7ff;
+}
+
+.agenda-card__content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  margin-top: 8px;
+}
+
+.agenda-card__col p {
+  margin: 7px 0;
+  color: #2a2f45;
+  font-size: 0.92rem;
+}
+
+.agenda-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(22, 25, 39, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+  padding: 16px;
+}
+
+.agenda-modal {
+  position: relative;
+  width: min(420px, 100%);
+  border-radius: 12px;
+  background: #fff;
+  padding: 22px 16px 16px;
+  box-shadow: 0 18px 34px rgba(10, 14, 31, 0.22);
+}
+
+.agenda-modal p {
+  margin: 0 0 14px;
+  color: #20273f;
+  font-size: 0.98rem;
+}
+
+.agenda-modal__close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  color: #2f385b;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.agenda-modal__accept {
+  border: none;
+  border-radius: 8px;
+  background: #2f6fec;
+  color: #fff;
+  padding: 9px 14px;
+  cursor: pointer;
+}
+
+.agenda-card__footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.agenda-card__estado {
+  font-size: 0.75rem;
+  background: rgba(32, 43, 85, 0.15);
+  color: #1f2a52;
+  border-radius: 999px;
+  padding: 4px 8px;
+}
+
+.agenda-card.estado-confirmado .agenda-card__estado {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .medico-agenda {
+    padding: 20px;
+  }
+
+  .medico-agenda__hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .agenda-filtros {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .agenda-desktop {
+    display: none;
+  }
+
+  .agenda-mobile {
+    display: block;
+  }
+}
+
+@media (max-width: 560px) {
+  .medico-agenda {
+    margin-top: 64px;
+    padding: 16px;
+  }
+
+  .medico-agenda__hero h1 {
+    font-size: 1.3rem;
+  }
+}
