@@ -23,7 +23,6 @@
 }
 
 .menu-toggle-brand {
-  +
   color: rgb(121, 29, 29);
   font-size: 1.35rem;
   font-weight: bold;
@@ -38,7 +37,7 @@
 }
 
 .drawer {
-  width: 250;
+  width: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;

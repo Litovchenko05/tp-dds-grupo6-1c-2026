@@ -2,10 +2,10 @@ import './Footer.css';
 
 const Footer = () => {
   return (
-  <footer class="footer">
-        <div class="footer-container">
+  <footer className="footer">
+        <div className="footer-container">
 
-            <div class="footer-section">
+            <div className="footer-section">
             <h3>Sweet Medical</h3>
             <p>
                 Sistema integral de gestión médica para la administración de turnos,
@@ -13,7 +13,7 @@ const Footer = () => {
             </p>
             </div>
 
-            <div class="footer-section">
+            <div className="footer-section">
             <h3>Accesos Rápidos</h3>
             <ul>
                 <li><a href="/">Inicio</a></li>
@@ -23,7 +23,7 @@ const Footer = () => {
             </ul>
             </div>
 
-            <div class="footer-section">
+            <div className="footer-section">
             <h3>Información</h3>
             <ul>
                 <li>Atención al Paciente</li>
@@ -33,7 +33,7 @@ const Footer = () => {
             </ul>
             </div>
 
-            <div class="footer-section">
+            <div className="footer-section">
             <h3>Contacto</h3>
             <p>Email: contacto@sweetmedical.com</p>
             <p>Teléfono: +54 11 1234-5678</p>
@@ -42,7 +42,7 @@ const Footer = () => {
 
         </div>
 
-        <div class="footer-bottom">
+        <div className="footer-bottom">
             <p>
             © 2026 Sweet Medical - Todos los derechos reservados.
             </p>

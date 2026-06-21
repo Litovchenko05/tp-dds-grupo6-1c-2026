@@ -1,16 +1,18 @@
 .turn-detail-container {
-  max-width: 100rem;
-  margin: 20px auto;
-  background-color: white;
+  width: 50%;
+  margin: 40px auto;
+  background-color: rgba(255, 255, 255, 0.889);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.496);
+  border: 1px solid #e2dbdb;
 }
+
 
 .turn-header {
   padding: 20px 24px 16px 24px;
   border-bottom: 1px solid #f0f0f0;
+  font-family: 'Trebuchet MS';
 }
 
 .turn-nombre {
@@ -88,19 +90,89 @@
 }
 
 .agregar{
-  background-color: var(--primary-orange);
+  background-color: rgb(162, 10, 10);
   color: white;
   padding: 8px 16px;
   border-radius: 6px;
+  border-color: rgb(124, 6, 6);
   font-size: 18px;
   font-weight: 700;
   margin: 1rem;
   cursor: pointer;
+  transition: 0.3s ease;
+}
+.agregar:hover{
+  background-color: #e70f0f;
 }
 
 .agregar-container{
   display: flex;
   justify-content: right;
+}
+.unidades {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-carrito {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background-color: #c00404;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+
+
+
+.cantidad {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #ce0d0d;
+  border-radius: 8px;
+  background-color: white;
+  color: #d70303f0;
+  font-size: 18px;
+  font-weight: bold;
+}
+.input-obra-social,
+.input-plan {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+    max-width: 200px;
+}
+
+.input-obra-social label,
+.input-plan label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.input-obra-social input,
+.input-plan input {
+    padding: 4px 10px;
+    font-size: 16px;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    background-color: #fff;
+    transition: all 0.2s ease;
+}
+
+.input-obra-social input:focus,
+.input-plan input:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(234, 0, 0, 0.126);
 }
 
 @media (max-width: 768px) {

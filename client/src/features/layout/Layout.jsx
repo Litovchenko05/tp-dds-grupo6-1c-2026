@@ -4,16 +4,16 @@ import Header  from "../../components/header/Header";
 import Footer from "../../components/Footer/Footer"
 
 const Layout = () => {
-    return (
-        <>
-            <Header></Header>
-            <Navbar></Navbar>
-            <main className="layout-content">
-                <Outlet />
-            </main>
-            <Footer></Footer>
-        </>
-    );
+ return (
+    <div className="layout">
+      <Header/>
+      <Navbar/>
+      <main className="layout-content">
+        <Outlet/>
+      </main>
+      <Footer/>
+    </div>
+  );
 };
 
 export default Layout;

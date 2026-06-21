@@ -1,0 +1,68 @@
+.contenedor-historial {
+  width: 100%;
+  margin: 0 auto;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: #ededed;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.tarjeta-turno {
+  background: white;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-left: 5px solid #ccc; 
+}
+.contenedor-titulo{
+    padding: 10px;
+}
+.turno-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+ 
+}
+
+.fecha {
+  font-weight: 600;
+  color: #333;
+}
+
+.estado {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.turno-cuerpo h3 {
+  margin: 0 0 5px 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.turno-cuerpo p {
+  margin: 3px 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+
+.tarjeta-turno.completado {
+  border-left-color: #28a745; 
+}
+.etiqueta-completado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.tarjeta-turno.cancelado {
+  border-left-color: #dc3545; 
+}
+.etiqueta-cancelado {
+  background-color: #f8d7da;
+  color: #721c24;
+}
