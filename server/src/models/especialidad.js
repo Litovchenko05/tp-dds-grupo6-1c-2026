@@ -1,5 +1,3 @@
-import { especialidadSchema } from '../schemas/especialidad.schema.js'
-
 export class Especialidad {
   id
   nombre
@@ -11,7 +9,7 @@ export class Especialidad {
     this.duracionTurnoEnMins = duracionTurnoEnMins
     this.costoConsulta = costoConsulta
   }
-  modificarEspecialidad(id,nombre,duracionTurnoEnMins,costoConsulta){
+  modificarEspecialidad(id, nombre, duracionTurnoEnMins, costoConsulta) {
     this.id = id
     this.nombre = nombre
     this.duracionTurnoEnMins = duracionTurnoEnMins

@@ -1,4 +1,4 @@
-import { registroSchema } from '../schemas/registro.schema.js'
+import { registroSchema } from '../validators/registro.schema.js'
 
 export class AuthController {
   constructor({ authService }) {

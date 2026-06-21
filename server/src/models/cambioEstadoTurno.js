@@ -1,5 +1,3 @@
-import { cambioEstadoTurnoSchema } from '../schemas/cambioEstadoTurno.schema.js'
-
 export class CambioEstadoTurno {
   fechaHoraIngreso
   estado
