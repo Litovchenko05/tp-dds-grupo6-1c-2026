@@ -1,23 +1,7 @@
 import express from 'express'
-import { notificacionController, usuarioController } from '../config/dependencies.js'
+import { notificacionController } from '../config/dependencies.js'
 
 const router = express.Router()
-
-router.route('/').post((req, res) =>
-  // #swagger.tags = ['Usuarios']
-  // #swagger.summary = 'Registrar un nuevo usuario'
-  // #swagger.description = 'Da de alta un usuario en el sistema.'
-  /* #swagger.parameters['body'] = {
-        in: 'body',
-        description: 'Datos de registro del usuario',
-        required: true,
-        schema: {
-          nombreUsuario: 'pedroibarra',
-          password: '1234456'
-        }
-  } */
-  usuarioController.crear(req, res)
-)
 
 router.route('/:id/notificaciones').get((req, res) =>
   // #swagger.tags = ['Notificaciones']
