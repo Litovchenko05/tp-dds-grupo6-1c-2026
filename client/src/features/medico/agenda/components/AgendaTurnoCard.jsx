@@ -74,9 +74,9 @@ const AgendaTurnoCard = ({ turno, onAction }) => {
                 <button
                   type="button"
                   role="menuitem"
-                  onClick={() => ejecutarAccion('Ver perfil del paciente')}
+                  onClick={() => ejecutarAccion('Ver historial del paciente')}
                 >
-                  Ver perfil del paciente
+                  Ver historial del paciente
                 </button>
               )}
 
@@ -84,9 +84,9 @@ const AgendaTurnoCard = ({ turno, onAction }) => {
                 <button
                   type="button"
                   role="menuitem"
-                  onClick={() => ejecutarAccion('Ver perfil del paciente')}
+                  onClick={() => ejecutarAccion('Ver historial del paciente')}
                 >
-                  Ver perfil del paciente
+                  Ver historial del paciente
                 </button>
               )}
             </div>

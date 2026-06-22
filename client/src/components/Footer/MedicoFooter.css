@@ -1,0 +1,77 @@
+.medico-footer {
+  margin-top: 24px;
+  background: #4a4241;
+  color: white;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.medico-footer__container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.medico-footer__section h3 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.medico-footer__section p {
+  margin: 0 0 8px;
+  color: rgba(245, 248, 255, 0.92);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.medico-footer__section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.medico-footer__section li {
+  margin: 0 0 8px;
+  font-size: 0.92rem;
+  color: rgba(245, 248, 255, 0.95);
+}
+
+.medico-footer__section a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.medico-footer__section a:hover {
+  opacity: 0.78;
+  text-decoration: underline;
+}
+
+.medico-footer__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  padding: 12px 16px;
+}
+
+.medico-footer__bottom p {
+  margin: 0;
+  color: rgba(245, 248, 255, 0.9);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .medico-footer__container {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .medico-footer__container {
+    grid-template-columns: 1fr;
+    padding: 18px 16px;
+  }
+}

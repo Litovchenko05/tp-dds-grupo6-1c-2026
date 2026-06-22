@@ -86,18 +86,18 @@ const AgendaTurnosTable = ({ turnos, onAction }) => {
                         <button
                           type="button"
                           role="menuitem"
-                          onClick={() => ejecutarAccion('Ver perfil del paciente', turno.id)}
+                          onClick={() => ejecutarAccion('Ver historial del paciente', turno.id)}
                         >
-                          Ver perfil del paciente
+                          Ver historial del paciente
                         </button>
                       ) : (
                         turno.estado !== 'DISPONIBLE' && (
                           <button
                             type="button"
                             role="menuitem"
-                            onClick={() => ejecutarAccion('Ver perfil del paciente', turno.id)}
+                            onClick={() => ejecutarAccion('Ver historial del paciente', turno.id)}
                           >
-                            Ver perfil del paciente
+                            Ver historial del paciente
                           </button>
                         )
                       )}
