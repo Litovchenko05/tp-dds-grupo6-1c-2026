@@ -21,6 +21,10 @@ export class UsuarioRepository {
     return await this.UsuarioModel.findOne({ nombreUsuario })
   }
 
+  async findByKeycloakId(keycloakId) {
+    return await this.UsuarioModel.findOne({ keycloakId })
+  }
+
   async save(usuario) {
     const datos = typeof usuario?.toJSON === 'function' ? usuario.toJSON() : usuario
     const identificador = datos?.id ?? datos?._id ?? new this.UsuarioModel()._id

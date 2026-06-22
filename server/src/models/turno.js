@@ -1,6 +1,4 @@
-//import { turnoSchema } from '../schemas/turno.schema.js'
 import { Agenda } from './Agenda.js'
-import { FactoryNotificacion } from './Notificacion.factory.js'
 import { EstadoTurno } from './EstadoTurno.enum.js'
 export class Turno {
   id

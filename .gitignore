@@ -4,3 +4,5 @@ dist/
 /.pnp
 .pnp.js
 .idea/
+skills-lock.json
+/.agents

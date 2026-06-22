@@ -5,6 +5,11 @@ import { ObraSchema } from './obraSocialSchema.js'
 
 export const PacienteSchema = new mongoose.Schema(
   {
+    usuario: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Usuario',
+      required: [true, 'El ID de usuario es obligatorio'],
+    },
     dni: {
       type: String,
       required: true,
@@ -19,16 +24,14 @@ export const PacienteSchema = new mongoose.Schema(
       type: ObraSchema,
       default: null,
     },
-    usuario: UsuarioSchema,
     plan: {
       type: mongoose.Schema.Types.Mixed,
       default: null,
     },
-    historialDeTurnos:{
+    historialDeTurnos: {
       type: [mongoose.Schema.Types.Mixed],
-      default:[],
-      required:false,
-    }
+      default: [],
+    },
   },
   {
     timestamps: true,

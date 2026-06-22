@@ -1,8 +1,7 @@
-import { EstadoTurno } from '../models/estadoTurno.enum.js';
-import { pacienteSchema } from '../schemas/paciente.schema.js';
-import { nuevoEstadoTurno } from '../schemas/nuevoEstadoTurnoSchema.js';
+import { EstadoTurno } from '../models/estadoTurno.enum.js'
+import { pacienteSchema } from '../validators/paciente.schema.js'
+import { nuevoEstadoTurno } from '../validators/nuevoEstadoTurnoSchema.js'
 export class PacienteController {
-
   constructor({ pacienteService }) {
     this.pacienteService = pacienteService
   }
@@ -20,7 +19,6 @@ export class PacienteController {
       const pacienteCreado = await this.pacienteService.createPaciente(resultado.data)
 
       return res.status(201).json({ status: 'success', data: pacienteCreado })
-
     } catch (error) {
       return res.status(409).json({ data: error.message })
     }
@@ -74,16 +72,15 @@ export class PacienteController {
       const { pacienteId, turnoId } = req.params
       const body = req.body
       const resultado = nuevoEstadoTurno.safeParse(body)
-      const turnoModificado = null;
+      const turnoModificado = null
 
       if (resultado.nuevoEstado == EstadoTurno.RESERVADO) {
-        turnoModificado = this.pacienteService.reservarTurno(pacienteId, turnoId);
+        turnoModificado = this.pacienteService.reservarTurno(pacienteId, turnoId)
       } else if (resultado.nuevoEstado == EstadoTurno.CANCELADO) {
-        turnoModificado = this.pacienteService.cancelarTurno(pacienteId, turnoId, resultado.motivo);
+        turnoModificado = this.pacienteService.cancelarTurno(pacienteId, turnoId, resultado.motivo)
       }
 
-      return res.status(200).json({ status: 'success', data: turnoModificado });
-
+      return res.status(200).json({ status: 'success', data: turnoModificado })
     } catch (error) {
       return res.status(404).json({ data: error.message })
     }
@@ -98,8 +95,6 @@ export class PacienteController {
       return res.status(400).json({ data: error.message })
     }
   }
-
-
 
   //GET ALL PAGINADO
   async findAllPaginated(req, res) {

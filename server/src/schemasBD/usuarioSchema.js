@@ -1,32 +1,27 @@
-import mongoose from "mongoose";
-import { Usuario } from "../models/Usuario.js";
+import mongoose from 'mongoose'
+import { Usuario } from '../models/Usuario.js'
 
-export const UsuarioSchema = new mongoose.Schema({
-
-    /*
-        #id
-        #nombreUsuario
-        #password
-    */
-
-    nombreUsuario: {
-        type: String,
-        required: true,
-        trim: true,
-    }
-    , password: {
-        type: String,
-        required: true,
-        trim: true
-
+export const UsuarioSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
     },
-}, {
+    keycloakId: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+    },
+  },
+  {
     timestamps: true,
     collection: 'usuarios',
+  }
+)
 
+UsuarioSchema.loadClass(Usuario)
 
-});
-
-UsuarioSchema.loadClass(Usuario);
-
-export const UsuarioModel = mongoose.model('Usuario', UsuarioSchema);
+export const UsuarioModel = mongoose.model('Usuario', UsuarioSchema)

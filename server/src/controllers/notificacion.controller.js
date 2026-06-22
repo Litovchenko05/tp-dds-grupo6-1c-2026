@@ -1,4 +1,4 @@
-import { notificacionSchema } from '../schemas/notificacion.schema.js'
+import { notificacionSchema } from '../validators/notificacion.schema.js'
 
 export class NotificacionController {
   constructor({ notificacionService }) {
