@@ -21,6 +21,40 @@
         }
       }
     },
+    "/notificaciones/": {
+      "get": {
+        "tags": [
+          "Notificaciones"
+        ],
+        "summary": "Obtener notificaciones",
+        "description": "Recupera el historial de notificaciones del usuario autenticado (extraído del token JWT).",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "leida",
+            "in": "query",
+            "description": "Filtrar por notificaciones leídas (true) o no leídas (false). Si no se envía, trae todas.",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/notificaciones/{id}/leida": {
       "put": {
         "tags": [
@@ -34,49 +68,34 @@
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "ID de MongoDB de la notificación a actualizar",
-            "example": "6661ee005fedc12a282ac126"
+            "description": "ID de MongoDB de la notificación a actualizar"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
-    "/notificaciones/": {
+    "/notificaciones/prueba": {
       "post": {
         "tags": [
           "Notificaciones"
         ],
         "summary": "Crear una notificación de prueba",
-        "description": "Permite forzar la creación de una notificación manualmente (ideal para probar con Postman).",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Datos requeridos para generar la notificación",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "destinatario": {
-                  "type": "string",
-                  "example": "6661ee005fedc12a282ac126"
-                },
-                "remitente": {
-                  "type": "string",
-                  "example": "6661ee005fedc12a282ac127"
-                },
-                "mensaje": {
-                  "type": "string",
-                  "example": "El paciente Juan Pérez ha cancelado el turno de las 16:30hs."
-                }
-              }
-            }
-          }
-        ],
+        "description": "",
         "responses": {
           "default": {
             "description": ""
@@ -727,37 +746,6 @@
             "required": true,
             "type": "string",
             "description": "ID del paciente"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/usuarios/{id}/notificaciones": {
-      "get": {
-        "tags": [
-          "Notificaciones"
-        ],
-        "summary": "Obtener notificaciones de un usuario",
-        "description": "Recupera el historial de notificaciones (tanto leídas como no leídas) asociadas a un usuario específico.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "ID de MongoDB del usuario cuyas notificaciones se quieren consultar",
-            "example": "6661ee005fedc12a282ac126"
-          },
-          {
-            "name": "leida",
-            "in": "query",
-            "description": "Filtrar por notificaciones leídas (true) o no leídas (false). Si no se envía, trae todas.",
-            "required": false,
-            "type": "boolean"
           }
         ],
         "responses": {
