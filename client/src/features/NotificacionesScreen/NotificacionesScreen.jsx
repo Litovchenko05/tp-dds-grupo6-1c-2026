@@ -7,8 +7,10 @@ import './NotificacionesScreen.css'
 const NotificacionesScreen = () => {
   const { notificaciones, cargarNotificaciones, marcarComoLeida } = useNotificaciones()
 
+  // Iniciamos por defecto en 'pendientes'
   const [filtroActual, setFiltroActual] = useState('pendientes')
 
+  // Cuando carga el componente o cambia la pestaña, disparamos la petición a la API
   useEffect(() => {
     cargarNotificaciones(filtroActual)
   }, [cargarNotificaciones, filtroActual])
@@ -23,6 +25,7 @@ const NotificacionesScreen = () => {
         Mis Notificaciones
       </Typography>
 
+      {/* Ahora el componente Tabs se divide armónicamente en 2 mitades */}
       <Tabs
         value={filtroActual}
         onChange={handleChangeFiltro}
@@ -31,7 +34,6 @@ const NotificacionesScreen = () => {
       >
         <Tab label="Pendientes" value="pendientes" className="notification-tab" />
         <Tab label="Todas" value="todas" className="notification-tab" />
-        <Tab label="Leídas" value="leidas" className="notification-tab" />
       </Tabs>
 
       {notificaciones.length === 0 ? (
@@ -39,7 +41,6 @@ const NotificacionesScreen = () => {
           <Typography className="notifications-empty-text">
             {filtroActual === 'pendientes' && '¡Al día! No tenés notificaciones pendientes.'}
             {filtroActual === 'todas' && 'No tenés notificaciones en tu historial.'}
-            {filtroActual === 'leidas' && 'Todavía no tenés notificaciones leídas.'}
           </Typography>
         </Paper>
       ) : (
