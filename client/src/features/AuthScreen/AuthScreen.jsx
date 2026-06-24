@@ -173,6 +173,9 @@ export default function AuthScreen() {
 
     // Diccionario de estrategias según codigo HTTP
     const errorHandlers = {
+      400: () => {
+        setServerError('Usuario o contraseña incorrectos.')
+      },
       401: () => {
         setServerError('Usuario o contraseña incorrectos.')
       },
@@ -192,11 +195,16 @@ export default function AuthScreen() {
           setServerError('Ese nombre de usuario ya está registrado.')
         }
       },
-      // Fallback para cualquier otro código (500, 400, etc.)
       default: () => {
-        setServerError(error.response.data?.message || 'Error de conexión con el servidor.')
+        const mensajeServidor =
+          error.response.data?.error_description ||
+          error.response.data?.message ||
+          'Error de conexión con el servidor.'
+
+        setServerError(mensajeServidor)
       },
     }
+
     const statusCode = error.response.status
     const handler = errorHandlers[statusCode] || errorHandlers.default
 

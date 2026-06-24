@@ -1,15 +1,21 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNotificaciones } from '../../context/NotificacionesContext'
-import { Box, Typography, List, Paper } from '@mui/material'
+import { Box, Typography, List, Paper, Tabs, Tab } from '@mui/material'
 import NotificacionCard from './NotificacionCard.jsx'
 import './NotificacionesScreen.css'
 
 const NotificacionesScreen = () => {
   const { notificaciones, cargarNotificaciones, marcarComoLeida } = useNotificaciones()
 
+  const [filtroActual, setFiltroActual] = useState('pendientes')
+
   useEffect(() => {
-    cargarNotificaciones()
-  }, [cargarNotificaciones])
+    cargarNotificaciones(filtroActual)
+  }, [cargarNotificaciones, filtroActual])
+
+  const handleChangeFiltro = (event, nuevoFiltro) => {
+    setFiltroActual(nuevoFiltro)
+  }
 
   return (
     <Box className="notifications-container">
@@ -17,10 +23,23 @@ const NotificacionesScreen = () => {
         Mis Notificaciones
       </Typography>
 
+      <Tabs
+        value={filtroActual}
+        onChange={handleChangeFiltro}
+        className="notifications-tabs"
+        variant="fullWidth"
+      >
+        <Tab label="Pendientes" value="pendientes" className="notification-tab" />
+        <Tab label="Todas" value="todas" className="notification-tab" />
+        <Tab label="Leídas" value="leidas" className="notification-tab" />
+      </Tabs>
+
       {notificaciones.length === 0 ? (
         <Paper className="notifications-empty">
           <Typography className="notifications-empty-text">
-            No tenés notificaciones nuevas.
+            {filtroActual === 'pendientes' && '¡Al día! No tenés notificaciones pendientes.'}
+            {filtroActual === 'todas' && 'No tenés notificaciones en tu historial.'}
+            {filtroActual === 'leidas' && 'Todavía no tenés notificaciones leídas.'}
           </Typography>
         </Paper>
       ) : (

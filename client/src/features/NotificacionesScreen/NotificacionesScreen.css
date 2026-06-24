@@ -1,26 +1,26 @@
 .notifications-container {
   max-width: 750px;
   margin: 0 auto;
-  padding: 3rem 1.5rem;
+  padding: var(--spacing-3xl) var(--spacing-xl);
 }
 
 .notifications-title {
   color: var(--color-primary);
   font-weight: 700 !important;
   font-size: 2rem !important;
-  margin-bottom: 2rem !important;
+  margin-bottom: var(--spacing-2xl) !important;
   letter-spacing: -0.5px;
 }
 
 .notifications-list {
   display: flex !important;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--spacing-lg);
   padding: 0 !important;
 }
 
 .notifications-empty {
-  padding: 3rem !important;
+  padding: var(--spacing-3xl) !important;
   text-align: center;
   background-color: var(--color-surface) !important;
   border: 1px solid var(--color-border) !important;
@@ -34,8 +34,32 @@
   font-weight: 500;
 }
 
+.notifications-tabs {
+  margin-bottom: var(--spacing-2xl) !important;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.notifications-tabs .MuiTabs-indicator {
+  background-color: var(--color-primary) !important;
+  height: 3px !important;
+  border-radius: 3px 3px 0 0;
+}
+
+.notification-tab {
+  text-transform: none !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  color: var(--color-muted) !important;
+  transition: color 0.2s ease !important;
+  padding: var(--spacing-md) 0 !important;
+}
+
+.notification-tab.Mui-selected {
+  color: var(--color-primary) !important;
+}
+
 .notification-card {
-  padding: 1.25rem 1.5rem !important;
+  padding: var(--spacing-lg) var(--spacing-xl) !important;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -43,7 +67,7 @@
   border: 1px solid var(--color-border) !important;
   transition: all 0.25s ease-in-out !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
-  gap: 1rem;
+  gap: var(--spacing-lg);
 }
 
 .notification-card.unread {
@@ -66,7 +90,7 @@
 .notification-content-box {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: var(--spacing-xl);
   flex-grow: 1;
 }
 
@@ -105,22 +129,22 @@
 
 @media (max-width: 768px) {
   .notifications-container {
-    padding: 2rem 1rem;
+    padding: var(--spacing-2xl) var(--spacing-lg);
   }
 
   .notifications-title {
     font-size: 1.75rem !important;
-    margin-bottom: 1.5rem !important;
+    margin-bottom: var(--spacing-xl) !important;
   }
 
   .notification-card {
-    padding: 1rem 1.25rem !important;
+    padding: var(--spacing-lg) var(--spacing-lg) !important;
   }
 }
 
 @media (max-width: 585px) {
   .notifications-container {
-    padding: 1.5rem 0.8rem;
+    padding: var(--spacing-xl) var(--spacing-md);
   }
 
   .notifications-title {
@@ -128,8 +152,16 @@
     text-align: left;
   }
 
+  .notifications-tabs {
+    margin-bottom: var(--spacing-xl) !important;
+  }
+
+  .notification-tab {
+    font-size: 0.85rem !important;
+  }
+
   .notification-content-box {
-    gap: 0.75rem;
+    gap: var(--spacing-md);
     align-items: flex-start;
   }
 
@@ -145,7 +177,7 @@
 
 @media (max-width: 440px) {
   .notifications-container {
-    padding: 1rem 0.5rem;
+    padding: var(--spacing-lg) var(--spacing-sm);
   }
 
   .notifications-title {
@@ -153,8 +185,8 @@
   }
 
   .notification-card {
-    padding: 0.8rem 1rem !important;
-    gap: 0.5rem;
+    padding: var(--spacing-sm) var(--spacing-lg) !important;
+    gap: var(--spacing-sm);
   }
 
   .notification-text {

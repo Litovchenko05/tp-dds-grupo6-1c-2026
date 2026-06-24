@@ -9,27 +9,38 @@ export const NotificacionesProvider = ({ children }) => {
   const [notificaciones, setNotificaciones] = useState([])
   const [noLeidas, setNoLeidas] = useState(0)
 
-  const cargarNotificaciones = useCallback(async () => {
+  // Recibe 'pendientes', 'todas' o 'leidas' (por defecto 'pendientes')
+  const cargarNotificaciones = useCallback(async (filtro = 'pendientes') => {
     const token = localStorage.getItem('token')
     if (!token) return
 
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/notificaciones`, config)
+      let url = `${process.env.REACT_APP_API_URL}/notificaciones`
+      if (filtro === 'leidas') url += '?leida=true'
+      if (filtro === 'pendientes') url += '?leida=false'
 
+      const response = await axios.get(url, config)
       const data = response.data.data || []
+
       setNotificaciones(data)
 
-      const cantidad = data.filter((notif) => notif.leida === false).length
-      setNoLeidas(cantidad)
+      if (filtro === 'todas') {
+        setNoLeidas(data.filter((notif) => notif.leida === false).length)
+      } else if (filtro === 'pendientes') {
+        setNoLeidas(data.length)
+      }
     } catch (error) {
       console.error('Error al cargar notificaciones:', error)
     }
   }, [])
 
   useEffect(() => {
-    cargarNotificaciones()
+    const token = localStorage.getItem('token')
+    if (token) {
+      cargarNotificaciones('pendientes')
+    }
   }, [cargarNotificaciones])
 
   const marcarComoLeida = async (idNotificacion) => {
@@ -46,6 +57,7 @@ export const NotificacionesProvider = ({ children }) => {
       setNotificaciones((prev) =>
         prev.map((n) => (n._id === idNotificacion ? { ...n, leida: true } : n))
       )
+
       setNoLeidas((prev) => Math.max(0, prev - 1))
     } catch (error) {
       console.error('Error al marcar como leída:', error)

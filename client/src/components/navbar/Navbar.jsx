@@ -9,11 +9,13 @@ import NotificationsIcon from '@mui/icons-material/NotificationsOutlined'
 import TemporaryDrawer from '../menuLateral/Drawer.jsx'
 import { useCarrito } from '../../context/CarritoContext.jsx'
 import { useUsuario } from '../../context/UsuarioContext.jsx'
+import { useNotificaciones } from '../../context/NotificacionesContext.jsx'
 
 const Navbar = () => {
   const navigate = useNavigate()
   const { carrito } = useCarrito()
   const { usuario } = useUsuario()
+  const { noLeidas } = useNotificaciones()
   const [cantUnidades, setCantUnidades] = useState(0)
 
   const irACheckout = () => {
@@ -65,7 +67,7 @@ const Navbar = () => {
           )}
 
           <IconButton aria-label="ver notificaciones" onClick={() => navigate('/notificaciones')}>
-            <Badge badgeContent={0} color="error">
+            <Badge badgeContent={noLeidas} color="error">
               <NotificationsIcon style={{ color: 'var(--color-primary)' }} />
             </Badge>
           </IconButton>
