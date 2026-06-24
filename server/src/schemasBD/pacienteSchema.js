@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 import { Paciente } from '../models/paciente.js'
-import { UsuarioSchema } from './usuarioSchema.js'
 import { ObraSchema } from './obraSocialSchema.js'
 
 export const PacienteSchema = new mongoose.Schema(

@@ -26,7 +26,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 48px;
+  padding: var(--spacing-3xl);
   position: relative;
   overflow: hidden;
 }
@@ -34,7 +34,7 @@
 .auth-brand__top {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .auth-brand__badge {
@@ -69,12 +69,12 @@
   font-size: 16px;
   line-height: 1.6;
   opacity: 0.9;
-  margin-top: 16px;
+  margin-top: var(--spacing-lg);
 }
 
 .auth-brand__features {
   display: flex;
-  gap: 24px;
+  gap: var(--spacing-xl);
   font-size: 13px;
   opacity: 0.85;
   flex-wrap: wrap;
@@ -106,7 +106,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: var(--spacing-xl);
   background: var(--color-white);
 }
 
@@ -118,8 +118,8 @@
 .auth-mobile-logo {
   display: none;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 24px;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
 }
 
 .auth-mobile-logo__icon {
@@ -149,13 +149,13 @@
 .auth-subtitle {
   font-size: 14px;
   color: var(--color-muted);
-  margin: 0 0 28px;
+  margin: 0 0 var(--spacing-2xl);
   line-height: 1.5;
 }
 
 .auth-login-link-wrap {
   text-align: right;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
   margin-top: -4px;
 }
 
@@ -178,7 +178,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   transition:
     background 0.15s ease,
     transform 0.05s ease;
@@ -208,7 +208,7 @@
   font-size: 13px;
   color: var(--color-muted);
   text-align: center;
-  margin-top: 16px;
+  margin-top: var(--spacing-lg);
   line-height: 1.5;
 }
 
@@ -224,7 +224,7 @@
 }
 
 .auth-mode-toggle {
-  margin-bottom: 28px;
+  margin-bottom: var(--spacing-2xl);
 }
 
 .auth-spin {
@@ -258,7 +258,7 @@ a:focus-visible {
 
   .auth-form-panel {
     flex: 1 1 100%;
-    padding: 32px 20px;
+    padding: var(--spacing-2xl) var(--spacing-xl);
   }
 
   .auth-mobile-logo {
@@ -268,7 +268,7 @@ a:focus-visible {
 
 @media (max-width: 420px) {
   .auth-form-panel {
-    padding: 24px 16px;
+    padding: var(--spacing-xl) var(--spacing-lg);
   }
 }
 
@@ -281,7 +281,7 @@ a:focus-visible {
 }
 
 .auth-brand__logo-icon {
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-xl);
   background: rgba(255, 255, 255, 0.15);
   width: 96px;
   height: 96px;

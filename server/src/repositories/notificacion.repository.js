@@ -6,7 +6,10 @@ export class NotificacionRepository {
   }
 
   #consultaBase() {
-    return this.NotificacionModel.find().populate('destinatario').populate('remitente')
+    return this.NotificacionModel.find()
+      .sort({ fechaHoraCreacion: -1 }) // Orden descendente
+      .populate('destinatario')
+      .populate('remitente')
   }
 
   #filtroPorUsuario(idUsuario, consulta) {
