@@ -514,12 +514,14 @@
   justify-content: center;
   z-index: 120;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .paciente-historial-panel {
   width: min(980px, 96vw);
   max-height: 86vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
   background: #ffffff;
   border-radius: 14px;
   box-shadow: 0 20px 40px rgba(14, 24, 52, 0.28);

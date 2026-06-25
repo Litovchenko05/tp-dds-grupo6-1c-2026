@@ -6,7 +6,6 @@ import CircularProgress from '@mui/material/CircularProgress'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import TurnGridSkeleton from '../../../components/common/TurnGridSkeleton'
-import MedicoFooter from '../../../components/Footer/MedicoFooter'
 import AgendaFiltros from './components/AgendaFiltros'
 import AgendaTurnoCard from './components/AgendaTurnoCard'
 import AgendaTurnosTable from './components/AgendaTurnosTable'
@@ -221,10 +220,6 @@ const MedicoAgenda = () => {
     }, 700)
   }
 
-  const simularError = () => {
-    setHasError(true)
-  }
-
   const cerrarHistorialPanel = () => {
     setShowHistorialPanel(false)
     setIsHistorialLoading(false)
@@ -274,9 +269,6 @@ const MedicoAgenda = () => {
                 </button>
                 <button type="button" onClick={limpiarFiltros}>
                   Limpiar filtros
-                </button>
-                <button type="button" onClick={simularError}>
-                  Simular error
                 </button>
               </div>
             </section>
@@ -449,8 +441,6 @@ const MedicoAgenda = () => {
           </article>
         </section>
       )}
-
-      <MedicoFooter />
     </>
   )
 }

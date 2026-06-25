@@ -10,6 +10,10 @@ import ListItemText from '@mui/material/ListItemText'
 import InboxIcon from '@mui/icons-material/MoveToInbox'
 import MailIcon from '@mui/icons-material/Mail'
 import LogoutIcon from '@mui/icons-material/Logout'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices'
+import NotificationsIcon from '@mui/icons-material/Notifications'
 import IconButton from '@mui/material/IconButton'
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
 import { useNavigate } from 'react-router-dom'
@@ -17,7 +21,7 @@ import { useUsuario } from '../../context/UsuarioContext.jsx'
 
 import './Drawer.css'
 
-export default function TemporaryDrawer() {
+export default function TemporaryDrawer({ role = 'paciente', options, showLogout = true }) {
   const [open, setOpen] = React.useState(false)
   const { cerrarSesion } = useUsuario()
 
@@ -27,12 +31,22 @@ export default function TemporaryDrawer() {
 
   const navigate = useNavigate()
 
-  const opciones = [
-    { texto: 'Mis turnos', ruta: '/mis-turnos' },
-    { texto: 'Historial', ruta: '/historial' },
-    { texto: 'Reservar Turnos', ruta: '/reserva-de-turnos' },
-    { texto: 'Notificaciones', ruta: '/notificaciones' },
+  const opcionesPaciente = [
+    { texto: 'Mis turnos', ruta: '/mis-turnos', icon: <InboxIcon /> },
+    { texto: 'Historial', ruta: '/historial', icon: <MailIcon /> },
+    { texto: 'Reservar Turnos', ruta: '/reserva-de-turnos', icon: <InboxIcon /> },
+    { texto: 'Notificaciones', ruta: '/notificaciones', icon: <NotificationsIcon /> },
   ]
+
+  const opcionesMedico = [
+    { texto: 'Inicio', ruta: '/medico/home', icon: <AccountCircleIcon /> },
+    { texto: 'Agenda', ruta: '/medico/agenda', icon: <CalendarMonthIcon /> },
+    { texto: 'Servicios', ruta: '/medico/home', icon: <MedicalServicesIcon /> },
+    { texto: 'Notificaciones', ruta: '/notificaciones', icon: <NotificationsIcon /> },
+  ]
+
+  const opcionesPorRol = role === 'medico' ? opcionesMedico : opcionesPaciente
+  const opcionesFinales = options || opcionesPorRol
 
   const DrawerList = (
     <Box className="drawer" role="presentation" onClick={toggleDrawer(false)}>
@@ -46,11 +60,11 @@ export default function TemporaryDrawer() {
       </div>
 
       <List className="drawer-list">
-        {opciones.map((opcion, index) => (
+        {opcionesFinales.map((opcion, index) => (
           <ListItem key={opcion.texto} disablePadding>
             <ListItemButton className="drawer-item" onClick={() => navigate(opcion.ruta)}>
               <ListItemIcon className="drawer-icon">
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {opcion.icon || (index % 2 === 0 ? <InboxIcon /> : <MailIcon />)}
               </ListItemIcon>
               <ListItemText primary={opcion.texto} />
             </ListItemButton>
@@ -59,17 +73,21 @@ export default function TemporaryDrawer() {
       </List>
       <Box sx={{ flexGrow: 1 }} />
 
-      <Divider className="drawer-divider" />
-      <List className="drawer-footer">
-        <ListItem disablePadding>
-          <ListItemButton className="logout-btn" onClick={cerrarSesion}>
-            <ListItemIcon>
-              <LogoutIcon className="logout-icon" />
-            </ListItemIcon>
-            <ListItemText primary="Cerrar sesión" className="logout-text" />
-          </ListItemButton>
-        </ListItem>
-      </List>
+      {showLogout && (
+        <>
+          <Divider className="drawer-divider" />
+          <List className="drawer-footer">
+            <ListItem disablePadding>
+              <ListItemButton className="logout-btn" onClick={cerrarSesion}>
+                <ListItemIcon>
+                  <LogoutIcon className="logout-icon" />
+                </ListItemIcon>
+                <ListItemText primary="Cerrar sesión" className="logout-text" />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </>
+      )}
     </Box>
   )
 

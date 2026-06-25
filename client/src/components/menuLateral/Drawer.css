@@ -36,25 +36,6 @@
   text-overflow: ellipsis;
 }
 
-.drawer {
-  width: 250px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px 0;
-}
-
-.drawer-logo {
-  width: 100px;
-  height: auto;
-}
-
-.drawer-title {
-  margin-top: 8px;
-  color: rgb(121, 29, 29);
-  font-weight: bold;
-}
-
 @media (max-width: 900px) {
   .menu-toggle-container {
     padding: 6px 8px;
@@ -75,6 +56,8 @@
     font-size: 0.98rem;
     max-width: calc(100% - 72px);
   }
+}
+
 .drawer {
   width: 280px;
   max-width: 80vw;

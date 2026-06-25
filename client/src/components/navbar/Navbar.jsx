@@ -15,6 +15,7 @@ const Navbar = () => {
   const navigate = useNavigate()
   const { carrito } = useCarrito()
   const { usuario } = useUsuario()
+  const esMedico = usuario?.rol === 'medico'
   const { noLeidas } = useNotificaciones()
   const [cantUnidades, setCantUnidades] = useState(0)
 
@@ -38,7 +39,7 @@ const Navbar = () => {
     <header className="navbar-bg">
       <nav className="navbar">
         <div className="navbar-section left">
-          <TemporaryDrawer />
+          <TemporaryDrawer role={esMedico ? 'medico' : 'paciente'} />
         </div>
 
         <div className="navbar-section center">
@@ -72,11 +73,13 @@ const Navbar = () => {
             </Badge>
           </IconButton>
 
-          <IconButton aria-label="view cart with items" onClick={irACheckout}>
-            <Badge badgeContent={cantUnidades} color="error">
-              <ShoppingCartIcon id="iconoDeCart" style={{ color: 'var(--color-primary)' }} />
-            </Badge>
-          </IconButton>
+          {!esMedico && (
+            <IconButton aria-label="view cart with items" onClick={irACheckout}>
+              <Badge badgeContent={cantUnidades} color="error">
+                <ShoppingCartIcon id="iconoDeCart" style={{ color: 'var(--color-primary)' }} />
+              </Badge>
+            </IconButton>
+          )}
         </div>
       </nav>
     </header>

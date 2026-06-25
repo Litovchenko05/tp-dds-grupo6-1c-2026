@@ -17,3 +17,12 @@
 - [ ] Alinear colores por estado en cards según criterio médico
 - [ ] Revisar consistencia de estilos sin romper estética actual
 - [ ] Validación final estática de cambios
+- [ ] Resolver conflicto de merge en `client/src/App.jsx` y dejar una única implementación consistente.
+- [ ] Validar compilación del cliente para confirmar ausencia de conflictos.
+- [ ] Unificar UI médico con base paciente usando variantes por rol.
+  - [ ] Reutilizar Drawer base para rol médico/paciente.
+  - [ ] Adaptar Navbar para ocultar carrito en médico.
+  - [ ] Unificar Footer con variante por rol.
+  - [ ] Ajustar rutas/layout para que médico use layout común.
+  - [x] Eliminar uso de MedicoFooter dentro de páginas médicas.
+  - [ ] Validar responsive en vistas médico y paciente.
