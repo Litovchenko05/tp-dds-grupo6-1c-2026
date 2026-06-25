@@ -5,56 +5,144 @@ const router = express.Router()
 
 router
   .route('/')
-  .get((req, res) => medicoController.findAllPaginated(req, res))
-  .post((req, res) => medicoController.createMedico(req, res))
+  .get((req, res) =>
+    // #swagger.tags = ['Médicos']
+    // #swagger.summary = 'Obtener listado de médicos paginado'
+    // #swagger.description = 'Recupera una lista paginada de todos los médicos registrados en el sistema.'
+    /* #swagger.parameters['page'] = { in: 'query', description: 'Número de página', type: 'integer' } */
+    /* #swagger.parameters['limit'] = { in: 'query', description: 'Cantidad de resultados por página', type: 'integer' } */
+    medicoController.findAllPaginated(req, res)
+  )
+  .post((req, res) =>
+    // #swagger.tags = ['Médicos']
+    // #swagger.summary = 'Crear un nuevo médico'
+    // #swagger.description = 'Da de alta un perfil de médico de forma manual.'
+    medicoController.createMedico(req, res)
+  )
 
-router
-  .route('/:id')
-  .get((req, res) => medicoController.findById(req, res))
+router.route('/:id').get((req, res) =>
+  // #swagger.tags = ['Médicos']
+  // #swagger.summary = 'Obtener médico por ID'
+  // #swagger.description = 'Recupera el perfil completo de un médico específico mediante su ID de MongoDB.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+  medicoController.findById(req, res)
+)
 
-router.route('/:id/turnos')
-  .get((req, res) => medicoController.obtenerTurnos(req, res)) //GET /medicos/1/disponibilidades?nombreServicio=Cardiologia&&estadoTurno=DISPONIBLE  
+router.route('/:id/turnos').get((req, res) =>
+  // #swagger.tags = ['Médicos', 'Turnos']
+  // #swagger.summary = 'Obtener turnos de un médico'
+  // #swagger.description = 'Recupera los turnos asociados a un médico. Permite filtrar por servicio y estado.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+  /* #swagger.parameters['nombreServicio'] = { in: 'query', description: 'Filtrar por nombre del servicio (ej: Cardiologia)', required: false, type: 'string' } */
+  /* #swagger.parameters['estadoTurno'] = { in: 'query', description: 'Filtrar por estado del turno (ej: DISPONIBLE)', required: false, type: 'string' } */
+  medicoController.obtenerTurnos(req, res)
+)
 
 router
   .route('/:id/turnos/:idTurno')
-  .post((req, res) => medicoController.solicitarCambioFecha(req, res))
-  .patch((req, res) => medicoController.cancelarTurno(req, res))
-  .put((req, res) => medicoController.actualizarTurno(req, res))
+  .post((req, res) =>
+    // #swagger.tags = ['Médicos', 'Turnos']
+    // #swagger.summary = 'Solicitar cambio de fecha de turno'
+    // #swagger.description = 'El médico solicita la reprogramación de un turno existente.'
+    /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+    /* #swagger.parameters['idTurno'] = { in: 'path', description: 'ID del turno', required: true, type: 'string' } */
+    medicoController.solicitarCambioFecha(req, res)
+  )
+  .patch((req, res) =>
+    // #swagger.tags = ['Médicos', 'Turnos']
+    // #swagger.summary = 'Cancelar un turno'
+    // #swagger.description = 'El médico cancela un turno específico.'
+    /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+    /* #swagger.parameters['idTurno'] = { in: 'path', description: 'ID del turno a cancelar', required: true, type: 'string' } */
+    medicoController.cancelarTurno(req, res)
+  )
+  .put((req, res) =>
+    // #swagger.tags = ['Médicos', 'Turnos']
+    // #swagger.summary = 'Actualizar datos de un turno'
+    // #swagger.description = 'Modifica los detalles generales de un turno asignado a este médico.'
+    /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+    /* #swagger.parameters['idTurno'] = { in: 'path', description: 'ID del turno', required: true, type: 'string' } */
+    medicoController.actualizarTurno(req, res)
+  )
 
-router
-  .route('/:id/turnos/:idTurno/cambios')
-  .post((req, res) => medicoController.crearCambio(req, res))
+router.route('/:id/turnos/:idTurno/cambios').post((req, res) =>
+  // #swagger.tags = ['Médicos', 'Turnos']
+  // #swagger.summary = 'Registrar un cambio en el turno'
+  // #swagger.description = 'Añade un registro al historial de cambios de un turno específico.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+  /* #swagger.parameters['idTurno'] = { in: 'path', description: 'ID del turno', required: true, type: 'string' } */
+  medicoController.crearCambio(req, res)
+)
 
 router
   .route('/:id/disponibilidades')
-  .post((req, res) => medicoController.createDisponibilidad(req, res))
+  .get((req, res) =>
+    // #swagger.tags = ['Médicos', 'Disponibilidad']
+    // #swagger.summary = 'Obtener disponibilidades del médico'
+    // #swagger.description = 'Lista los horarios y días que el médico tiene configurados como disponibles.'
+    /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+    medicoController.obtenerDisponibilidad(req, res)
+  )
+  .post((req, res) =>
+    // #swagger.tags = ['Médicos', 'Disponibilidad']
+    // #swagger.summary = 'Crear bloque de disponibilidad'
+    // #swagger.description = 'Define un nuevo rango de días y horarios de atención para el médico.'
+    /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+    medicoController.createDisponibilidad(req, res)
+  )
 
-router
-  .route('/:id/disponibilidades/:idDisponibilidad')
-  .put((req, res) => medicoController.modificarDisponibilidad(req, res))
-
-router
-  .route('/:id/disponibilidades')
-  .get((req, res) => medicoController.obtenerDisponibilidad(req, res))
+router.route('/:id/disponibilidades/:idDisponibilidad').put((req, res) =>
+  // #swagger.tags = ['Médicos', 'Disponibilidad']
+  // #swagger.summary = 'Modificar bloque de disponibilidad'
+  // #swagger.description = 'Edita un rango horario existente del médico.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+  /* #swagger.parameters['idDisponibilidad'] = { in: 'path', description: 'ID de la disponibilidad a modificar', required: true, type: 'string' } */
+  medicoController.modificarDisponibilidad(req, res)
+)
 
 router
   .route('/:id/servicios')
-  .get((req, res) => medicoController.obtenerServicios(req, res))
-  .post((req, res) => medicoController.agregarServicio(req, res))
+  .get((req, res) =>
+    // #swagger.tags = ['Médicos', 'Servicios']
+    // #swagger.summary = 'Obtener servicios del médico'
+    // #swagger.description = 'Recupera la lista de servicios médicos que ofrece el profesional.'
+    /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+    medicoController.obtenerServicios(req, res)
+  )
+  .post((req, res) =>
+    // #swagger.tags = ['Médicos', 'Servicios']
+    // #swagger.summary = 'Agregar servicio al médico'
+    // #swagger.description = 'Vincula un nuevo servicio de atención al perfil del profesional.'
+    /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+    medicoController.agregarServicio(req, res)
+  )
 
-router
-  .route('/:id/servicios/:nombreServicio')
-  .put((req, res) => medicoController.modificarServicio(req, res))
+router.route('/:id/servicios/:nombreServicio').put((req, res) =>
+  // #swagger.tags = ['Médicos', 'Servicios']
+  // #swagger.summary = 'Modificar servicio del médico'
+  // #swagger.description = 'Edita las características de un servicio específico brindado por el médico.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+  /* #swagger.parameters['nombreServicio'] = { in: 'path', description: 'Nombre del servicio actual', required: true, type: 'string' } */
+  medicoController.modificarServicio(req, res)
+)
 
-router
-  .route('/:id/servicios/:tipoServicio/:servicioNombre')
-  .delete((req, res) => {
-    medicoController.deleteServicio(req, res)
-  })
+router.route('/:id/servicios/:tipoServicio/:servicioNombre').delete((req, res) => {
+  // #swagger.tags = ['Médicos', 'Servicios']
+  // #swagger.summary = 'Eliminar servicio del médico'
+  // #swagger.description = 'Desvincula un servicio médico del perfil del profesional.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+  /* #swagger.parameters['tipoServicio'] = { in: 'path', description: 'Tipo o categoría del servicio', required: true, type: 'string' } */
+  /* #swagger.parameters['servicioNombre'] = { in: 'path', description: 'Nombre exacto del servicio a eliminar', required: true, type: 'string' } */
+  return medicoController.deleteServicio(req, res)
+})
 
-router
-  .route('/:id/pacientes/:idPaciente/historial')
-  .get((req, res) => medicoController.obtenerHistorialPaciente(req, res))
-
+router.route('/:id/pacientes/:idPaciente/historial').get((req, res) =>
+  // #swagger.tags = ['Médicos', 'Historial Clínico']
+  // #swagger.summary = 'Ver historial clínico de un paciente'
+  // #swagger.description = 'Permite al médico visualizar los antecedentes y el historial médico de un paciente específico.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+  /* #swagger.parameters['idPaciente'] = { in: 'path', description: 'ID del paciente a consultar', required: true, type: 'string' } */
+  medicoController.obtenerHistorialPaciente(req, res)
+)
 
 export default router

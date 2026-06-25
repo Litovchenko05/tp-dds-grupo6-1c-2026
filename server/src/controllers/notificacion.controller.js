@@ -1,4 +1,4 @@
-import { notificacionSchema } from '../schemas/notificacion.schema.js'
+import { notificacionSchema } from '../validators/notificacion.schema.js'
 
 export class NotificacionController {
   constructor({ notificacionService }) {
@@ -8,7 +8,7 @@ export class NotificacionController {
   obtenerDeUsuario = async (req, res) => {
     try {
       const { leida } = req.query
-      const idUsuario = req.params.id
+      const idUsuario = req.usuarioMongoId
 
       if (leida !== undefined && leida !== 'true' && leida !== 'false') {
         return res

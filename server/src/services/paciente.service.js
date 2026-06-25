@@ -1,6 +1,5 @@
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 export class PacienteService {
-
   constructor({ pacienteRepository, turnoRepository, medicoRepository, turnoService }) {
     this.pacienteRepository = pacienteRepository
     this.turnoRepository = turnoRepository
@@ -9,10 +8,9 @@ export class PacienteService {
   }
 
   async createPaciente(pacienteData) {
+    const { usuario, dni, nombre } = pacienteData
 
-    const { dni, nombre, obraSocial, usuario, plan } = pacienteData
-
-    if (!usuario || !dni || !nombre || !obraSocial || !plan) {
+    if (!usuario || !dni || !nombre) {
       throw new Error('Todos los campos son requeridos')
     }
 
@@ -22,7 +20,7 @@ export class PacienteService {
       throw new Error('El Paciente ya existe')
     }
 
-    const nuevoPaciente = { dni, nombre, obraSocial, usuario, plan }
+    const nuevoPaciente = { dni, nombre, usuario }
 
     const pacienteGuardado = await this.pacienteRepository.save(nuevoPaciente)
 
@@ -92,8 +90,6 @@ export class PacienteService {
     const historial = paciente.historialDeTurnos
     return historial
   }
-
-
 
   async findAllPaginated(page, limit) {
     return await this.pacienteRepository.findAllPaginated(page, limit)

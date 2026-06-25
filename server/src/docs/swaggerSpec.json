@@ -21,6 +21,40 @@
         }
       }
     },
+    "/notificaciones/": {
+      "get": {
+        "tags": [
+          "Notificaciones"
+        ],
+        "summary": "Obtener notificaciones",
+        "description": "Recupera el historial de notificaciones del usuario autenticado (extraído del token JWT).",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "leida",
+            "in": "query",
+            "description": "Filtrar por notificaciones leídas (true) o no leídas (false). Si no se envía, trae todas.",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/notificaciones/{id}/leida": {
       "put": {
         "tags": [
@@ -34,49 +68,34 @@
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "ID de MongoDB de la notificación a actualizar",
-            "example": "6661ee005fedc12a282ac126"
+            "description": "ID de MongoDB de la notificación a actualizar"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
-    "/notificaciones/": {
+    "/notificaciones/prueba": {
       "post": {
         "tags": [
           "Notificaciones"
         ],
         "summary": "Crear una notificación de prueba",
-        "description": "Permite forzar la creación de una notificación manualmente (ideal para probar con Postman).",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Datos requeridos para generar la notificación",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "destinatario": {
-                  "type": "string",
-                  "example": "6661ee005fedc12a282ac126"
-                },
-                "remitente": {
-                  "type": "string",
-                  "example": "6661ee005fedc12a282ac127"
-                },
-                "mensaje": {
-                  "type": "string",
-                  "example": "El paciente Juan Pérez ha cancelado el turno de las 16:30hs."
-                }
-              }
-            }
-          }
-        ],
+        "description": "",
         "responses": {
           "default": {
             "description": ""
@@ -86,7 +105,11 @@
     },
     "/turnos/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Turnos Globales"
+        ],
+        "summary": "Obtener todos los turnos",
+        "description": "Recupera un listado global y paginado de los turnos de la clínica.",
         "responses": {
           "default": {
             "description": ""
@@ -96,13 +119,39 @@
     },
     "/turnos/{id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Turnos Globales"
+        ],
+        "summary": "Obtener un turno por ID",
+        "description": "Busca los detalles de un turno específico en el sistema.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del turno"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Turnos Globales"
+        ],
+        "summary": "Solicitar cambio de fecha",
+        "description": "Inicia una solicitud de reprogramación para un turno específico a nivel sistema.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del turno"
           }
         ],
         "responses": {
@@ -114,13 +163,18 @@
     },
     "/turnos/{id}/cancelar": {
       "patch": {
-        "description": "",
+        "tags": [
+          "Turnos Globales"
+        ],
+        "summary": "Cancelar un turno globalmente",
+        "description": "Cambia el estado del turno a cancelado desde el módulo administrador de turnos.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del turno a cancelar"
           }
         ],
         "responses": {
@@ -132,83 +186,20 @@
     },
     "/turnos/{id}/realizado": {
       "patch": {
-        "description": "",
+        "tags": [
+          "Turnos Globales"
+        ],
+        "summary": "Marcar turno como realizado",
+        "description": "Actualiza el estado del turno indicando que la consulta médica finalizó con éxito.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del turno a finalizar"
           }
         ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/turnos/{id}/solicitarCambioFecha": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/turnos/buscarTurnos/profesional": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/turnos/buscarTurnos/especialidad": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/turnos/buscarTurnos/practica": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/turnos/buscarTurnos/sede": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/turnos/buscarTurnos/rangoDeFechas": {
-      "get": {
-        "description": "",
         "responses": {
           "default": {
             "description": ""
@@ -218,7 +209,37 @@
     },
     "/medicos/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Médicos"
+        ],
+        "summary": "Obtener listado de médicos paginado",
+        "description": "Recupera una lista paginada de todos los médicos registrados en el sistema.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Número de página",
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Cantidad de resultados por página",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Médicos"
+        ],
+        "summary": "Crear un nuevo médico",
+        "description": "Da de alta un perfil de médico de forma manual.",
         "responses": {
           "default": {
             "description": ""
@@ -228,137 +249,18 @@
     },
     "/medicos/{id}": {
       "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
+        "tags": [
+          "Médicos"
         ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/medicos/nuevoMedico": {
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/medicos/{id}/disponibilidad": {
-      "post": {
-        "description": "",
+        "summary": "Obtener médico por ID",
+        "description": "Recupera el perfil completo de un médico específico mediante su ID de MongoDB.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/medicos/{id}/modificarDisponibilidad/{idDisponibilidad}": {
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "idDisponibilidad",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/medicos/{id}/servicio": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/medicos/{id}/modificarServicio/{nombreServicio}": {
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "nombreServicio",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/medicos/{id}/darDeBajaServicio/{tipoServicio}/{servicioNombre}": {
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "tipoServicio",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "servicioNombre",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del médico"
           }
         ],
         "responses": {
@@ -370,12 +272,32 @@
     },
     "/medicos/{id}/turnos": {
       "get": {
-        "description": "",
+        "tags": [
+          "Médicos",
+          "Turnos"
+        ],
+        "summary": "Obtener turnos de un médico",
+        "description": "Recupera los turnos asociados a un médico. Permite filtrar por servicio y estado.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string",
+            "description": "ID del médico"
+          },
+          {
+            "name": "nombreServicio",
+            "in": "query",
+            "description": "Filtrar por nombre del servicio (ej: Cardiologia)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "estadoTurno",
+            "in": "query",
+            "description": "Filtrar por estado del turno (ej: DISPONIBLE)",
+            "required": false,
             "type": "string"
           }
         ],
@@ -386,21 +308,28 @@
         }
       }
     },
-    "/medicos/{id}/turnos/{idTurno}/solicitarCambioFecha": {
+    "/medicos/{id}/turnos/{idTurno}": {
       "post": {
-        "description": "",
+        "tags": [
+          "Médicos",
+          "Turnos"
+        ],
+        "summary": "Solicitar cambio de fecha de turno",
+        "description": "El médico solicita la reprogramación de un turno existente.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del médico"
           },
           {
             "name": "idTurno",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del turno"
           }
         ],
         "responses": {
@@ -408,23 +337,28 @@
             "description": ""
           }
         }
-      }
-    },
-    "/medicos/{medicoId}/turnos/{turnoId}": {
+      },
       "put": {
-        "description": "",
+        "tags": [
+          "Médicos",
+          "Turnos"
+        ],
+        "summary": "Actualizar datos de un turno",
+        "description": "Modifica los detalles generales de un turno asignado a este médico.",
         "parameters": [
           {
-            "name": "medicoId",
+            "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del médico"
           },
           {
-            "name": "turnoId",
+            "name": "idTurno",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del turno"
           }
         ],
         "responses": {
@@ -434,19 +368,26 @@
         }
       },
       "patch": {
-        "description": "",
+        "tags": [
+          "Médicos",
+          "Turnos"
+        ],
+        "summary": "Cancelar un turno",
+        "description": "El médico cancela un turno específico.",
         "parameters": [
           {
-            "name": "medicoId",
+            "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del médico"
           },
           {
-            "name": "turnoId",
+            "name": "idTurno",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del turno a cancelar"
           }
         ],
         "responses": {
@@ -456,21 +397,28 @@
         }
       }
     },
-    "/medicos/{medicoId}/turnos/{turnoId}/cambios": {
+    "/medicos/{id}/turnos/{idTurno}/cambios": {
       "post": {
-        "description": "",
+        "tags": [
+          "Médicos",
+          "Turnos"
+        ],
+        "summary": "Registrar un cambio en el turno",
+        "description": "Añade un registro al historial de cambios de un turno específico.",
         "parameters": [
           {
-            "name": "medicoId",
+            "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del médico"
           },
           {
-            "name": "turnoId",
+            "name": "idTurno",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del turno"
           }
         ],
         "responses": {
@@ -480,15 +428,21 @@
         }
       }
     },
-    "/medicos/{medicoId}/servicios": {
+    "/medicos/{id}/disponibilidades": {
       "get": {
-        "description": "",
+        "tags": [
+          "Médicos",
+          "Disponibilidad"
+        ],
+        "summary": "Obtener disponibilidades del médico",
+        "description": "Lista los horarios y días que el médico tiene configurados como disponibles.",
         "parameters": [
           {
-            "name": "medicoId",
+            "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del médico"
           }
         ],
         "responses": {
@@ -498,13 +452,19 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": [
+          "Médicos",
+          "Disponibilidad"
+        ],
+        "summary": "Crear bloque de disponibilidad",
+        "description": "Define un nuevo rango de días y horarios de atención para el médico.",
         "parameters": [
           {
-            "name": "medicoId",
+            "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del médico"
           }
         ],
         "responses": {
@@ -514,21 +474,143 @@
         }
       }
     },
-    "/medicos/{medicoId}/servicios/{servicioId}": {
+    "/medicos/{id}/disponibilidades/{idDisponibilidad}": {
+      "put": {
+        "tags": [
+          "Médicos",
+          "Disponibilidad"
+        ],
+        "summary": "Modificar bloque de disponibilidad",
+        "description": "Edita un rango horario existente del médico.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del médico"
+          },
+          {
+            "name": "idDisponibilidad",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID de la disponibilidad a modificar"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/medicos/{id}/servicios": {
+      "get": {
+        "tags": [
+          "Médicos",
+          "Servicios"
+        ],
+        "summary": "Obtener servicios del médico",
+        "description": "Recupera la lista de servicios médicos que ofrece el profesional.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del médico"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Médicos",
+          "Servicios"
+        ],
+        "summary": "Agregar servicio al médico",
+        "description": "Vincula un nuevo servicio de atención al perfil del profesional.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del médico"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/medicos/{id}/servicios/{nombreServicio}": {
+      "put": {
+        "tags": [
+          "Médicos",
+          "Servicios"
+        ],
+        "summary": "Modificar servicio del médico",
+        "description": "Edita las características de un servicio específico brindado por el médico.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del médico"
+          },
+          {
+            "name": "nombreServicio",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Nombre del servicio actual"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/medicos/{id}/servicios/{tipoServicio}/{servicioNombre}": {
       "delete": {
-        "description": "",
+        "tags": [
+          "Médicos",
+          "Servicios"
+        ],
+        "summary": "Eliminar servicio del médico",
+        "description": "Desvincula un servicio médico del perfil del profesional.",
         "parameters": [
           {
-            "name": "medicoId",
+            "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del médico"
           },
           {
-            "name": "servicioId",
+            "name": "tipoServicio",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Tipo o categoría del servicio"
+          },
+          {
+            "name": "servicioNombre",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Nombre exacto del servicio a eliminar"
           }
         ],
         "responses": {
@@ -538,39 +620,28 @@
         }
       }
     },
-    "/medicos/{medicoId}/pacientes/{pacienteId}/historial": {
+    "/medicos/{id}/pacientes/{idPaciente}/historial": {
       "get": {
-        "description": "",
+        "tags": [
+          "Médicos",
+          "Historial Clínico"
+        ],
+        "summary": "Ver historial clínico de un paciente",
+        "description": "Permite al médico visualizar los antecedentes y el historial médico de un paciente específico.",
         "parameters": [
           {
-            "name": "medicoId",
+            "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del médico"
           },
           {
-            "name": "pacienteId",
+            "name": "idPaciente",
             "in": "path",
             "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/medicos/{medicoId}/disponibilidad": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "medicoId",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID del paciente a consultar"
           }
         ],
         "responses": {
@@ -582,7 +653,23 @@
     },
     "/pacientes/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Pacientes"
+        ],
+        "summary": "Obtener listado de pacientes paginado",
+        "description": "Recupera una lista paginada de todos los pacientes del sistema.",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pacientes"
+        ],
+        "summary": "Crear un nuevo paciente",
+        "description": "Da de alta un perfil de paciente de forma manual.",
         "responses": {
           "default": {
             "description": ""
@@ -592,155 +679,99 @@
     },
     "/pacientes/{id}": {
       "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/pacientes/nuevoPaciente": {
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/pacientes/{pacienteId}/turnos/{turnoId}": {
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "pacienteId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "turnoId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/pacientes/{pacienteId}/consultarHistorial": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "pacienteId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/pacientes/{pacienteId}/solicitarCambioDeFecha/{turnoId}": {
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "pacienteId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "turnoId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/usuarios/": {
-      "post": {
         "tags": [
-          "Usuarios"
+          "Pacientes"
         ],
-        "summary": "Registrar un nuevo usuario",
-        "description": "Da de alta un usuario en el sistema.",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Datos de registro del usuario",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "nombreUsuario": {
-                  "type": "string",
-                  "example": "pedroibarra"
-                },
-                "password": {
-                  "type": "string",
-                  "example": "1234456"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/usuarios/{id}/notificaciones": {
-      "get": {
-        "tags": [
-          "Notificaciones"
-        ],
-        "summary": "Obtener notificaciones de un usuario",
-        "description": "Recupera el historial de notificaciones (tanto leídas como no leídas) asociadas a un usuario específico.",
+        "summary": "Obtener paciente por ID",
+        "description": "Recupera el perfil completo de un paciente específico mediante su ID de MongoDB.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "ID de MongoDB del usuario cuyas notificaciones se quieren consultar",
-            "example": "6661ee005fedc12a282ac126"
+            "description": "ID del paciente"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/pacientes/{id}/turnos/{turnoId}": {
+      "patch": {
+        "tags": [
+          "Pacientes",
+          "Turnos"
+        ],
+        "summary": "Cambiar estado de un turno",
+        "description": "Permite al paciente modificar el estado de uno de sus turnos (ej. cancelarlo).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del paciente"
           },
           {
-            "name": "leida",
-            "in": "query",
-            "description": "Filtrar por notificaciones leídas (true) o no leídas (false). Si no se envía, trae todas.",
-            "required": false,
-            "type": "boolean"
+            "name": "turnoId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del turno a modificar"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/pacientes/{id}/historial": {
+      "get": {
+        "tags": [
+          "Pacientes",
+          "Historial Clínico"
+        ],
+        "summary": "Consultar historial clínico propio",
+        "description": "Recupera el historial de atenciones médicas y antecedentes del paciente.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del paciente"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/registro": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Registrar un nuevo usuario",
+        "description": "Registra un paciente o médico en el sistema, creando su cuenta en Keycloak y su perfil en MongoDB.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Datos del usuario a registrar (nombre, username, password, rol, y DNI/Matrícula según corresponda).",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
           }
         ],
         "responses": {

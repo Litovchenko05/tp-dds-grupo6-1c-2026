@@ -1,18 +1,18 @@
-import { especialidadSchema } from '../schemas/especialidad.schema.js'
-import { medicoSchema } from '../schemas/medico.schema.js'
-import { practicaSchema } from '../schemas/practica.schema.js'
-import { disponibilidadHorariaSchema } from '../schemas/disponibilidadHoraria.schema.js'
-import { disponibilidadDetalladaSchema } from '../schemas/disponibilidadPorSedeyServicio.js'
-import { cancelarTurnoSchema } from '../schemas/cancelarTurnoSchema.js'
-import { marcarRealizadoSchema } from '../schemas/marcarRealizadoSchema.js'
-import { agregarServicioSchema } from '../schemas/agregarServicioSchema.js'
-import { crearCambioSchema } from '../schemas/cambioFechaTurnoSchema.js'
+import { especialidadSchema } from '../validators/especialidad.schema.js'
+import { medicoSchema } from '../validators/medico.schema.js'
+import { practicaSchema } from '../validators/practica.schema.js'
+import { disponibilidadHorariaSchema } from '../validators/disponibilidadHoraria.schema.js'
+import { disponibilidadDetalladaSchema } from '../validators/disponibilidadPorSedeyServicio.js'
+import { cancelarTurnoSchema } from '../validators/cancelarTurnoSchema.js'
+import { marcarRealizadoSchema } from '../validators/marcarRealizadoSchema.js'
+import { agregarServicioSchema } from '../validators/agregarServicioSchema.js'
+import { crearCambioSchema } from '../validators/cambioFechaTurnoSchema.js'
 
 export class MedicoController {
   constructor({ medicoService, turnoService, pacienteService }) {
     this.medicoService = medicoService
     this.turnoService = turnoService
-    this.pacienteService = pacienteService /* PARA OBTENER LA CONSULTA DEL HISTORIAL DE TURNOS DEL PACIENTE */
+    this.pacienteService = pacienteService
   }
 
   createMedico = async (req, res) => {
@@ -28,7 +28,6 @@ export class MedicoController {
       const medicoCreado = await this.medicoService.createMedico(resultado.data)
 
       return res.status(201).json({ status: 'success', data: medicoCreado })
-
     } catch (error) {
       return res.status(409).json({ data: error.message })
     }
@@ -113,7 +112,10 @@ export class MedicoController {
       const { nombreServicio, estadoTurno } = req.query
       const disponibilidades = []
       if (estadoTurno && estadoTurno == 'DISPONIBLE') {
-        disponibilidades = this.medicoService.obtenerDisponiblesSegunMedicoYServicio(idMedico, nombreServicio)
+        disponibilidades = this.medicoService.obtenerDisponiblesSegunMedicoYServicio(
+          idMedico,
+          nombreServicio
+        )
       }
       return res.status(200).json({
         status: 'success',
@@ -151,7 +153,6 @@ export class MedicoController {
       if (!resultado.success) {
         return res.status(400).json({ status: 'error', message: resultado.error.errors })
       }
-
     } catch (error) {
       if (error.message === 'Turno no encontrado') {
         return res.status(404).json({
@@ -416,7 +417,6 @@ export class MedicoController {
       const medicoId = req.params.id
       const servicioNombre = req.params.nombreServicio
 
-
       await this.medicoService.modificarServicio(medicoId, servicioNombre, resultado.data)
       return res.status(200).json({ status: 'success', data: resultado.data })
     } catch (error) {
@@ -426,13 +426,12 @@ export class MedicoController {
 
   deleteServicio = async (req, res) => {
     try {
-
       const medicoId = req.params.id
       const tipoDeServicio = req.params.tipoServicio
       const nombreServicio = req.params.servicioNombre
       await this.medicoService.eliminarServicio(nombreServicio, tipoDeServicio, medicoId)
 
-      return res.status(200).json({ status: "success", data: "servicio eliminado" })
+      return res.status(200).json({ status: 'success', data: 'servicio eliminado' })
     } catch (error) {
       return res.status(500).json({ data: error.message })
     }

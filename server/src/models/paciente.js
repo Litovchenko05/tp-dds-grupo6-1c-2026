@@ -45,14 +45,6 @@ export class Paciente {
 
   guardarTurnoEnHistorial(turno) {
     this.historialDeTurnos.push(turno)
-    console.log(
-      'Se guardó el turno ' +
-        turno.id +
-        ' en el historial del paciente ' +
-        this.nombre +
-        ': ' +
-        this.historialDeTurnos.length
-    )
   }
 
   solicitarCambioDeFechaTurno(turno, nuevaFechaHora, medico) {

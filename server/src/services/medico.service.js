@@ -22,15 +22,7 @@ export class MedicoService {
   }
 
   async createMedico(medicoData) {
-    if (
-      !medicoData.usuario ||
-      !medicoData.matricula ||
-      !medicoData.nombre ||
-      !medicoData.especialidades ||
-      !medicoData.practicas ||
-      !medicoData.sedes ||
-      !medicoData.disponibilidades
-    ) {
+    if (!medicoData.usuario || !medicoData.matricula || !medicoData.nombre) {
       throw new Error('Todos los campos son requeridos')
     }
 
@@ -39,19 +31,7 @@ export class MedicoService {
       throw new Error('El médico ya existe')
     }
 
-    const especialidadesIds = await this.obtenerIdsEspecialidades(medicoData.especialidades)
-    const practicasIds = await this.obtenerIdsPracticas(medicoData.practicas)
-    const sedesIds = await this.obtenerIdsSedes(medicoData.sedes)
-
-    const nuevoMedico = new Medico(
-      medicoData.usuario,
-      medicoData.matricula,
-      medicoData.nombre,
-      especialidadesIds,
-      practicasIds,
-      sedesIds,
-      medicoData.disponibilidades
-    )
+    const nuevoMedico = new Medico(medicoData.usuario, medicoData.matricula, medicoData.nombre)
 
     const medicoGuardado = await this.medicoRepository.save(nuevoMedico)
 

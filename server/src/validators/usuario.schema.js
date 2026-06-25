@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const usuarioSchema = z.object({
-  nombreUsuario: z
+  username: z
     .string({
       required_error: 'El nombre de usuario es obligatorio',
       invalid_type_error: 'El nombre de usuario debe ser un texto',
@@ -10,9 +10,11 @@ export const usuarioSchema = z.object({
     .min(3, { message: 'El nombre de usuario debe tener al menos 3 caracteres' })
     .max(20, { message: 'El nombre de usuario no puede superar los 20 caracteres' }),
 
-  password: z
+  keycloakId: z
     .string({
-      required_error: 'La contraseña es obligatoria',
+      required_error: 'El ID de Keycloak es obligatorio',
+      invalid_type_error: 'El ID de Keycloak debe ser un texto',
     })
-    .min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
+    .trim()
+    .min(1, { message: 'El ID de Keycloak no puede estar vacío' }),
 })

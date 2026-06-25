@@ -13,12 +13,13 @@ import { NotificacionService } from '../services/notificacion.service.js'
 import { PacienteService } from '../services/paciente.service.js'
 import { TurnoService } from '../services/turno.service.js'
 import { UsuarioService } from '../services/usuario.service.js'
+import { AuthService } from '../services/auth.service.js'
 
 import { MedicoController } from '../controllers/medico.controller.js'
 import { NotificacionController } from '../controllers/notificacion.controller.js'
 import { PacienteController } from '../controllers/paciente.controller.js'
 import { TurnoController } from '../controllers/turno.controller.js'
-import { UsuarioController } from '../controllers/usuario.controller.js'
+import { AuthController } from '../controllers/auth.controller.js'
 
 import { RecordatorioTask } from '../tasks/recordatorio.task.js'
 
@@ -52,17 +53,23 @@ const medicoService = new MedicoService({
   sedeRepository,
   turnoService,
 })
+const authService = new AuthService({
+  usuarioService,
+  pacienteService,
+  medicoService,
+  pacienteRepository,
+  medicoRepository,
+})
 
 const notificacionController = new NotificacionController({ notificacionService })
 const turnoController = new TurnoController({ turnoService })
 const pacienteController = new PacienteController({ pacienteService })
-const usuarioController = new UsuarioController({ usuarioService })
 const medicoController = new MedicoController({
   medicoService,
   turnoService,
   pacienteService,
 })
-
+const authController = new AuthController({ authService })
 const recordatorioTask = new RecordatorioTask({
   turnoRepository,
   notificacionService,
@@ -86,7 +93,7 @@ export {
   notificacionController,
   turnoController,
   pacienteController,
-  usuarioController,
   medicoController,
+  authController,
   recordatorioTask,
 }

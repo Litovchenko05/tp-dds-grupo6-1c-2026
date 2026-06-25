@@ -1,54 +1,65 @@
-import mongoose from "mongoose";
-import { Medico } from "../models/Medico.js";
-import { DisponibilidadSchema } from "../schemasBD/disponibilidadSchema.js";
-import { UsuarioSchema } from "../schemasBD/usuarioSchema.js";
+import mongoose from 'mongoose'
+import { Medico } from '../models/Medico.js'
+import { DisponibilidadSchema } from '../schemasBD/disponibilidadSchema.js'
 
-const Schema = mongoose.Schema;
-export const MedicoSchema = new mongoose.Schema({
-
-    usuario: UsuarioSchema,
+export const MedicoSchema = new mongoose.Schema(
+  {
+    usuario: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Usuario',
+      required: [true, 'El ID de usuario es obligatorio'],
+    },
     matricula: {
-        type: String,
-        required: true,
-        trim: true,
+      type: String,
+      required: true,
+      trim: true,
     },
     nombre: {
-        type: String,
-        required: true,
-        trim: true,
+      type: String,
+      required: true,
+      trim: true,
     },
-    especialidades: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Especialidad',
-        required: true,
-    }],
-
-    practicas: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Practica',
-        required: true,
-    }],
-
-    sedes: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Sede',
-        required: true,
-    }],
-
-    disponibilidades: [DisponibilidadSchema],
+    especialidades: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Especialidad',
+        },
+      ],
+      default: [],
+    },
+    practicas: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Practica',
+        },
+      ],
+      default: [],
+    },
+    sedes: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Sede',
+        },
+      ],
+      default: [],
+    },
+    disponibilidades: {
+      type: [DisponibilidadSchema],
+      default: [],
+    },
     solicitudesDeCambioDeFecha: {
-        type: [mongoose.Schema.Types.Mixed],
-        default: [],
-        required: false,
-    }
-},
-    {
-        timestamps: true,
-        collection: 'medicos',
+      type: [mongoose.Schema.Types.Mixed],
+      default: [],
+    },
+  },
+  {
+    timestamps: true,
+    collection: 'medicos',
+  }
+)
 
-    });
-
-
-MedicoSchema.loadClass(Medico);
-
-export const MedicoModel = mongoose.model('Medico', MedicoSchema);
+MedicoSchema.loadClass(Medico)
+export const MedicoModel = mongoose.model('Medico', MedicoSchema)
