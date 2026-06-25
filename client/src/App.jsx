@@ -14,7 +14,7 @@ import Checkout from './features/checkout/Checkout.jsx'
 import ReservarTurnosPage from './features/reservarTurnosPage/reservarTurnosPage.jsx'
 import HistorialTurnosPage from './features/historial/historial.jsx'
 import MisTurnosPage from './features/misTurnos/misTurnosPage.jsx'
-import AuthScreen from './features/AuthScreen/AuthScreen.jsx'
+import AuthScreen from './features/auth/AuthScreen.jsx'
 import NotificacionesScreen from './features/NotificacionesScreen/NotificacionesScreen.jsx'
 
 function ProtectedRoute() {
