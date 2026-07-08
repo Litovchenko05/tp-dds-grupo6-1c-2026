@@ -295,3 +295,7 @@ a:focus-visible {
 .auth-brand__features--centered {
   justify-content: center;
 }
+
+.auth-usertype-wrapper {
+  margin-bottom: var(--spacing-xl);
+}
