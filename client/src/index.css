@@ -1,21 +1,23 @@
 :root {
-  --color-primary: #cc002b;
-  --color-primary-dark: #a30022;
-  --color-primary-light: #ffe5ea;
-  --color-white: #ffffff;
-  --color-ink: #1a1a1a;
-  --color-muted: #6b7280;
-  --color-border: #e5e7eb;
-  --color-surface: #f7f7f8;
-  --color-success: #16a34a;
-  --color-error: #dc2626;
-  --color-success-surface: #f0fdf4;
-  --color-success-border: #bbf7d0;
-  --color-success-ink: #166534;
-  --color-error-surface: #fef2f2;
-  --color-error-border: #fecaca;
+  --color-primary: #0f2d99; /* Tu azul fuerte con presencia sanatorial */
+  --color-primary-dark: #0a206e; /* Azul oscuro profundo para hovers y botones activos */
+  --color-primary-light: #eaeeff; /* Celeste pastel ultra suave para fondos de componentes activos */
 
-  /* Spacing */
+  /* --- ESTRUCTURA GENERAL MEJORADA --- */
+  --color-white: #ffffff; /* Conservamos el blanco para que tus tarjetas floten sobre el fondo */
+  --color-ink: #111827; /* Gris casi negro muy premium para textos principales */
+  --color-muted: #4b5563; /* Gris medio para etiquetas, subtítulos y datos secundarios */
+  --color-border: #dcdfe6; /* Gris claro para bordes finos de inputs y tarjetas */
+
+  /* --- EL NUEVO FONDO COMPAÑERO-ESTILO --- */
+  --color-surface: #f1f3f6; /* El gris suave de fondo para toda la app (reemplaza al blanco de fondo) */
+
+  /* --- SEMÁNTICA DE RESPUESTAS (Ajustadas al nuevo contraste) --- */
+  --color-success: #15803d;
+  --color-error: #b91c1c;
+  --color-success-surface: #f0fdf4;
+  --color-error-surface: #fef2f2;
+
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 0.75rem;
@@ -42,4 +44,21 @@ code {
 
 * {
   box-sizing: border-box;
+}
+
+.app-view-container {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--spacing-3xl) var(--spacing-xl);
+}
+
+.page-title {
+  color: var(
+    --color-ink
+  ) !important; /* Cambiamos a ink para que no sea un bloque de color invasivo */
+  font-weight: 700 !important;
+  font-size: 2rem !important;
+  margin-bottom: var(--spacing-2xl) !important;
+  letter-spacing: -0.5px;
 }

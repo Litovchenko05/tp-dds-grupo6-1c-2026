@@ -16,6 +16,7 @@ import HistorialTurnosPage from './features/historial/historial.jsx'
 import MisTurnosPage from './features/misTurnos/misTurnosPage.jsx'
 import AuthScreen from './features/auth/AuthScreen.jsx'
 import NotificacionesScreen from './features/NotificacionesScreen/NotificacionesScreen.jsx'
+import PerfilScreen from './features/perfil/PerfilScreen.jsx'
 
 function ProtectedRoute() {
   const isAuthenticated = !!localStorage.getItem('token')
@@ -24,7 +25,6 @@ function ProtectedRoute() {
 
 function GuestRoute() {
   const isAuthenticated = !!localStorage.getItem('token')
-  // Si tiene token, lo mandamos al home. Si no, mostramos el login.
   return isAuthenticated ? <Navigate to="/" replace /> : <AuthScreen />
 }
 
@@ -44,6 +44,7 @@ function App() {
                 <Route path="historial" element={<HistorialTurnosPage />} />
                 <Route path="mis-turnos" element={<MisTurnosPage />} />
                 <Route path="notificaciones" element={<NotificacionesScreen />} />
+                <Route path="perfil" element={<PerfilScreen />} />
               </Route>
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />

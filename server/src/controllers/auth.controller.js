@@ -33,4 +33,25 @@ export class AuthController {
       return res.status(500).json({ message: 'Ocurrió un error interno al procesar el registro.' })
     }
   }
+
+  obtenerPerfil = async (req, res) => {
+    try {
+      const perfil = await this.authService.obtenerPerfilDelUsuario(
+        req.usuarioMongoId,
+        req.usuarioRol
+      )
+
+      return res.status(200).json({
+        status: 'success',
+        data: perfil,
+      })
+    } catch {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Error interno al obtener el perfil del usuario.',
+      })
+    }
+  }
+
+  obtenerPerfilDelUsuario = async (req, res) => this.obtenerPerfil(req, res)
 }

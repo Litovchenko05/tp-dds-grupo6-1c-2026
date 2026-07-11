@@ -11,6 +11,8 @@ export const identificarUsuario = async (req, res, next) => {
     const token = authHeader.split(' ')[1]
     const decodedPayload = jwt.decode(token)
     const keycloakId = decodedPayload?.sub
+    const roles = decodedPayload?.realm_access?.roles ?? []
+    const usuarioRol = roles.find((role) => role === 'medico' || role === 'paciente')
 
     if (!keycloakId) {
       return res
@@ -26,6 +28,7 @@ export const identificarUsuario = async (req, res, next) => {
     }
 
     req.usuarioMongoId = usuario._id
+    req.usuarioRol = usuarioRol
     next()
   } catch (error) {
     return res.status(500).json({

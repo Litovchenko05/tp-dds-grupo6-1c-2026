@@ -1,5 +1,6 @@
 import express from 'express'
 import { authController } from '../config/dependencies.js'
+import { identificarUsuario } from '../middlewares/auth.middleware.js'
 
 const router = express.Router()
 
@@ -15,5 +16,9 @@ router.route('/registro').post((req, res) =>
   } */
   authController.registrarUsuario(req, res)
 )
+
+router
+  .route('/identificacion')
+  .get(identificarUsuario, (req, res) => authController.obtenerPerfil(req, res))
 
 export default router

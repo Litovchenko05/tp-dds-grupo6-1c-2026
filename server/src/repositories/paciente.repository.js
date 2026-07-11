@@ -22,6 +22,10 @@ export class PacienteRepository {
     return await this.PacienteModel.findOne({ dni: dniPaciente })
   }
 
+  async findByUsuario(usuarioId) {
+    return await this.PacienteModel.findOne({ usuario: usuarioId }).select('dni usuario')
+  }
+
   async save(paciente) {
     const query = paciente.id ? { _id: paciente.id } : { _id: new this.PacienteModel()._id }
 

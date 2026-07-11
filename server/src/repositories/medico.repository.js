@@ -28,6 +28,10 @@ export class MedicoRepository {
     return await this.MedicoModel.findOne({ matricula: matricula })
   }
 
+  async findByUsuario(usuarioId) {
+    return await this.MedicoModel.findOne({ usuario: usuarioId }).select('matricula usuario')
+  }
+
   async save(medico) {
     //Si tiene id es update, si no es create
     const query = medico.id ? { _id: medico.id } : { _id: new this.MedicoModel()._id }

@@ -1,9 +1,18 @@
-/* .layout {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-surface);
 }
 
-.layout-content {
-    flex: 1;
-} */
+.navbar-bg {
+  background-color: var(--color-white);
+}
+
+.footer {
+  background-color: var(--color-surface);
+}
+
+.app-main-content {
+  flex-grow: 1;
+}

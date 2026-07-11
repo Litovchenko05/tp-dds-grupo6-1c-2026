@@ -7,10 +7,8 @@ import './NotificacionesScreen.css'
 const NotificacionesScreen = () => {
   const { notificaciones, cargarNotificaciones, marcarComoLeida } = useNotificaciones()
 
-  // Iniciamos por defecto en 'pendientes'
   const [filtroActual, setFiltroActual] = useState('pendientes')
 
-  // Cuando carga el componente o cambia la pestaña, disparamos la petición a la API
   useEffect(() => {
     cargarNotificaciones(filtroActual)
   }, [cargarNotificaciones, filtroActual])
@@ -20,12 +18,11 @@ const NotificacionesScreen = () => {
   }
 
   return (
-    <Box className="notifications-container">
-      <Typography variant="h4" className="notifications-title">
+    <Box className="app-view-container">
+      <Typography variant="h4" className="page-title">
         Mis Notificaciones
       </Typography>
 
-      {/* Ahora el componente Tabs se divide armónicamente en 2 mitades */}
       <Tabs
         value={filtroActual}
         onChange={handleChangeFiltro}

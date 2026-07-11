@@ -1,16 +1,14 @@
-import TurnSearchBar from '../../components/turnSearchBar/TurnSearchBar';
-import TurnsGrid from '../../components/turnsGrid/TurnsGrid';
-import './Home.css';
+import './Home.css'
+import { useUsuario } from '../../context/UsuarioContext.jsx'
 
 const Home = () => {
-    return (
-      <>
-        <div className="home-body">
-          {/* <TurnSearchBar /> */}
-        </div>
-        {/* <TurnsGrid /> */}
-      </>
-    );
-};
+  const { usuario } = useUsuario()
+  return (
+    <>
+      <div className="home-body"></div>
+      {usuario && <span className="navbar-username">Hola, {usuario.nombre}</span>}
+    </>
+  )
+}
 
-export default Home;
+export default Home

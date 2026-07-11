@@ -55,34 +55,3 @@
 .drawer-item:hover .drawer-item-text span {
   color: var(--color-primary-dark) !important;
 }
-
-.drawer-divider {
-  border-color: var(--color-error-border) !important;
-  margin: 0 var(--spacing-xl) !important;
-  border-bottom-width: 2px !important;
-  opacity: 1 !important;
-}
-
-.drawer-footer {
-  padding-top: var(--spacing-lg) !important;
-  padding-bottom: var(--spacing-xl) !important;
-}
-
-.logout-btn {
-  margin: 0 var(--spacing-lg) !important;
-  border-radius: 8px !important;
-  transition: all 0.2s ease-in-out !important;
-}
-
-.logout-btn:hover {
-  background-color: var(--color-error-surface) !important;
-}
-
-.logout-icon {
-  color: var(--color-error) !important;
-}
-
-.logout-text span {
-  color: var(--color-error) !important;
-  font-weight: bold !important;
-}

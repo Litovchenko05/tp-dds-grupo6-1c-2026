@@ -1,54 +1,27 @@
-import './Footer.css';
+import { Link } from 'react-router-dom'
+import './Footer.css'
 
 const Footer = () => {
   return (
-  <footer className="footer">
-        <div className="footer-container">
-
-            <div className="footer-section">
-            <h3>Sweet Medical</h3>
-            <p>
-                Sistema integral de gestión médica para la administración de turnos,
-                profesionales y pacientes.
-            </p>
-            </div>
-
-            <div className="footer-section">
-            <h3>Accesos Rápidos</h3>
-            <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/turnos">Turnos</a></li>
-                <li><a href="/especialidades">Especialidades</a></li>
-                <li><a href="/contacto">Contacto</a></li>
-            </ul>
-            </div>
-
-            <div className="footer-section">
-            <h3>Información</h3>
-            <ul>
-                <li>Atención al Paciente</li>
-                <li>Profesionales Médicos</li>
-                <li>Sedes de Atención</li>
-                <li>Preguntas Frecuentes</li>
-            </ul>
-            </div>
-
-            <div className="footer-section">
-            <h3>Contacto</h3>
-            <p>Email: contacto@sweetmedical.com</p>
-            <p>Teléfono: +54 11 1234-5678</p>
-            <p>Buenos Aires, Argentina</p>
-            </div>
-
+    <footer className="footer">
+      <div className="footer-container">
+        <div className="footer-left">
+          <span>© 2026 </span>
+          <span className="footer-brand">Sweet Medical</span>
+          <span> - Todos los derechos reservados.</span>
         </div>
 
-        <div className="footer-bottom">
-            <p>
-            © 2026 Sweet Medical - Todos los derechos reservados.
-            </p>
-        </div>
-  </footer>
-  );
-};
+        <ul className="footer-links">
+          <li>
+            <Link to="/">Inicio</Link>
+          </li>
+          <li>
+            <Link to="/mis-turnos">Mis Turnos</Link>
+          </li>
+        </ul>
+      </div>
+    </footer>
+  )
+}
 
-export default Footer;
+export default Footer
