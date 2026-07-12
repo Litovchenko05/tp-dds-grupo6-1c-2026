@@ -90,20 +90,21 @@
 }
 
 .agregar{
-  background-color: rgb(162, 10, 10);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 6px;
-  border-color: rgb(124, 6, 6);
-  font-size: 18px;
-  font-weight: 700;
-  margin: 1rem;
-  cursor: pointer;
-  transition: 0.3s ease;
+    margin: auto 20px 20px auto;
+    width:150px;
+    height:50px;
+    border:none;
+    border-radius:0.6rem;
+    background:var(--color-primary);
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+ 
 }
 .agregar:hover{
-  background-color: #e70f0f;
+  background-color: var( --color-primary-dark);
 }
+
 
 .agregar-container{
   display: flex;
@@ -119,9 +120,9 @@
 .btn-carrito {
   width: 40px;
   height: 40px;
-  border: none;
+  border-color: var(--color-primary);
   border-radius: 8px;
-  background-color: #c00404;
+  background-color: var(--color-primary);
   color: white;
   font-size: 22px;
   font-weight: bold;
@@ -130,18 +131,6 @@
 }
 
 
-
-
-.cantidad {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #ce0d0d;
-  border-radius: 8px;
-  background-color: white;
-  color: #d70303f0;
-  font-size: 18px;
-  font-weight: bold;
-}
 .input-obra-social,
 .input-plan {
     display: flex;

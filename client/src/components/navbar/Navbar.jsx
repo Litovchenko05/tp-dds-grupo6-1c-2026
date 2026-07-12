@@ -70,7 +70,7 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-section center">
-          <Link to="/" className="link-no-style brand">
+          <Link to="/reserva-de-turnos" className="link-no-style brand">
             <HeartPulse className="nav-pulse-icon" />
             <h1 className="brand-text">Sweet Medical</h1>
           </Link>

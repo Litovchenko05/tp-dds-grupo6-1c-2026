@@ -71,7 +71,7 @@ return (
         </div>
 
       <div class="div-search-button">
-          <Button
+        <Button
           variant="contained"
           id="search-button"
           startIcon={<FaSearch id='iconoBotonSearch' />}

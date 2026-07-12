@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import './BusquedaServiciosPage.css';
-
+import { Link } from "react-router-dom";
 
 const BusquedaServiciosPage = () => {
 
@@ -74,11 +74,29 @@ const BusquedaServiciosPage = () => {
         setMenuAbierto(menuAbierto === id ? null : id);
     };
 
-
-    const reservarTurno = (servicio) => {
-        console.log("Reservar turno:", servicio);
-        // navigate("/reservar-turno")
-    };
+    const menuRef = useRef(null);
+    
+        useEffect(() => {
+    
+        function cerrarMenu(event) {
+          if (
+                menuRef.current &&
+                !menuRef.current.contains(event.target)
+            ) {
+                setMenuAbierto(false);
+            }
+    
+        }
+    
+        document.addEventListener("mousedown", cerrarMenu);
+    
+        return () => {
+            document.removeEventListener("mousedown", cerrarMenu);
+        };
+    
+          }, []);
+    
+  
     
     const serviciosFiltrados = serviciosMock.filter((servicio)=>{
 
@@ -216,6 +234,7 @@ const BusquedaServiciosPage = () => {
 
 
                                     <td className="acciones">
+                                    <div ref={menuRef}>
                                         <button
                                             className="menu-button"
                                             onClick={() => abrirMenu(servicio.id)}
@@ -224,14 +243,16 @@ const BusquedaServiciosPage = () => {
                                         </button>
 
                                         {menuAbierto === servicio.id && (
-                                            <div className="acciones-menu">
-                                                <button
-                                                    onClick={() => reservarTurno(servicio)}
-                                                >
-                                                    Reservar turno
-                                                </button>
-                                            </div>
+                                        <div className="acciones-menu">
+                                             {/* /* esto esta mal, tengo que reimplementarlo, pero por ahora lo dejo asi */}
+                                             <Link to={`/turnos/${servicio.id}`} class="btn-reservar"> 
+                                             <button>
+                                                 Reservar
+                                            </button>
+                                            </Link>     
+                                        </div>
                                         )}
+                                    </div>
                                     </td>
                                 </tr>
                             ))}

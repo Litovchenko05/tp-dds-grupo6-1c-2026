@@ -106,7 +106,7 @@
 
   padding: var(--spacing-sm);
 
-  width: 170px;
+  width: 100px;
 
   box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 
@@ -115,22 +115,14 @@
 
 
 .acciones-menu button {
-
   width: 100%;
-
   border: none;
   background: transparent;
-
   padding: var(--spacing-md);
-
   text-align: left;
-
   color: var(--color-primary);
-
   font-weight: 600;
-
   cursor: pointer;
-
   border-radius: 0.5rem;
 }
 
