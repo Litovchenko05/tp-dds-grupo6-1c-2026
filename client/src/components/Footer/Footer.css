@@ -99,10 +99,8 @@
 }
 
 .footer-social svg:hover{
-
     transform:scale(1.2);
-
-    color:#FF5A5F;
+    color:var(--primary-color);
 }
 
 .footer-bottom{

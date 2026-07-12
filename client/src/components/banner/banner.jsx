@@ -1,6 +1,6 @@
 import "./banner.css";
 import { FaHeartbeat } from "react-icons/fa";
-
+import { Link } from "react-router-dom";
 
 const BannerPage = () => {
   
@@ -27,13 +27,24 @@ const BannerPage = () => {
 
             <div className="hero-buttons">
 
-                <button className="btn-primary">
-                    Reservar turno
-                </button>
+            <button
+                className="btn-primary"
+                onClick={() => {
+                    document
+                        .getElementById("buscador-turnos")
+                        ?.scrollIntoView({
+                            behavior: "smooth"
+                        });
+                }}
+            >
+                Reservar turno
+            </button>
 
+                <Link to={"/busqueda-de-servicios"} class="btn-reservar">
                 <button className="btn-secondary">
                     Conocer servicios
                 </button>
+                </Link>
 
             </div>
 

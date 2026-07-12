@@ -43,7 +43,7 @@ const inicializarCampos = () => ({
     };
 
     const handleCancelar = () => {
-        navigate('/');
+        navigate('/reservar-de-turnos');
     };
         
     return(

@@ -6,9 +6,8 @@ import Button from '@mui/material/Button';
 const TurnSearchBar = () => {
 
 return (
-
-
-  <div className="turn-search">
+     
+  <div className="turn-search" id="buscador-turnos">
       <Typography variant="h4" className="page-title">
           Búsqueda de turnos
       </Typography>
