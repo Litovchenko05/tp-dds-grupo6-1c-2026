@@ -36,10 +36,11 @@ const TurnItem = ({ turno }) => {
 
                 {menuAbierto && (
                     <div className="acciones-menu">
-                        <button
-                          onClick={reservarTurno}>
-                        Reservar turno
-                        </button>
+                       
+                        <Link to={`/turnos/${turno.id}`} class="btn-reservar">
+                            Reservar
+                        </Link>
+                        
                     </div>
                 )}
         </td>
