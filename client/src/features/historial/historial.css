@@ -53,7 +53,7 @@
 }
 .etiqueta-completado {
   background-color: var(--color-success-surface);
-  color: var(--color-success-ink);
+  color: green;
 }
 
 .tarjeta-turno.cancelado {

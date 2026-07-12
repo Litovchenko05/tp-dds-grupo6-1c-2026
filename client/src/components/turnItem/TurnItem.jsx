@@ -1,51 +1,50 @@
-import "./TurnItem.css";
-import { Link } from "react-router-dom";
+import { useState } from "react";
 
+const TurnItem = ({ turno }) => {
 
-const TurnItem = ({turno}) => {
-  return (
+    const [menuAbierto, setMenuAbierto] = useState(false);
 
-    <div class="card-turno">
-        <h2>Turno</h2>
-        <div class="info-turno">
+    const abrirMenu = () => {
 
-          <div class="item">
-            <span class="label">Servicio:</span>
-            <span>{turno.servicio}</span>
-          </div>
-          <div class="item">
-            <span class="label">Médico:</span>
-            <span>{turno.medico}</span>
-          </div>
-          <div class="item">
-            <span class="label">Sede:</span>
-            <span>{turno.sede}</span>
-          </div>
-          <div class="item">
-            <span class="label">Fecha:</span>
-            <span>{turno.fecha}</span>
-          </div>
-          <div class="item">
-            <span class="label">Hora:</span>
-            <span>{turno.hora}</span>
-          </div>
-         <div class="item">
-            <span class="label">Costo:</span>
-            <span>{turno.costo}</span>
-          </div>
-            <div class="item">
-            <span class="label">Estado:</span>
-            <span>{turno.estado}</span>
-          </div>
+        setMenuAbierto(!menuAbierto);
 
-        </div>
-        <Link to={`/turnos/${turno.id}`} class="btn-reservar">
-                Reservar
-        </Link>
-  
-      </div>
+    };
 
-  );
+    const reservarTurno = () => {
+        // navigate("/reservar-turno")
+    };
+
+    return (
+      <tr>
+        <td>{turno.servicio}</td>
+        <td>{turno.medico}</td>
+        <td>{turno.sede}</td>
+        <td>{turno.fecha}</td>
+        <td>{turno.hora}</td>
+        <td>{turno.costo}</td>
+        <td>
+          <span className="tipo-badge">
+            {turno.estado}
+          </span>
+        </td>
+            <td className="acciones">
+              <button
+                className="menu-button"
+                onClick={abrirMenu}>
+                  ⋮
+                </button>
+
+                {menuAbierto && (
+                    <div className="acciones-menu">
+                        <button
+                          onClick={reservarTurno}>
+                        Reservar turno
+                        </button>
+                    </div>
+                )}
+        </td>
+      </tr>
+    );
 };
- 
+
 export default TurnItem;

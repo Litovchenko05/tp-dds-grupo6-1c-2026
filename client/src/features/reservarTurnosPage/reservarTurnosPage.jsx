@@ -1,3 +1,4 @@
+import BannerPage from "../../components/banner/banner.jsx";
 import TurnSearchBar from "../../components/turnSearchBar/TurnSearchBar.jsx";
 import TurnsGrid from "../../components/turnsGrid/TurnsGrid";
 
@@ -8,9 +9,11 @@ const ReservarTurnosPage = () => {
   
   return (
     <>
+    <BannerPage/>
     <div className="home-body">
         <TurnSearchBar />
     </div>
+
         <TurnsGrid />
     </>
   );

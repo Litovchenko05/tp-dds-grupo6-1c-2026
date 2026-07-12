@@ -1,61 +1,41 @@
 import './TurnSearchBar.css';
-import { FaStethoscope, FaSearch } from 'react-icons/fa';
+import Typography from '@mui/material/Typography';
+import { FaStethoscope, FaSearch, FaHospital,FaFlask,FaUserMd,FaMicroscope } from 'react-icons/fa';
 import Button from '@mui/material/Button';
 
 const TurnSearchBar = () => {
 
 return (
 
-  <div className='banner'>
-    <div className="turn-search">
- 
-        <div className="search-row">
 
-        <div className="input-buscador">
-          <FaStethoscope className="search-icon" />
-          <input
-            type="text"
-            className="search-input"
-            placeholder="¿Qué servicio buscas?"
-          />
-        </div>
-
-        <Button
-          variant="contained"
-          id="search-button"
-          startIcon={<FaSearch id='iconoBotonSearch' />}
-          sx={{
-            backgroundColor: '#c62828',
-            '&:hover': {
-              backgroundColor: '#b71c1c'
-            }
-          }}
-        >
-        <span className='text-buscador'>Buscar</span>
-        </Button>
-
-      </div>
-
+  <div className="turn-search">
+      <Typography variant="h4" className="page-title">
+          Búsqueda de turnos
+      </Typography>
+      <p>
+      Encontrá y reservá turnos médicos en segundos. 
+      </p>
       <div className="filters-grid">
-
         <div className="input-wrapper">
+          <FaUserMd className="search-icon"/>
           <input
             type="text"
             className="search-input"
-            placeholder="Profesional"
+            placeholder="Busca por profesional"
           />
         </div>
-
         <div className="input-wrapper">
+          <FaStethoscope className="search-icon" />
           <select className="search-input">
             <option value="">Especialidad</option>
             <option>Cardiología</option>
-            <option>Clínica Médica</option>
+            <option>Dermatología</option>
             <option>Pediatría</option>
           </select>
         </div>
 
         <div className="input-wrapper">
+          <FaMicroscope className="search-icon" />
           <select className="search-input">
             <option value="">Práctica</option>
             <option>Electrocardiograma</option>
@@ -65,6 +45,7 @@ return (
         </div>
 
         <div className="input-wrapper">
+          <FaHospital className="search-icon" />
           <select className="search-input">
             <option value="">Sede</option>
             <option>Caballito</option>
@@ -89,10 +70,27 @@ return (
           />
         </div>
 
+      <div class="div-search-button">
+          <Button
+          variant="contained"
+          id="search-button"
+          startIcon={<FaSearch id='iconoBotonSearch' />}
+          sx={{
+            backgroundColor: '#0f2d99',
+            '&:hover': {
+              backgroundColor: '#0a206e'
+            }
+          }}
+        >
+        
+        <span className='text-buscador'>Buscar</span>
+        </Button>
+      </div>
+      
+
       </div>
 
    </div>
-  </div>
 
 );
 };
