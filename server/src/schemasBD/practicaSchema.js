@@ -1,24 +1,18 @@
 import mongoose from "mongoose";
 import { Practica } from "../models/Practica.js";
+import { ServicioSchema } from "../schemasBD/servicioSchema.js";
 
 export const PracticaSchema = new mongoose.Schema({
-    /*
-        #id
-        #codigo
-        #nombre
-        #duracionTurnoEnMins
-        #costo
-    */
-
     codigo:{
         type: String,
         required: true,
         trim: true,
     }
-    ,nombre:{
-        type: String,
+    ,servicio:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Servicio',
         required: true,
-        trim: true,
+
     },duracionTurnoEnMins:{
         type: Number,
         required: true,

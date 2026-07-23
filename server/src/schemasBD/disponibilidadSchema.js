@@ -2,14 +2,6 @@ import mongoose from "mongoose";
 import { DisponibilidadHoraria } from "../models/DisponibilidadHoraria.js";
 
 export const DisponibilidadSchema = new mongoose.Schema({
-
-/*
-  #diaSemana
-  #horaDesde
-  #horaHasta
-  #fueModificada // no lo muetsro
-*/
-
     diaSemana:{
         type: String,
         required: true,
@@ -25,9 +17,7 @@ export const DisponibilidadSchema = new mongoose.Schema({
     }
     ,
 },{
-    timestamps: true,
-    collection: 'disponibilidades',//chequear!
-           
+    timestamps: true,          
 });
 
 DisponibilidadSchema.loadClass(DisponibilidadHoraria);

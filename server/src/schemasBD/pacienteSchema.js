@@ -24,11 +24,17 @@ export const PacienteSchema = new mongoose.Schema(
       default: null,
     },
     plan: {
-      type: mongoose.Schema.Types.Mixed,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Plan',
       default: null,
     },
-    historialDeTurnos: {
-      type: [mongoose.Schema.Types.Mixed],
+    historialDeTurnos: { 
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Turno',
+        },
+      ],
       default: [],
     },
   },

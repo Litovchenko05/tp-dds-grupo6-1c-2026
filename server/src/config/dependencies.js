@@ -6,6 +6,7 @@ import { PracticaRepository } from '../repositories/practica.repository.js'
 import { SedeRepository } from '../repositories/sede.repository.js'
 import { TurnoRepository } from '../repositories/turno.repository.js'
 import { UsuarioRepository } from '../repositories/usuario.repository.js'
+import { ServicioRepository } from '../repositories/servicios.repository.js'
 
 import { AgendaService } from '../services/agenda.service.js'
 import { MedicoService } from '../services/medico.service.js'
@@ -31,6 +32,7 @@ const practicaRepository = new PracticaRepository()
 const sedeRepository = new SedeRepository()
 const turnoRepository = new TurnoRepository()
 const usuarioRepository = new UsuarioRepository()
+const servicioRepository = new ServicioRepository()
 
 const notificacionService = new NotificacionService({ notificacionRepository })
 const turnoService = new TurnoService({
@@ -84,6 +86,7 @@ export {
   sedeRepository,
   turnoRepository,
   usuarioRepository,
+  servicioRepository,
   notificacionService,
   turnoService,
   agendaService,
