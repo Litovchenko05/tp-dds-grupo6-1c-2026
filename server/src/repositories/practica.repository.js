@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { PracticaModel } from '../schemasBD/practicaSchema.js'
 
 export class PracticaRepository {

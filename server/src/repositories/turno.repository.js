@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
 import { TurnoModel } from '../schemasBD/turnoSchema.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
+
 export class TurnoRepository {
   constructor() {
     this.TurnoModel = TurnoModel
@@ -14,7 +16,7 @@ export class TurnoRepository {
   }
 
   async findById(id) {
-    return await this.TurnoModel.findById(id)
+    return await this.TurnoModel.findById(id).populate('medico', 'nombre').populate('servicio', 'nombre').populate('sede', 'nombre')
   }
 
   async findByTurnoId(idMedico) {
@@ -23,7 +25,7 @@ export class TurnoRepository {
 
   async save(turno) {
     //Si tiene id es update, si no es create
-    const query = turno.id ? { _id: turno.id } : { _id: new this.TurnoModel()._id }
+    const query = turno._id ? { _id: turno._id } : { _id: new this.TurnoModel()._id }
 
     //Si no existe, lo crea (por upsert: true).
     return await this.TurnoModel.findOneAndUpdate(query, turno.toJSON(), {
@@ -176,15 +178,19 @@ export class TurnoRepository {
   //paginado
   //GET ALL PAGINADO
   async findAllPaginated(page = 1, limit = 5) {
+  
     //cuantos documentos hay que saltar
     const skip = (page - 1) * limit
 
     const turnos =
       await this.TurnoModel
         .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
+        .populate('medico', 'nombre')
+        .populate('sede', 'nombre')
+        .populate('servicio', 'nombre')
         .skip(skip)
         .limit(limit)
-
+  
     const total =
       await this.TurnoModel.countDocuments({
         //eliminado: false

@@ -1,12 +1,14 @@
 import './Home.css'
 import { useUsuario } from '../../context/UsuarioContext.jsx'
+import BannerPage from "../../components/banner/banner.jsx";
+import BodyHome from "../../components/bodyHome/BodyHome.jsx";
 
 const Home = () => {
   const { usuario } = useUsuario()
   return (
     <>
-      <div className="home-body"></div>
-      {usuario && <span className="navbar-username">Hola, {usuario.nombre}</span>}
+    <BannerPage/>
+    <BodyHome/>
     </>
   )
 }

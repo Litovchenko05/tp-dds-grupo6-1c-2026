@@ -35,6 +35,14 @@ router.route('/:id/turnos/:turnoId').patch((req, res) =>
   pacienteController.cambiarEstadoDeTurno(req, res)
 )
 
+router.route('/:id/turnos/:turnoId').post((req, res) =>
+  // #swagger.tags = ['Pacientes', 'Turnos']
+  // #swagger.summary = 'Reservar un turno'
+  // #swagger.description = 'Permite al paciente reservar un turno.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del paciente', required: true, type: 'string' } */
+  /* #swagger.parameters['turnoId'] = { in: 'path', description: 'ID del turno a reservar', required: true, type: 'string' } */
+  pacienteController.reservarTurno(req, res)
+)
 router.route('/:id/historial').get((req, res) =>
   // #swagger.tags = ['Pacientes', 'Historial Clínico']
   // #swagger.summary = 'Consultar historial clínico propio'
@@ -42,5 +50,8 @@ router.route('/:id/historial').get((req, res) =>
   /* #swagger.parameters['id'] = { in: 'path', description: 'ID del paciente', required: true, type: 'string' } */
   pacienteController.consultarHistorial(req, res)
 )
+
+
+
 
 export default router

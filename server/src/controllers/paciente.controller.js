@@ -56,7 +56,7 @@ export class PacienteController {
 
   reservarTurno = async (req, res) => {
     try {
-      const pacienteId = req.params.pacienteId
+      const pacienteId = req.params.id
       const turnoId = req.params.turnoId
 
       const turnoReservado = await this.pacienteService.reservarTurno(pacienteId, turnoId)

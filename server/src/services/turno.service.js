@@ -94,14 +94,9 @@ export class TurnoService {
     }
   }
 
-  obtenerPorId(id) {
-    const turno = this.turnoRepository.obtenerPorId(id)
-
-    return turno
-  }
 
   async cancelar(id_turno, id_usuario, motivo) {
-    const turno = this.turnoRepository.obtenerPorId(id_turno)
+    const turno = this.turnoRepository.findById(id_turno)
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
@@ -135,7 +130,7 @@ export class TurnoService {
   }
 
   async solicitarCambioDeFecha(idUsuario, idTurno, nuevaFechaHora) {
-    const turno = this.turnoRepository.obtenerPorId(idTurno)
+    const turno = this.turnoRepository.findById(idTurno)
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
@@ -157,7 +152,7 @@ export class TurnoService {
     if (turno.estado === 'realizado') {
       return turno
     }
-    const turno = this.turnoRepository.obtenerPorId(id_turno)
+    const turno = this.turnoRepository.findBYiD(id_turno)
     if (!turno) {
       throw new Error('Turno no encontrado')
     }

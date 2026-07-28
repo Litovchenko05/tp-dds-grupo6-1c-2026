@@ -1,25 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./TurnsGrid.css";
-import { turnos } from "../../mockData/turnosMock";
+import { getTurns } from "../../service/turnsService.js";
 import TurnItem from "../turnItem/TurnItem";
+import Paginacion from "../paginacion/Paginacion.jsx";
+import {Spinner} from "react-bootstrap";
 
 export default function TurnsGrid() {
 
+    const [turnos, setTurnos] = useState([]);
+    const [turnosFiltrados, setTurnosFiltrados] = useState([]);
     const [paginaActual, setPaginaActual] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
 
-    const elementosPorPagina = 3;
+    const filtrarTurnos = (filtros) => {
+      if(filtros.trim() === " "){
+        //muestro todos
+        setTurnosFiltrados(turnos);
+      }else{
+        //muestro turnos filtrados
+        // const filtered = turnos.filter( 
+        // );
+        // setTurnosFiltrados(filtros);
+      }
+    }
 
-    const indiceUltimo = paginaActual * elementosPorPagina;
-    const indicePrimero = indiceUltimo - elementosPorPagina;
+    const cargarTurnos = async (page = 1) => {
+      const turnosCargados = await getTurns(page);
+      setTurnos(turnosCargados.data.turnos);
+      setTurnosFiltrados(turnosCargados.data.turnos);
+      setPaginaActual(page);
+      setTotalPaginas(turnosCargados.data.totalPages);
 
-    const turnosPagina = turnos.slice(
-        indicePrimero,
-        indiceUltimo
-    );
-
-    const cantidadPaginas = Math.ceil(
-        turnos.length / elementosPorPagina
-    );
+    }
+    //para que cuando se monte el componente, cargue los turnos
+    useEffect(() => {
+      cargarTurnos()
+    }, [])
 
     return (
       <div className="turnos-container">
@@ -40,40 +56,17 @@ export default function TurnsGrid() {
 
             <tbody>
 
-            {turnosPagina.map((turno) => (
+            {turnosFiltrados.map((turno) => (
 
-            <TurnItem key={turno.id} turno={turno}/>))}
+            <TurnItem key={turno._id} turno={turno}/>))}
 
             </tbody>
-      </table>
+          </table>
         </div>
-          <div className="paginacion">
-            <button
-              disabled={paginaActual === 1}
-              onClick={() => setPaginaActual(paginaActual - 1)}
-            >
-              ‹
-            </button>
-            {
-              Array.from(
-                { length: cantidadPaginas },
-                  (_, i) => i + 1
-              )
-              .map((num) => (
-                  <button
-                    key={num}
-                    className={
-                    paginaActual === num ? "pagina-activa": ""}
-                    onClick={() => setPaginaActual(num)}>{num}
-                  </button>
-              ))}
-                  <button
-                    disabled={paginaActual === cantidadPaginas}
-                    onClick={() => setPaginaActual(paginaActual + 1)}
-                  >
-                    ›
-                  </button>
-            </div>
+        <div className="paginacion">
+            <Paginacion paginaActual={paginaActual} totalDePaginas={totalPaginas} cambioDePagina={(page) => cargarTurnos(page)}/>
+        </div>
+        
       </div>
     );
 }

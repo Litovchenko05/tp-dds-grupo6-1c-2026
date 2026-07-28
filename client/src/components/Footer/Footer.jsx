@@ -61,7 +61,7 @@ export default function Footer() {
 
                         <li>
                             <FaMapMarkerAlt/>
-                            Av. Siempre Viva 123
+                            Av. Santa Fe 3250, Palermo, CABA
                         </li>
 
                         <li>

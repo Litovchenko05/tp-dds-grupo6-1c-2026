@@ -8,9 +8,9 @@ export class PacienteService {
   }
 
   async createPaciente(pacienteData) {
-    const { usuario, dni, nombre } = pacienteData
+    const { usuario, dni, nombre} = pacienteData
 
-    if (!usuario || !dni || !nombre) {
+    if (!usuario || !dni || !nombre ) {
       throw new Error('Todos los campos son requeridos')
     }
 
@@ -20,7 +20,7 @@ export class PacienteService {
       throw new Error('El Paciente ya existe')
     }
 
-    const nuevoPaciente = { dni, nombre, usuario }
+    const nuevoPaciente = { dni, nombre, usuario}
 
     const pacienteGuardado = await this.pacienteRepository.save(nuevoPaciente)
 
@@ -51,14 +51,15 @@ export class PacienteService {
       throw new Error('Turno no encontrado')
     }
 
-    //TODO DELEGAR EN TURNO SERVICE
-    if (turno.estado == 'DISPONIBLE') {
-      turno.paciente = paciente
-      turno.estado = EstadoTurno.DISPONIBLE
-      turno.save()
+  
+    if (turno.estado == EstadoTurno.DISPONIBLE) {
 
-      paciente.historialDeTurnos.push(turno)
-      paciente.save()
+      turno.paciente = paciente
+      turno.estado = EstadoTurno.RESERVADO
+      this.turnoRepository.save(turno);
+      
+      paciente.turnos.push(turno);
+      this.pacienteRepository.save(paciente);
 
       return turno
     } else {

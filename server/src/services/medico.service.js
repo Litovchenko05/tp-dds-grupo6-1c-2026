@@ -127,11 +127,7 @@ export class MedicoService {
       // const objSede = await this.sedeRepository.findById(disponibilidad.sedeId)
       const tipoDeServicio = disponibilidad.tipoDeServicio
       const tipoDeServicioNormalizado = tipoDeServicio.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim()
-      
-      // if (tipoDeServicioNormalizado == "especialidad") {
-        // const servicioObj = await this.servicioRepository.findById(
-        //   disponibilidad.servicioId
-        // )
+
         setImmediate(() => {
           this.generarTurnosPorAnio(
             medicoId,
@@ -139,23 +135,10 @@ export class MedicoService {
             disponibilidad.sedeId,
             disponibilidad.servicioId,
             tipoDeServicioNormalizado,
-            disponibilidad.duracion
+            disponibilidad.duracion,
+            disponibilidad.costo
           )
         })
-      //} // else {
-      //   const practicaObj = await this.practicaRepository.findById(
-      //     disponibilidad.servicioId
-      //   )
-      //   setImmediate(() => {
-      //     this.generarTurnosPorAnio(
-      //       medicoId,
-      //       nuevaDisponibilidadObj,
-      //       objSede,
-      //       practicaObj,
-      //       tipoDeServicioNormalizado
-      //     )
-      //   })
-      // }
 
       return medico
     } catch (error) {
@@ -163,7 +146,7 @@ export class MedicoService {
     }
   }
 
-  async generarTurnosPorAnio(medicoId, disponibilidad, sedeId, servicioId, tipoDeServicio, duracion) {
+  async generarTurnosPorAnio(medicoId, disponibilidad, sedeId, servicioId, tipoDeServicio, duracion, costo) {
     try {
       this.agendaService.generarTurnosParaDisponibilidad(
         medicoId,
@@ -171,7 +154,8 @@ export class MedicoService {
         sedeId,
         servicioId,
         tipoDeServicio,
-        duracion
+        duracion,
+        costo
       )
     } catch (error) {
       throw error
@@ -229,7 +213,8 @@ export class MedicoService {
           nuevaDisponibilidad.duracion,
           nuevaDisponibilidad.sedeId,
           nuevaDisponibilidad.servicioId,
-          tipoDeServicioNormalizado
+          tipoDeServicioNormalizado,
+          nuevaDisponibilidad.costo
         )
       })
 
@@ -308,7 +293,8 @@ export class MedicoService {
     duracion,
     sedeId,
     servicioId,
-    tipoDeServicio
+    tipoDeServicio,
+    costo
   ) {
     this.agendaService.cambiarTurnosPorDisponibilidadModificada(
       medico,
@@ -317,7 +303,8 @@ export class MedicoService {
       duracion,
       sedeId,
       servicioId,
-      tipoDeServicio
+      tipoDeServicio,
+      costo
     )
   }
 }

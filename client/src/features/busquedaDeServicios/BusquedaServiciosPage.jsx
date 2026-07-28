@@ -66,7 +66,7 @@ const BusquedaServiciosPage = () => {
     const [menuAbierto, setMenuAbierto] = useState(null);
     const [especialidadSeleccionada, setEspecialidadSeleccionada] = useState("");
     const [practicaSeleccionada, setPracticaSeleccionada] = useState("");
-    const [paginaActual, setPaginaActual] = useState(1);
+    const [paginaActual, setpaginaActual] = useState(1);
     const elementosPorPagina = 3;
 
 
@@ -161,7 +161,7 @@ const BusquedaServiciosPage = () => {
                     value={especialidadSeleccionada}
                     onChange={(e) => {
                     setEspecialidadSeleccionada(e.target.value);
-                    setPaginaActual(1);
+                    setpaginaActual(1);
                     }}
                 >
                     <option value="">Todas</option>
@@ -182,7 +182,7 @@ const BusquedaServiciosPage = () => {
                     value={practicaSeleccionada}
                     onChange={(e)=>{
                     setPracticaSeleccionada(e.target.value);
-                    setPaginaActual(1);
+                    setpaginaActual(1);
                 }}
                 >
                 <option value="">Todas</option>
@@ -264,7 +264,7 @@ const BusquedaServiciosPage = () => {
            <div className="paginacion">
             <button
             disabled={paginaActual === 1}
-            onClick={()=>setPaginaActual(paginaActual-1)}
+            onClick={()=>setpaginaActual(paginaActual-1)}
             >
             ‹
             </button>
@@ -284,7 +284,7 @@ const BusquedaServiciosPage = () => {
             ? "pagina-activa"
             : ""
             }
-            onClick={()=>setPaginaActual(num)}
+            onClick={()=>setpaginaActual(num)}
             >
             {num}
             </button>
@@ -293,7 +293,7 @@ const BusquedaServiciosPage = () => {
 
             <button
             disabled={paginaActual===cantidadPaginas}
-            onClick={()=>setPaginaActual(paginaActual+1)}
+            onClick={()=>setpaginaActual(paginaActual+1)}
             >
             ›
             </button>

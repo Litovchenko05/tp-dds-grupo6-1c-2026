@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const BannerPage = () => {
   
   return (
-   <section className="hero-banner">
+    <section className="hero-banner">
 
     <div className="hero-content">
 
@@ -27,18 +27,11 @@ const BannerPage = () => {
 
             <div className="hero-buttons">
 
-            <button
-                className="btn-primary"
-                onClick={() => {
-                    document
-                        .getElementById("buscador-turnos")
-                        ?.scrollIntoView({
-                            behavior: "smooth"
-                        });
-                }}
-            >
-                Reservar turno
-            </button>
+                <Link to={"/reserva-de-turnos"} >
+                <button className="btn-primary">
+                    Reservar turno
+                </button>
+                </Link>
 
                 <Link to={"/busqueda-de-servicios"} class="btn-reservar">
                 <button className="btn-secondary">
@@ -70,12 +63,12 @@ const BannerPage = () => {
         </div>
 
         <div className="hero-image">
-            <FaHeartbeat className="nav-pulse-icon" />
+            <FaHeartbeat className="nav-pulse-icon-banner" />
         </div>
 
     </div>
 
-</section>
+    </section>
   );
 };
 

@@ -13,7 +13,8 @@ export const nuevaDisponibilidadSchema = z.object({
   tipoDeServicio: z.enum([
   'Especialidad',
   'Practica',
-]).optional().nullable()
+]).optional().nullable(),
+  costo:z.number().int().positive()
 }).refine((data) => data.horaDesde < data.horaHasta, {
     message: 'HoraDesde debe ser menor que HoraHasta',
 })

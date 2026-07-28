@@ -13,7 +13,7 @@ export class Turno {
   tipoDeServicio
   duracion
 
-  constructor(medico, fechaHora, sede, servicio, tipoDeServicio, duracion) {
+  constructor(medico, fechaHora, sede, servicio, tipoDeServicio, duracion, costo) {
     this.medico = medico
     this.paciente = null // Inicialmente sin paciente asignado
     this.fechaHora = fechaHora //date
@@ -21,7 +21,7 @@ export class Turno {
     this.servicio = servicio //practica o especialidad asociado al turno
     this.estado = EstadoTurno.DISPONIBLE // Estado inicial
     this.historialEstados = []
-    this.costo = null
+    this.costo = costo
     this.tipoDeServicio = tipoDeServicio
     this.duracion = duracion
   }

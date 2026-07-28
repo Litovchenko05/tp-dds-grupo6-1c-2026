@@ -14,7 +14,7 @@ export const matriculaMedicaSchema = z
   .transform((m) => `MP${m.slice(2).padStart(5, '0').slice(0, 7)}`.toUpperCase())
 
 export const medicoSchema = z.object({
-  usuario: usuarioSchema,
+  usuario: usuarioSchema.optional(),
   matricula: matriculaMedicaSchema,
   nombre: z.string().trim().min(1, 'Debe tener nombre.'),
   especialidades: z.array(especialidadSchema).optional().nullable(), // Verifica que sea un array de especialidades o null

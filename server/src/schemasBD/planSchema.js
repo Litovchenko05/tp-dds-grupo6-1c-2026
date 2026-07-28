@@ -15,7 +15,7 @@ export const PlanSchema = new mongoose.Schema(
       ref: 'Cobertura',
       required: true
     }
-  ]
+    ]
   },
   {
     timestamps: true,

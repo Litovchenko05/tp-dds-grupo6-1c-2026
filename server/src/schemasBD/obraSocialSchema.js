@@ -10,9 +10,15 @@ export const ObraSchema = new mongoose.Schema(
       trim: true,
     },
     planes: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Plan',
-      required:true,
+      type: [
+        {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Plan',
+        required:true,
+        }
+      ],
+      default: [],
+     
     },
   },
   {

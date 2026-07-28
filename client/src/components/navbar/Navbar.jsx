@@ -11,7 +11,7 @@ import NotificationsIcon from '@mui/icons-material/NotificationsOutlined'
 import ExitToAppIcon from '@mui/icons-material/ExitToAppOutlined'
 import AccountBoxIcon from '@mui/icons-material/AccountBoxOutlined'
 import { HeartPulse } from 'lucide-react'
-import TemporaryDrawer from '../menuLateral/Drawer.jsx'
+import TemporaryDrawer from '../drawer/Drawer.jsx'
 import { useCarrito } from '../../context/CarritoContext.jsx'
 import { useUsuario } from '../../context/UsuarioContext.jsx'
 import { useNotificaciones } from '../../context/NotificacionesContext.jsx'
@@ -48,15 +48,15 @@ const Navbar = () => {
     navigate('/checkout')
   }
 
-  const cantUnidadesEnCarrito = () => {
-    let suma = 0
-    for (const turno of carrito) {
-      suma += turno.unidades
-    }
-    return suma
-  }
-
   useEffect(() => {
+    
+    const cantUnidadesEnCarrito = () => {
+    let suma = 0
+      for (const turno of carrito) {
+        suma += 1
+      }
+      return suma;
+    }
     setCantUnidades(cantUnidadesEnCarrito())
   }, [carrito])
 
@@ -70,7 +70,7 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-section center">
-          <Link to="/reserva-de-turnos" className="link-no-style brand">
+          <Link to="/home" className="link-no-style brand">
             <HeartPulse className="nav-pulse-icon" />
             <h1 className="brand-text">Sweet Medical</h1>
           </Link>

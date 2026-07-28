@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ServicioModel } from '../schemasBD/servicioSchema.js'
 
 export class ServicioRepository {

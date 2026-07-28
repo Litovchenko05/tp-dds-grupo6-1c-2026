@@ -74,12 +74,6 @@ return (
           variant="contained"
           id="search-button"
           startIcon={<FaSearch id='iconoBotonSearch' />}
-          sx={{
-            backgroundColor: '#0f2d99',
-            '&:hover': {
-              backgroundColor: '#0a206e'
-            }
-          }}
         >
         
         <span className='text-buscador'>Buscar</span>

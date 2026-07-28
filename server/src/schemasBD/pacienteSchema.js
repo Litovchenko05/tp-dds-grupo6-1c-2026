@@ -20,13 +20,23 @@ export const PacienteSchema = new mongoose.Schema(
       trim: true,
     },
     obraSocial: {
-      type: ObraSchema,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ObraSocial',
       default: null,
     },
     plan: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Plan',
       default: null,
+    },
+    turnos:{
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Turno',
+        },
+      ],
+      default: [],
     },
     historialDeTurnos: { 
       type: [

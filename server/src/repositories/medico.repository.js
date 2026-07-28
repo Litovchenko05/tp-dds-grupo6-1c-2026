@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { MedicoModel } from '../schemasBD/medicoSchema.js'
 
 export class MedicoRepository {

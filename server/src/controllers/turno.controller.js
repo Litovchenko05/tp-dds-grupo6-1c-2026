@@ -20,9 +20,9 @@ export class TurnoController {
 
   findById = async (req, res) => {
     try {
-      const { id } = req.params
+      const id  = req.params.id
 
-      const turno = this.turnoService.obtenerPorId(id)
+      const turno = await this.turnoService.obtenerPorId(id)
 
       if (!turno) {
         return res.status(404).json({ status: 'error', message: 'Turno no encontrado' })

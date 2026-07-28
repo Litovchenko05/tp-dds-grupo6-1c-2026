@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 const TurnItem = ({ turno }) => {
+
+    const navigate = useNavigate();
 
     const [menuAbierto, setMenuAbierto] = useState(false);
 
@@ -12,32 +14,36 @@ const TurnItem = ({ turno }) => {
     const menuRef = useRef(null);
 
     useEffect(() => {
+      function cerrarMenu(event) {
+        if (menuRef.current && !menuRef.current.contains(event.target)) {
+              setMenuAbierto(false);
+          }
+      }
 
-    function cerrarMenu(event) {
-      if (
-            menuRef.current &&
-            !menuRef.current.contains(event.target)
-        ) {
-            setMenuAbierto(false);
-        }
+      document.addEventListener("mousedown", cerrarMenu);
 
-    }
-
-    document.addEventListener("mousedown", cerrarMenu);
-
-    return () => {
+      return () => {
         document.removeEventListener("mousedown", cerrarMenu);
-    };
+      };
 
-      }, []);
+    }, []);
+
+    
+    const fecha = new Date(turno.fechaHora);
+    const fechaDeFecha = fecha.toLocaleDateString('es-AR');
+    const horaDeFecha = fecha.toLocaleTimeString('es-AR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
 
     return (
       <tr>
-        <td>{turno.servicio}</td>
-        <td>{turno.medico}</td>
-        <td>{turno.sede}</td>
-        <td>{turno.fecha}</td>
-        <td>{turno.hora}</td>
+        <td>{turno.servicio.nombre}</td>
+        <td>{turno.medico.nombre}</td>
+        <td>{turno.sede.nombre}</td>
+        <td>{fechaDeFecha}</td>
+        <td>{horaDeFecha} hs</td>
         <td>{turno.costo}</td>
         <td>
           <span className="tipo-badge">
@@ -54,11 +60,11 @@ const TurnItem = ({ turno }) => {
 
                 {menuAbierto && (
                   <div className="acciones-menu">
-                    <Link to={`/turnos/${turno.id}`} class="btn-reservar">
-                      <button>
+                      <button
+                        onClick={() => navigate(`/turnos/${turno._id}`)}
+                      >
                         Reservar
                       </button>
-                    </Link>    
                   </div>
                 )}
               </div>

@@ -7,14 +7,15 @@ export class AgendaService {
   }
 
   //generar turnos mediante un proceso batch
-  async generarTurnosParaDisponibilidad(medicoId, disponibilidad, sedeId, servicioId, tipoDeServicio, duracion) {
+  async generarTurnosParaDisponibilidad(medicoId, disponibilidad, sedeId, servicioId, tipoDeServicio, duracion, costo) {
     const todosLosTurnosGenerados = Agenda.generarTurnos(
       medicoId,
       disponibilidad,
       sedeId,
       servicioId,
       tipoDeServicio,
-      duracion
+      duracion,
+      costo
     ); //acá me llegan todos los turnos con estado DISPONIBLE, para una disponibilidad del médico
 
     const TAMANIO_BATCH = 10; // Defino que el tamaño del lote a procesar, va a ser de a 10 turnos por vez
@@ -33,7 +34,8 @@ export class AgendaService {
     duracion,
     sedeId,
     servicioId,
-    tipoDeServicio
+    tipoDeServicio,
+    costo
   ) {
     try {
       const fechaActual = new Date()
@@ -61,7 +63,7 @@ export class AgendaService {
       // );
 
       if(duracion == undefined && sedeId == undefined &&  servicioId == undefined &&
-         tipoDeServicio == undefined && disponibilidadAnterior.horaDesde == disponibilidadModificada.horaDesde 
+         tipoDeServicio == undefined && costo == undefined && disponibilidadAnterior.horaDesde == disponibilidadModificada.horaDesde 
          && disponibilidadAnterior.horaHasta == disponibilidadModificada.horaHasta && disponibilidadModificada.diaSemana != disponibilidadAnterior.diaSemana){
         
         for (const turno of turnosDelMedicoAModificar) {
@@ -73,7 +75,7 @@ export class AgendaService {
 
           turno.fechaHora = nuevaFechaHora
 
-          turno.save()
+          await this.turnoRepository.save(turno);
         }
       }else{
          
@@ -90,9 +92,12 @@ export class AgendaService {
         if(duracion == undefined){
           duracion =  turnosDelMedicoAModificar[0].duracion
         }
+        if(costo == undefined){
+          costo =  turnosDelMedicoAModificar[0].costo
+        }
 
         for (const turno of turnosDelMedicoAModificar) {
-           const turnoEliminado = await this.turnoRepository.delete(turno._id);
+           await this.turnoRepository.delete(turno._id);
         }
 
         await this.generarTurnosParaDisponibilidad(
@@ -101,7 +106,8 @@ export class AgendaService {
           sedeId,
           servicioId,
           tipoDeServicio,
-          duracion
+          duracion,
+          costo
         )
        }
        

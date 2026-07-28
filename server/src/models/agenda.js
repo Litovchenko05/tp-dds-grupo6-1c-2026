@@ -11,7 +11,7 @@ import { Paciente } from './Paciente.js'
 
 export class Agenda {
   
-  static generarTurnos(medicoId, disponibilidad, sedeId, servicioId, tipoDeServicio, duracion) {
+  static generarTurnos(medicoId, disponibilidad, sedeId, servicioId, tipoDeServicio, duracion, costo) {
 
     const nuevosTurnos = []
     const fechaActual = new Date()
@@ -56,7 +56,7 @@ export class Agenda {
             // console.log('La fecha del siguiente turno es ' + fechaHoraInicial.toLocaleString('es-AR'));
 
             const fechaTurno = new Date(fechaHoraInicial);
-            const nuevoTurno = new Turno(medicoId, fechaTurno, sedeId, servicioId, tipoDeServicio, duracion);
+            const nuevoTurno = new Turno(medicoId, fechaTurno, sedeId, servicioId, tipoDeServicio, duracion, costo);
             
             nuevosTurnos.push(nuevoTurno);
             //le sumo duracion en min a la hora inicial de la fecha inicial para generar los turnos
