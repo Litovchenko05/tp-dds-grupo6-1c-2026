@@ -1,5 +1,14 @@
 export const NivelDeCobertura = Object.freeze({
-  TOTAL: 'TOTAL',
-  PARCIAL: 'PARCIAL',
-  NO_CUBIERTA: 'NO_CUBIERTA',
+  TOTAL: {
+    nombre: 'TOTAL',
+    calcularDescuento: (costo) => costo,
+  },
+  PARCIAL: {
+    nombre: 'PARCIAL',
+    calcularDescuento: (costo) => costo * 0.5,
+  },
+  NO_CUBIERTO: {
+    nombre: 'NO_CUBIERTO',
+    calcularDescuento: (_) => 0,
+  },
 })

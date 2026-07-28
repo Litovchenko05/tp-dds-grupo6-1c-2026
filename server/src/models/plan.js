@@ -1,5 +1,3 @@
-import { CoberturaEspecialidad } from './CoberturaEspecialidad.js'
-import { CoberturaPractica } from './CoberturaPractica.js'
 export class Plan {
   id
   nombre
@@ -11,22 +9,24 @@ export class Plan {
     this.coberturasEspecialidad = coberturasEspecialidad
     this.coberturasPractica = coberturasPractica
   }
+
   obtenerCoberturaEspecialidad(especialidadBuscada) {
     const cobertura = this.coberturasEspecialidad.find(
       (especialidadEnLista) => especialidadEnLista.especialidad.id == especialidadBuscada.id
     )
     if (cobertura) {
-      return cobertura.nivel
+      return cobertura.porcentajeDescuento
     } else {
       return null
     }
   }
+
   obtenerCoberturaPractica(practicaBuscada) {
     const cobertura = this.coberturasPractica.find(
       (practicaEnLista) => practicaEnLista.practica.id == practicaBuscada.id
     )
     if (cobertura) {
-      return cobertura.nivel
+      return cobertura.porcentajeDescuento
     } else {
       return null
     }

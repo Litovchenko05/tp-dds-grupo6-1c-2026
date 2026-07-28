@@ -103,7 +103,7 @@ export class MedicoService {
     return medico
   }
 
-  async agregarServicio(medicoId, servicio) {
+  async agregarServicio(medicoId, data) {
     try {
       const medico = await this.medicoRepository.findById(medicoId)
 
@@ -111,56 +111,19 @@ export class MedicoService {
         throw new Error('Medico no encontrado')
       }
       let nuevoServicio
-      if ('codigo' in servicio) {
-        nuevoServicio = new Practica(
-          servicio.codigo,
-          servicio.nombre,
-          servicio.duracionTurnoEnMins,
-          servicio.costo
-        )
+      if (data.tipo == 'practica') {
+        nuevoServicio = new Practica(data.nombre, data.duracionTurnoEnMins, data.costo)
       } else {
-        nuevoServicio = new Especialidad(
-          servicio.nombre,
-          servicio.duracionTurnoEnMins,
-          servicio.costoConsulta
-        )
+        nuevoServicio = new Especialidad(data.nombre, data.duracionTurnoEnMins, data.costoConsulta)
       }
       medico.darDeAltaServicio(nuevoServicio)
-      await medico.save()
-    } catch (error) {
-      throw error
-    }
-  }
-  async agregarServicio(medicoId, servicio) {
-    try {
-      const medico = await this.medicoRepository.findById(medicoId)
-
-      if (!medico) {
-        throw new Error('Medico no encontrado')
-      }
-      let nuevoServicio
-      if ('codigo' in servicio) {
-        nuevoServicio = new Practica(
-          servicio.codigo,
-          servicio.nombre,
-          servicio.duracionTurnoEnMins,
-          servicio.costo
-        )
-      } else {
-        nuevoServicio = new Especialidad(
-          servicio.nombre,
-          servicio.duracionTurnoEnMins,
-          servicio.costoConsulta
-        )
-      }
-      medico.darDeAltaServicio(nuevoServicio)
-      await medico.save()
+      await this.medicoRepository.save(medico)
     } catch (error) {
       throw error
     }
   }
 
-  async agregarDisponibilidad(medicoId, disponibilidadCompleta) {
+  async agregarDisponibilidad(medicoId, disponibilidad) {
     try {
       const medico = await this.medicoRepository.findById(medicoId)
 
@@ -168,21 +131,18 @@ export class MedicoService {
         throw new Error('Médico no encontrado')
       }
 
-      //le agrego la disponibilidad al doc del medico
-      const nuevaDisponibilidad = disponibilidadCompleta.disponibilidadHoraria
+      medico.agregarDisponibilidad(disponibilidad)
 
-      medico.agregarDisponibilidad(nuevaDisponibilidad)
-
-      //persisto en mongo
-      await medico.save()
+      await this.medicoRepository.save(medico)
 
       const nuevaDisponibilidadObj = medico.disponibilidades[medico.disponibilidades.length - 1]
-      const objSede = await this.sedeRepository.findByNombre(disponibilidadCompleta.sede.nombre)
-      const tipoDeServicio = disponibilidadCompleta.tipoDeServicio
+      const objSede = await this.sedeRepository.findByNombre(disponibilidad.sede.nombre)
+      const tipoDeServicio = disponibilidad.tipoDeServicio
 
-      if (disponibilidadCompleta.servicio.codigo == undefined) {
+      if (disponibilidad.servicio.codigo == undefined) {
+        // TODO: Esto va a romper
         const especialidadObj = await this.especialidadRepository.findByNombre(
-          disponibilidadCompleta.servicio.nombre
+          disponibilidad.servicio.nombre // TODO: Esto va a romper
         )
         setImmediate(() => {
           this.generarTurnosPorAnio(
@@ -195,8 +155,8 @@ export class MedicoService {
         })
       } else {
         const practicaObj = await this.practicaRepository.findByCodigoYNombre(
-          disponibilidadCompleta.servicio.codigo,
-          disponibilidadCompleta.servicio.nombre
+          disponibilidad.servicio.codigo, // TODO: Esto va a romper
+          disponibilidad.servicio.nombre // TODO: Esto va a romper
         )
         setImmediate(() => {
           this.generarTurnosPorAnio(
@@ -323,11 +283,11 @@ export class MedicoService {
       throw error
     }
   }
-  async eliminarServicio(nombreServicio, tipoDeServicio, medicoId) {
+
+  async eliminarServicio(medicoId, nombreServicio, tipoDeServicio) {
     try {
       const medico = await this.medicoRepository.findById(medicoId)
       let servicio
-
       if (tipoDeServicio == 'practica') {
         servicio = medico.practicas.find((n) => n.nombre == nombreServicio)
       } else if (tipoDeServicio == 'especialidad') {
@@ -340,6 +300,7 @@ export class MedicoService {
       throw error
     }
   }
+
   generarTurnosPorAnioParaDisponibilidadModificada(
     medico,
     disponibilidadAnterior,
@@ -350,5 +311,15 @@ export class MedicoService {
       disponibilidadAnterior,
       disponibilidadModificada
     )
+  }
+
+  async obtenerServicios(medicoId) {
+    try {
+      const medico = this.medicoRepository.findById(medicoId)
+      const todosLosServicios = [...(medico.especialidades || []), ...(medico.practicas || [])]
+      return todosLosServicios
+    } catch (error) {
+      throw error
+    }
   }
 }

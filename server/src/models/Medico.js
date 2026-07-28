@@ -8,8 +8,7 @@ export class Medico {
   usuario
   matricula
   nombre
-  especialidades
-  practicas
+  servicios
   sedes
   disponibilidades
   solicitudesDeCambioDeFecha
@@ -18,16 +17,14 @@ export class Medico {
     usuarioMedico,
     matriculaMedica,
     nombreMedico,
-    especialidadesMedico,
-    practicasMedico,
+    serviciosMedico,
     sedesMedico,
     disponibilidadesMedico
   ) {
     this.usuario = usuarioMedico
     this.matricula = matriculaMedica
     this.nombre = nombreMedico
-    this.especialidades = especialidadesMedico
-    this.practicas = practicasMedico
+    this.servicios = serviciosMedico ?? []
     this.sedes = sedesMedico
     this.disponibilidades = disponibilidadesMedico ?? []
     this.solicitudesDeCambioDeFecha = []
@@ -52,12 +49,16 @@ export class Medico {
     return this.nombre
   }
 
+  getServicios() {
+    return this.servicios
+  }
+
   getEspecialidades() {
-    return this.especialidades
+    return this.servicios.filter((servicio) => servicio.especialidad != null)
   }
 
   getPracticas() {
-    return this.practicas
+    return this.servicios.filter((servicio) => servicio.practica != null)
   }
 
   getSedes() {
@@ -70,8 +71,8 @@ export class Medico {
 
   tieneServicio(tipoServicio) {
     return (
-      this.especialidades.some((especialidad) => especialidad.nombre === tipoServicio) ||
-      this.practicas.some((practica) => practica.nombre === tipoServicio)
+      this.getEspecialidades().some((servicio) => servicio.especialidad?.nombre === tipoServicio) ||
+      this.getPracticas().some((servicio) => servicio.practica?.nombre === tipoServicio)
     )
   }
 
@@ -85,12 +86,10 @@ export class Medico {
   }
   tieneTipoTurno(tipoTurno) {
     if (tipoTurno instanceof Especialidad) {
-      return this.especialidades.some(
-        (especialidadMedico) => especialidadMedico.id === tipoTurno.id
-      )
+      return this.getEspecialidades().some((servicio) => servicio.especialidad?.id === tipoTurno.id)
     }
     if (tipoTurno instanceof Practica) {
-      return this.practicas.some((practicaMedico) => practicaMedico.id === tipoTurno.id)
+      return this.getPracticas().some((servicio) => servicio.practica?.id === tipoTurno.id)
     }
   }
 
@@ -107,9 +106,7 @@ export class Medico {
   }
 
   aceptarCambioDeFecha(turno) {
-    const solicitud = this.solicitudesDeCambioDeFecha.find(
-      (solicitud) => solicitud.turno === turno
-    )
+    const solicitud = this.solicitudesDeCambioDeFecha.find((solicitud) => solicitud.turno === turno)
 
     if (!solicitud) {
       throw new Error('Solicitud no encontrada')
@@ -158,9 +155,7 @@ export class Medico {
    this.especialidades[index].costoConsulta = nuevoServicio.costoConsulta;
  }}*/
   darDeAltaServicio(servicio) {
-
-    if ("codigo" in servicio) {
-
+    if ('codigo' in servicio) {
       this.practicas = this.darDeAlta(servicio, this.practicas)
     } else {
       this.especialidades = this.darDeAlta(servicio, this.especialidades)
@@ -168,65 +163,52 @@ export class Medico {
   }
 
   darDeBajaServicio(servicio) {
-
-    if ("codigo" in servicio) {
-
+    if ('codigo' in servicio) {
       this.practicas = this.darDeBaja(servicio, this.practicas)
-    } else if ("codigo" in servicio) {
+    } else if (!('codigo' in servicio)) {
       this.especialidades = this.darDeBaja(servicio, this.especialidades)
     } else {
-      throw new Error(
-        "servicio no esta en formato indicado"
-      )
+      throw new Error('servicio no esta en formato indicado')
     }
-
   }
+
   darDeBaja(servicio, listaServicios) {
-
     if (!this.servicioExiste(servicio, listaServicios)) {
-      throw new Error(
-        "Este servicio no es brindado por el medico"
-      )
+      throw new Error('Este servicio no es brindado por el medico')
     }
-    return listaServicios.filter(p => p.id !== servicio.id)
 
+    const indice = listaServicios.findIndex((p) => {
+      if (p.id != null && servicio.id != null) {
+        return p.id === servicio.id
+      }
+      return p.nombre === servicio.nombre
+    })
 
+    if (indice !== -1) {
+      listaServicios.splice(indice, 1)
+    }
+
+    return listaServicios
   }
+
   servicioExiste(servicio, listaServicios) {
-    return listaServicios.some(p => p.nombre === servicio.nombre)
-  }
-  servicioPorId(servicioId) {
-    console.log("paseid")
-    const servicios = [
-      ...this.practicas,
-      ...this.especialidades
-    ]
-    console.log("pase", servicios)
-
-    const servicio = servicios.find(s => s._id === servicioId)
-    console.log("pase", servicio)
-    return servicio
+    return listaServicios.some((p) => {
+      if (p.id != null && servicio.id != null) {
+        return p.id === servicio.id
+      }
+      return p.nombre === servicio.nombre
+    })
   }
 
   darDeAlta(servicio, listaServicio) {
-
-
     if (this.servicioExiste(servicio, listaServicio)) {
-      throw new Error(
-        "Servicio ya está dado de alta"
-      )
-    }
-    else if (!listaServicio) {
-
+      throw new Error('Servicio ya está dado de alta')
+    } else if (!listaServicio) {
       listaServicio = []
       return listaServicio.push(servicio)
-
     } else {
-
       listaServicio.push(servicio)
-
       return listaServicio
     }
   }
-
 }

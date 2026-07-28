@@ -1,20 +1,16 @@
 export class Practica {
   id
-  codigo
   nombre
   duracionTurnoEnMins
   costo
- 
 
   constructor(codigo, nombre, duracionTurnoEnMins, costo) {
-    this.codigo = codigo
     this.nombre = nombre
     this.duracionTurnoEnMins = duracionTurnoEnMins
     this.costo = costo
   }
-  modificarPractica(id,codigo,nombre,duracionTurnoEnMins,costo){
+  modificarPractica(id, nombre, duracionTurnoEnMins, costo) {
     this.id = id
-    this.codigo = codigo
     this.nombre = nombre
     this.duracionTurnoEnMins = duracionTurnoEnMins
     this.costo = costo
@@ -22,10 +18,6 @@ export class Practica {
 
   getId() {
     return this.id
-  }
-
-  getCodigo() {
-    return this.codigo
   }
 
   getNombre() {

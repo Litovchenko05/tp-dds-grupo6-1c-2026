@@ -6,7 +6,10 @@ export class TurnoRepository {
   }
 
   async findAll() {
-    return await this.TurnoModel.find().populate('servicio').populate('sede')
+    return await this.TurnoModel.find()
+      .populate('practica')
+      .populate('especialidad')
+      .populate('sede')
   }
 
   async findByFilters(filtros = {}) {
@@ -18,7 +21,9 @@ export class TurnoRepository {
   }
 
   async findByTurnoId(idMedico) {
-    return await this.TurnoModel.find({ 'medico.id': idMedico }).populate('servicio')
+    return await this.TurnoModel.find({ 'medico.id': idMedico })
+      .populate('practica')
+      .populate('especialidad')
   }
 
   async save(turno) {
@@ -39,17 +44,13 @@ export class TurnoRepository {
 
   async obtenerTurnosPorEspecialidad(nombreDeEspecialidad) {
     return (await this.findAll()).filter(
-      (t) =>
-        t.servicio.nombre.toLowerCase() == nombreDeEspecialidad.toLowerCase() &&
-        t.tipoDeServicio == 'Especialidad'
+      (t) => t.especialidad?.nombre?.toLowerCase() == nombreDeEspecialidad.toLowerCase()
     )
   }
 
   async obtenerTurnosPorPractica(nombreDePractica) {
     return (await this.findAll()).filter(
-      (t) =>
-        t.servicio.nombre.toLowerCase() == nombreDePractica.toLowerCase() &&
-        t.tipoDeServicio == 'Practica'
+      (t) => t.practica?.nombre?.toLowerCase() == nombreDePractica.toLowerCase()
     )
   }
 
@@ -130,7 +131,7 @@ export class TurnoRepository {
     if (nombreServicio) {
       filtro.$or = [
         { 'practica.nombre': { $regex: nombreServicio, $options: 'i' } },
-        { 'practica.especialidad': { $regex: nombreServicio, $options: 'i' } },
+        { 'especialidad.nombre': { $regex: nombreServicio, $options: 'i' } },
       ]
     }
 
@@ -151,7 +152,7 @@ export class TurnoRepository {
     // Mapeo de sortBy a campo de Mongoose
     const sortFields = {
       fecha: 'fechaHora',
-      costo: 'practica.costo',
+      costo: 'costo',
       medico: 'medico.nombre',
     }
     const campoSort = sortFields[sortBy] || 'fechaHora'
@@ -179,23 +180,20 @@ export class TurnoRepository {
     //cuantos documentos hay que saltar
     const skip = (page - 1) * limit
 
-    const turnos =
-      await this.TurnoModel
-        .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
-        .skip(skip)
-        .limit(limit)
+    const turnos = await this.TurnoModel.find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
+      .skip(skip)
+      .limit(limit)
 
-    const total =
-      await this.TurnoModel.countDocuments({
-        //eliminado: false
-      })
+    const total = await this.TurnoModel.countDocuments({
+      //eliminado: false
+    })
 
     return {
       turnos,
       total,
       page,
       // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit),
     }
   }
 }

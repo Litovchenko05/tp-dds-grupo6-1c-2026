@@ -7,13 +7,12 @@ export class AgendaService {
   }
 
   //generar turnos mediante un proceso batch
-  async generarTurnosParaDisponibilidad(medico, disponibilidad, sede, servicio, tipoDeServicio) {
+  async generarTurnosParaDisponibilidad(medico, disponibilidad, sede, servicio) {
     const todosLosTurnosGenerados = Agenda.generarTurnos(
       medico,
       disponibilidad,
       sede,
-      servicio,
-      tipoDeServicio
+      servicio
     ) //acá me llegan todos los turnos con estado DISPONIBLE, para una disponibilidad del médico
 
     const TAMANIO_BATCH = 10 // Defino que el tamaño del lote a procesar, va a ser de a 10 turnos por vez
@@ -65,8 +64,7 @@ export class AgendaService {
   obtenerDisponiblesSegunServicio(nombreServicio) {
     const turnosTotales = this.turnoRepository.obtenerTodos()
     const turnosFiltrados = turnosTotales.filter(
-      (turno) =>
-        turno.getNombreServicio() === nombreServicio && turno.estado === EstadoTurno.DISPONIBLE
+      (turno) => turno.getNombreServicio() === nombreServicio && turno.estado === EstadoTurno.DISPONIBLE
     )
     return turnosFiltrados
   }

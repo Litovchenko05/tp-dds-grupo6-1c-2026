@@ -1,39 +1,25 @@
-import mongoose from "mongoose";
-import { Practica } from "../models/Practica.js";
+import mongoose from 'mongoose'
+import { Practica } from '../models/Practica.js'
 
-export const PracticaSchema = new mongoose.Schema({
-    /*
-        #id
-        #codigo
-        #nombre
-        #duracionTurnoEnMins
-        #costo
-    */
-
-    codigo:{
-        type: String,
-        required: true,
-        trim: true,
-    }
-    ,nombre:{
-        type: String,
-        required: true,
-        trim: true,
-    },duracionTurnoEnMins:{
-        type: Number,
-        required: true,
-        trim:true,
-    },costo:{
-        type: Number,
-        required: true,
-        trim:true,
+export const PracticaSchema = new mongoose.Schema(
+  {
+    nombre: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Servicio',
+      required: true,
     },
-    },{
-    timestamps: true,
-    collection: 'practicas',
-           
-});
+    duracionEnMins: {
+      type: Number,
+      required: true,
+    },
+    costo: {
+      type: Number,
+      required: true,
+    },
+  },
+  { timestamps: true, collection: 'practicas' }
+)
 
-PracticaSchema.loadClass(Practica);
+PracticaSchema.loadClass(Practica)
 
-export const PracticaModel = mongoose.model('Practica', PracticaSchema);
+export const PracticaModel = mongoose.model('Practica', PracticaSchema)

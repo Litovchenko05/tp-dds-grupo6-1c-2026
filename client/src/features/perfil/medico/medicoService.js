@@ -14,7 +14,13 @@ const getAuthHeaders = () => {
 export const medicoService = {
   obtenerServicios: async (idMedico) => {
     const response = await axios.get(`${API_URL}/medicos/${idMedico}/servicios`, getAuthHeaders())
-    return response.data.data
+    return response.data?.data || response.data || []
+    // TODO
+  },
+
+  obtenerCatalogoServicios: async () => {
+    const response = await axios.get(`${API_URL}/servicios`, getAuthHeaders())
+    return response.data?.data || response.data || []
   },
 
   agregarServicio: async (idMedico, servicioData) => {
@@ -32,5 +38,19 @@ export const medicoService = {
       getAuthHeaders()
     )
     return response.data
+  },
+
+  agregarDisponibilidad: async (idMedico, disponibilidadData) => {
+    const response = await axios.post(
+      `${API_URL}/medicos/${idMedico}/disponibilidades`,
+      disponibilidadData,
+      getAuthHeaders()
+    )
+    return response.data.data || response.data
+  },
+
+  obtenerSedes: async () => {
+    const response = await axios.get(`${API_URL}/sedes`, getAuthHeaders())
+    return response.data.data || response.data
   },
 }

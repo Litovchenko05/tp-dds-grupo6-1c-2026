@@ -5,4 +5,6 @@ export const agregarServicioSchema = z.object({
   tipo: z.enum(['especialidad', 'practica'], {
     errorMap: () => ({ message: 'El tipo debe ser "especialidad" o "practica"' }),
   }),
+  costo: z.number().min(1, 'El costo debe ser mayor a 0'),
+  duracion: z.number().min(10, 'La duracion debe ser de minimo 10 minutos'),
 })
