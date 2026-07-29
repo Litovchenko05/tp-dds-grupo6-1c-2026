@@ -10,10 +10,12 @@ export const getTurnsSlowly = () =>
     }, 5000)
   })
 
-export const getTurns = async (page, { sortBy, order } = {}) => {
+export const getTurns = async (page, idUsuario, { sortBy, order } = {}) => {
   try {
+    console.log(idUsuario)
     const response = await axios.get(`${REACT_APP_API_URL}/turnos`, {
       params: {
+        idUsuario,
         page,
         limit: 8,
         sortBy,
@@ -49,21 +51,25 @@ export const crearReserva = async (idUsuario, idTurno) => {
   }
 }
 
-export const getTurnsFiltered = async ({
-  nombreMedico,
-  idServicio,
-  idSede,
-  fechaDesde,
-  fechaHasta,
-  tipoServicio,
-  page = 1,
-  limit = 8,
-  sortBy,
-  order,
-}) => {
+export const getTurnsFiltered = async (
+  idUsuario,
+  {
+    nombreMedico,
+    idServicio,
+    idSede,
+    fechaDesde,
+    fechaHasta,
+    tipoServicio,
+    page = 1,
+    limit = 8,
+    sortBy,
+    order,
+  }
+) => {
   try {
     const response = await axios.get(`${REACT_APP_API_URL}/turnos/filtered`, {
       params: {
+        idUsuario,
         nombreMedico,
         idServicio,
         idSede,

@@ -2,11 +2,15 @@ import mongoose from 'mongoose'
 import { TurnoModel } from '../schemasBD/turnoSchema.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 import { ServicioRepository } from '../repositories/servicios.repository.js'
-
+import { Cobertura } from '../models/Cobertura.js'
+import { NivelDeCobertura } from '../models/nivelDeCobertura.js'
 export class TurnoRepository {
-  constructor(medicoRepository) {
+  constructor(medicoRepository, pacienteRepository, planRepository, coberturaRepository) {
     this.TurnoModel = TurnoModel
     this.medicoRepository = medicoRepository
+    this.pacienteRepository = pacienteRepository
+    this.planRepository = planRepository
+    this.coberturaRepository = coberturaRepository
   }
 
   async findAll() {
@@ -111,6 +115,7 @@ export class TurnoRepository {
   }
 
   async findAllFilteredPaginated({
+    idUsuario,
     nombreMedico,
     idServicio,
     idSede,
@@ -196,17 +201,54 @@ export class TurnoRepository {
 
     const total = await this.TurnoModel.countDocuments(filtro)
 
+    const pacienteEncontrado = await this.pacienteRepository.findByUsuario(idUsuario)
+
+    let coberturas = []
+
+    if (pacienteEncontrado?.plan) {
+      const plan = await this.planRepository.findById(pacienteEncontrado.plan)
+
+      if (plan?.coberturasDeServicios?.length) {
+        coberturas = await Promise.all(
+          plan.coberturasDeServicios.map((coberturaId) =>
+            this.coberturaRepository.findById(coberturaId)
+          )
+        )
+      }
+    }
+
+    const turnosConCobertura = turnos.map((turno) => {
+      const turnoObj = turno.toObject ? turno.toObject() : turno
+
+      const cobertura = coberturas.find(
+        (c) => c && c.servicio.toString() === turnoObj.servicio._id.toString()
+      )
+
+      if (cobertura) {
+        return {
+          ...turnoObj,
+          costoConCobertura: this.calcularDescuento(cobertura, turnoObj.costo),
+          nivelCobertura: cobertura.nivel.nivel,
+        }
+      }
+
+      return {
+        ...turnoObj,
+        costoConCobertura: turnoObj.costo,
+        nivelCobertura: 'NO_CUBIERTA',
+      }
+    })
+
     return {
-      turnos,
+      turnos: turnosConCobertura,
       total,
       page,
-      limit,
       totalPages: Math.ceil(total / limit),
     }
   }
   //paginado
   //GET ALL PAGINADO
-  async findAllPaginated(page = 1, limit = 5, sortBy = 'fecha', order = 'asc') {
+  async findAllPaginated(idUsuario, page = 1, limit = 5, sortBy = 'fecha', order = 'asc') {
     const skip = (page - 1) * limit
     const sortOrder = order === 'asc' ? 1 : -1
 
@@ -228,13 +270,62 @@ export class TurnoRepository {
       .skip(skip)
       .limit(limit)
 
-    const total = await this.TurnoModel.countDocuments(filtro) // <- agregué el filtro acá también
+    const total = await this.TurnoModel.countDocuments(filtro)
+
+    const pacienteEncontrado = await this.pacienteRepository.findByUsuario(idUsuario)
+
+    let coberturas = []
+
+    if (pacienteEncontrado?.plan) {
+      const plan = await this.planRepository.findById(pacienteEncontrado.plan)
+
+      if (plan?.coberturasDeServicios?.length) {
+        coberturas = await Promise.all(
+          plan.coberturasDeServicios.map((coberturaId) =>
+            this.coberturaRepository.findById(coberturaId)
+          )
+        )
+      }
+    }
+
+    const turnosConCobertura = turnos.map((turno) => {
+      const turnoObj = turno.toObject ? turno.toObject() : turno
+
+      const cobertura = coberturas.find(
+        (c) => c && c.servicio.toString() === turnoObj.servicio._id.toString()
+      )
+
+      if (cobertura) {
+        return {
+          ...turnoObj,
+          costoConCobertura: this.calcularDescuento(cobertura, turnoObj.costo),
+          nivelCobertura: cobertura.nivel.nivel,
+        }
+      }
+
+      return {
+        ...turnoObj,
+        costoConCobertura: turnoObj.costo,
+        nivelCobertura: 'NO_CUBIERTA',
+      }
+    })
 
     return {
-      turnos,
+      turnos: turnosConCobertura,
       total,
       page,
       totalPages: Math.ceil(total / limit),
+    }
+  }
+
+  calcularDescuento(cobertura, costoInicial) {
+    const nivel = cobertura.nivel.nivel
+    if (nivel == NivelDeCobertura.TOTAL) {
+      return costoInicial * 0
+    } else if (nivel == NivelDeCobertura.PARCIAL) {
+      return costoInicial / 2
+    } else if (nivel == NivelDeCobertura.NO_CUBIERTA) {
+      return costoInicial
     }
   }
 }

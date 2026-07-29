@@ -9,6 +9,7 @@ import { UsuarioRepository } from '../repositories/usuario.repository.js'
 import { ServicioRepository } from '../repositories/servicios.repository.js'
 import { ObraSocialRepository } from '../repositories/obraSocial.repository.js'
 import { PlanRepository } from '../repositories/plan.repository.js'
+import { CoberturaRepository } from '../repositories/cobertura.repository.js'
 
 import { AgendaService } from '../services/agenda.service.js'
 import { MedicoService } from '../services/medico.service.js'
@@ -32,6 +33,7 @@ import { SedeController } from '../controllers/sede.controller.js'
 import { ObraSocialController } from '../controllers/obraSocial.controller.js'
 import { PlanController } from '../controllers/plan.controller.js'
 import { RecordatorioTask } from '../tasks/recordatorio.task.js'
+import { Cobertura } from '../models/Cobertura.js'
 
 const medicoRepository = new MedicoRepository()
 const notificacionRepository = new NotificacionRepository()
@@ -39,11 +41,17 @@ const pacienteRepository = new PacienteRepository()
 const especialidadRepository = new EspecialidadRepository()
 const practicaRepository = new PracticaRepository()
 const sedeRepository = new SedeRepository()
-const turnoRepository = new TurnoRepository(medicoRepository)
 const usuarioRepository = new UsuarioRepository()
 const servicioRepository = new ServicioRepository()
 const obraSocialRepository = new ObraSocialRepository()
 const planRepository = new PlanRepository()
+const coberturaRepository = new CoberturaRepository()
+const turnoRepository = new TurnoRepository(
+  medicoRepository,
+  pacienteRepository,
+  planRepository,
+  coberturaRepository
+)
 
 const planService = new PlanService({ planRepository })
 const obraSocialService = new ObraSocialService({ obraSocialRepository })
@@ -97,6 +105,7 @@ const obraSocialController = new ObraSocialController({ obraSocialService })
 const planController = new PlanController({ planService })
 
 export {
+  coberturaRepository,
   medicoRepository,
   notificacionRepository,
   pacienteRepository,

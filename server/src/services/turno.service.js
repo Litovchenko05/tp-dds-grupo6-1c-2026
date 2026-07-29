@@ -115,11 +115,12 @@ export class TurnoService {
   }
 
   //paginado
-  async findAllPaginated(page, limit, sortBy, order) {
-    return await this.turnoRepository.findAllPaginated(page, limit, sortBy, order)
+  async findAllPaginated(idUsuario, page, limit, sortBy, order) {
+    return await this.turnoRepository.findAllPaginated(idUsuario, page, limit, sortBy, order)
   }
 
   async findAllFilteredPaginated({
+    idUsuario,
     nombreMedico,
     idServicio,
     idSede,
@@ -146,6 +147,7 @@ export class TurnoService {
     }
 
     return await this.turnoRepository.findAllFilteredPaginated({
+      idUsuario,
       nombreMedico,
       idServicio,
       idSede,

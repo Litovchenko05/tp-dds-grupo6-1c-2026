@@ -94,10 +94,17 @@ export class TurnoController {
     try {
       const page = Number(req.query.page) || 1
       const limit = Number(req.query.limit) || 5
+      const idUsuario = req.query.idUsuario || null
       const sortBy = req.query.sortBy || 'fechaHora'
       const order = req.query.order || 'asc'
 
-      const resultado = await this.turnoService.findAllPaginated(page, limit, sortBy, order)
+      const resultado = await this.turnoService.findAllPaginated(
+        idUsuario,
+        page,
+        limit,
+        sortBy,
+        order
+      )
       return res.status(200).json({
         status: 'success',
         data: resultado,
@@ -114,6 +121,7 @@ export class TurnoController {
   async findAllFilteredPaginated(req, res) {
     try {
       const {
+        idUsuario,
         nombreMedico,
         idServicio,
         idSede,
@@ -127,6 +135,7 @@ export class TurnoController {
       } = req.query
 
       const resultado = await this.turnoService.findAllFilteredPaginated({
+        idUsuario,
         nombreMedico,
         idServicio,
         idSede,

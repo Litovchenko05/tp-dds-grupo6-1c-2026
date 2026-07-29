@@ -33,6 +33,11 @@ const TurnItem = ({ turno }) => {
     minute: '2-digit',
     hour12: false,
   })
+  const textoNivel = {
+    TOTAL: 'TOTAL',
+    PARCIAL: 'PARCIAL',
+    NO_CUBIERTA: 'NO CUBIERTA',
+  }
 
   return (
     <tr>
@@ -41,8 +46,8 @@ const TurnItem = ({ turno }) => {
       <td>{turno.sede.nombre}</td>
       <td>{fechaDeFecha}</td>
       <td>{horaDeFecha}</td>
-      <td>{turno.costo}</td>
-      <td>{turno.costo}</td>
+      <td>{turno.costoConCobertura}</td>
+      <td>{textoNivel[turno.nivelCobertura]}</td>
       <td>
         <span className="tipo-badge">{turno.estado}</span>
       </td>
