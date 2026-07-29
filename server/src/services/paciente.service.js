@@ -1,4 +1,7 @@
-import { EstadoTurno } from '../models/estadoTurno.enum.js'
+import { EstadoTurno } from '../models/estadoTurno.enum.js';
+import mongoose from "mongoose";
+import { Types } from 'mongoose'
+
 export class PacienteService {
   constructor({ pacienteRepository, turnoRepository, medicoRepository, turnoService }) {
     this.pacienteRepository = pacienteRepository
@@ -39,27 +42,29 @@ export class PacienteService {
     return paciente
   }
 
-  async reservarTurno(pacienteId, turnoId) {
-    const paciente = await this.pacienteRepository.findById(pacienteId)
+  async reservarTurno(usuarioId, turnoId) {
+
+    console.log(usuarioId)
+    const paciente = await this.pacienteRepository.findOne({usuario:new Types.ObjectId(usuarioId)})
 
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
-    const turno = await this.turnoRepository.findById(turnoId)
+    console.log(turnoId)
+    const turno = await this.turnoRepository.findById(new Types.ObjectId(turnoId))
 
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
 
-  
     if (turno.estado == EstadoTurno.DISPONIBLE) {
 
       turno.paciente = paciente
       turno.estado = EstadoTurno.RESERVADO
-      this.turnoRepository.save(turno);
+      await this.turnoRepository.save(turno);
       
       paciente.turnos.push(turno);
-      this.pacienteRepository.save(paciente);
+      await this.pacienteRepository.save(paciente);
 
       return turno
     } else {

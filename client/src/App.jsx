@@ -36,7 +36,7 @@ function App() {
         <NotificacionesProvider>
           <Routes>
             <Route path="/login" element={<GuestRoute />} />
-            {/* <Route element={<ProtectedRoute />}> */}
+            <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
                 <Route path="turnos/:id" element={<TurnDetailPage />} />
@@ -48,7 +48,7 @@ function App() {
                 <Route path="notificaciones" element={<NotificacionesScreen />} />
                 <Route path="perfil" element={<PerfilScreen />} />
               </Route>
-            {/* </Route> */}
+            </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </NotificacionesProvider>

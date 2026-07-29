@@ -28,4 +28,14 @@ export const pacienteService = {
     )
     return response.data
   },
+
+  getObrasSociales: async () => {
+    const response = await axios.get(`${API_URL}/obraSocial`)
+    return response.data
+  },
+
+  getPlanes: async () => {
+    const response = await axios.get(`${API_URL}/plan`)
+    return response.data
+  },
 }

@@ -1,4 +1,26 @@
-.turnos-container{
+.turnos-container {
   margin: 10px 200px 200px 200px;
   padding: 0;
+}
+
+.spinner-contenedor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sort-icon {
+  margin-left: 6px;
+  opacity: 0.4;
+  font-size: 0.8em;
+  vertical-align: middle;
+}
+
+.sort-icon.active {
+  opacity: 1;
 }

@@ -26,6 +26,7 @@ router.route('/:id').get((req, res) =>
   pacienteController.findById(req, res)
 )
 
+
 router.route('/:id/turnos/:turnoId').patch((req, res) =>
   // #swagger.tags = ['Pacientes', 'Turnos']
   // #swagger.summary = 'Cambiar estado de un turno'
@@ -35,11 +36,11 @@ router.route('/:id/turnos/:turnoId').patch((req, res) =>
   pacienteController.cambiarEstadoDeTurno(req, res)
 )
 
-router.route('/:id/turnos/:turnoId').post((req, res) =>
+router.route('/:idUsuario/turnos/:idTurno').post((req, res) =>
   // #swagger.tags = ['Pacientes', 'Turnos']
   // #swagger.summary = 'Reservar un turno'
   // #swagger.description = 'Permite al paciente reservar un turno.'
-  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del paciente', required: true, type: 'string' } */
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID de usuario del paciente', required: true, type: 'string' } */
   /* #swagger.parameters['turnoId'] = { in: 'path', description: 'ID del turno a reservar', required: true, type: 'string' } */
   pacienteController.reservarTurno(req, res)
 )

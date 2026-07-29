@@ -3,9 +3,10 @@ import  { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import "./Checkout.css";
 import { useCarrito } from '../../context/CarritoContext.jsx';
+import { useUsuario } from "../../context/UsuarioContext.jsx";
 import  ModalTurnos  from '../../components/modal/Modal.jsx'
 import { FaTrash } from "react-icons/fa";
-
+import { crearReserva } from "../../service/turnsService.js";
 
 const inicializarCampo = (requerido = true) => ({ valor: '', requerido });
 
@@ -20,6 +21,7 @@ const inicializarCampos = () => ({
  const Checkout = () => {
     
     const { carrito, limpiarCarrito, eliminarTurno } = useCarrito();
+    const { usuario } = useUsuario();
 
     const [mostrarModal, setMostrarModal] = useState(false);
 
@@ -42,9 +44,19 @@ const inicializarCampos = () => ({
         !campo.requerido || campo.valor.length
     );
 
-    const handleGuardar = (e) => {
+    const handleGuardar = async(e) => {
         e.preventDefault();
-        setMostrarModal(true);
+        try{
+            for(const turno of carrito){     
+                console.log(JSON.stringify(turno, null, 2))  
+                console.log(turno.data._id) 
+                await crearReserva(usuario._id, turno.data._id);
+            }
+            setMostrarModal(true);
+        }
+        catch(error){
+            alert(`Error al guardar la reserva. Por favor, intente nuevamente `)
+        }
     };
 
     const aceptarCompra = () => {

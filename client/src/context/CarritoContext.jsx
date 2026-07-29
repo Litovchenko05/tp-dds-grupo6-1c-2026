@@ -34,7 +34,7 @@ export const CarritoProvider = ({ children }) => {
 
   //se establecen las funciones y la entidad a compartir, medinate el provider, a todos los componentes que esten dentro del provider
   return (
-    <CarritoContext.Provider value={{ carrito, actualizarCarrito, limpiarCarrito, eliminarTurno,verificarTurno }}>
+    <CarritoContext.Provider value={{ carrito, actualizarCarrito, limpiarCarrito, eliminarTurno, verificarTurno }}>
       {children}
     </CarritoContext.Provider>
   );

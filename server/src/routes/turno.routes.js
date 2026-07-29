@@ -10,6 +10,13 @@ router.route('/').get((req, res) =>
   turnoController.findAllPaginated(req, res)
 )
 
+router.route('/filtered').get((req, res) =>
+  // #swagger.tags = ['Turnos Filtrados']
+  // #swagger.summary = 'Obtener todos los turnos por filtros, tales como nombre de profesional, especialidad, practica, sede y rango de fechas.'
+  // #swagger.description = 'Recupera un listado global y paginado de los turnos de la clínica filtrado por los filtros que se mandan.'
+  turnoController.findAllFilteredPaginated(req, res)
+)
+
 router
   .route('/:id')
   .get((req, res) =>

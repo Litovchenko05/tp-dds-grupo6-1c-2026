@@ -6,7 +6,8 @@ import { UsuarioSchema } from  '../schemasBD/usuarioSchema.js'
 export const MedicoSchema = new mongoose.Schema(
   {
     usuario: {
-      type: UsuarioSchema,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Usuario',
       required: [true, 'El ID de usuario es obligatorio'],
     },
     matricula: {

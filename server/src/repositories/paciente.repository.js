@@ -15,6 +15,10 @@ export class PacienteRepository {
     return await this.PacienteModel.find(filtros)
   }
 
+  async findOne(filtros = {}) {
+    return await this.PacienteModel.findOne(filtros)
+  }
+
   async findById(id) {
     return await this.PacienteModel.findById(id)
   }

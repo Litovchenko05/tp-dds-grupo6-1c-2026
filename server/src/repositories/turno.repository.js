@@ -1,10 +1,12 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 import { TurnoModel } from '../schemasBD/turnoSchema.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
+import { ServicioRepository } from '../repositories/servicios.repository.js'
 
 export class TurnoRepository {
-  constructor() {
+  constructor(medicoRepository) {
     this.TurnoModel = TurnoModel
+    this.medicoRepository = medicoRepository
   }
 
   async findAll() {
@@ -16,7 +18,10 @@ export class TurnoRepository {
   }
 
   async findById(id) {
-    return await this.TurnoModel.findById(id).populate('medico', 'nombre').populate('servicio', 'nombre').populate('sede', 'nombre')
+    return await this.TurnoModel.findById(id)
+      .populate('medico', 'nombre')
+      .populate('servicio', 'nombre')
+      .populate('sede', 'nombre')
   }
 
   async findByTurnoId(idMedico) {
@@ -105,39 +110,56 @@ export class TurnoRepository {
     })
   }
 
-  async buscarTurnosPaginated({
+  async findAllFilteredPaginated({
     nombreMedico,
-    nombreServicio,
-    sede,
+    idServicio,
+    idSede,
     fechaDesde,
     fechaHasta,
-    estadoTurno = 'DISPONIBLE',
+    tipoServicio,
     page = 1,
     limit = 5,
     sortBy = 'fechaHora',
     order = 'asc',
   }) {
+    const normalizar = (str) =>
+      str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+
     const skip = (page - 1) * limit
     const sortOrder = order === 'asc' ? 1 : -1
 
     // Construir filtro dinámico
     const filtro = {
-      estado: estadoTurno,
+      estado: 'disponible',
     }
 
     if (nombreMedico) {
-      filtro['medico.nombre'] = { $regex: nombreMedico, $options: 'i' }
+      const todosLosMedicos = await this.medicoRepository.findAll()
+
+      const nombreBuscado = normalizar(nombreMedico)
+
+      const medicos = todosLosMedicos.filter((medico) => {
+        const nombreNormalizado = normalizar(medico.nombre)
+
+        return nombreNormalizado.includes(nombreBuscado)
+      })
+
+      const idsMedicos = medicos.map((m) => m._id)
+
+      filtro.medico = {
+        $in: idsMedicos,
+      }
     }
 
-    if (nombreServicio) {
-      filtro.$or = [
-        { 'practica.nombre': { $regex: nombreServicio, $options: 'i' } },
-        { 'practica.especialidad': { $regex: nombreServicio, $options: 'i' } },
-      ]
+    if (idServicio) {
+      filtro.servicio = idServicio
     }
 
-    if (sede) {
-      filtro['sede.nombre'] = { $regex: sede, $options: 'i' }
+    if (idSede) {
+      filtro.sede = idSede
     }
 
     if (fechaDesde || fechaHasta) {
@@ -146,24 +168,31 @@ export class TurnoRepository {
         filtro.fechaHora.$gte = new Date(fechaDesde)
       }
       if (fechaHasta) {
-        filtro.fechaHora.$lte = new Date(fechaHasta)
+        const hasta = new Date(fechaHasta)
+        hasta.setHours(23, 59, 59, 999)
+        filtro.fechaHora.$lte = hasta
       }
+    }
+
+    if (tipoServicio) {
+      filtro.tipoDeServicio = tipoServicio
     }
 
     // Mapeo de sortBy a campo de Mongoose
     const sortFields = {
       fecha: 'fechaHora',
-      costo: 'practica.costo',
-      medico: 'medico.nombre',
+      costo: 'costo',
     }
     const campoSort = sortFields[sortBy] || 'fechaHora'
 
     // Ejecutar búsqueda
     const turnos = await this.TurnoModel.find(filtro)
+      .populate('medico', 'nombre')
+      .populate('sede', 'nombre')
+      .populate('servicio', 'nombre')
       .sort({ [campoSort]: sortOrder })
       .skip(skip)
       .limit(limit)
-      .lean() // Retorna objetos JavaScript planos, no documentos Mongoose
 
     const total = await this.TurnoModel.countDocuments(filtro)
 
@@ -177,31 +206,35 @@ export class TurnoRepository {
   }
   //paginado
   //GET ALL PAGINADO
-  async findAllPaginated(page = 1, limit = 5) {
-  
-    //cuantos documentos hay que saltar
+  async findAllPaginated(page = 1, limit = 5, sortBy = 'fecha', order = 'asc') {
     const skip = (page - 1) * limit
+    const sortOrder = order === 'asc' ? 1 : -1
 
-    const turnos =
-      await this.TurnoModel
-        .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
-        .populate('medico', 'nombre')
-        .populate('sede', 'nombre')
-        .populate('servicio', 'nombre')
-        .skip(skip)
-        .limit(limit)
-  
-    const total =
-      await this.TurnoModel.countDocuments({
-        //eliminado: false
-      })
+    const filtro = {
+      estado: 'disponible',
+    }
+
+    const sortFields = {
+      fecha: 'fechaHora',
+      costo: 'costo',
+    }
+    const campoSort = sortFields[sortBy] || 'fechaHora'
+
+    const turnos = await this.TurnoModel.find(filtro)
+      .populate('medico', 'nombre')
+      .populate('sede', 'nombre')
+      .populate('servicio', 'nombre')
+      .sort({ [campoSort]: sortOrder })
+      .skip(skip)
+      .limit(limit)
+
+    const total = await this.TurnoModel.countDocuments(filtro) // <- agregué el filtro acá también
 
     return {
       turnos,
       total,
       page,
-      // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit),
     }
   }
 }

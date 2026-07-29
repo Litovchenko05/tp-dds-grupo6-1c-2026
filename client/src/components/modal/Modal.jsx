@@ -14,7 +14,7 @@ const ModalTurnos = ({ turnos, onAceptar, onCerrar }) => {
                     ×
                 </button>
 
-                <h2>
+                <h2 className="titulo-modal">
                     Reserva confirmada
                 </h2>
 
