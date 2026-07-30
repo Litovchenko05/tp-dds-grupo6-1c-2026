@@ -1,9 +1,9 @@
 export class Cobertura {
   servicio
-  nivel
+  nivelDeCobertura
 
-  constructor(servicio, nivel) {
+  constructor(servicio, nivelDeCobertura) {
     this.servicio = servicio
-    this.nivel = nivel
+    this.nivelDeCobertura = nivelDeCobertura
   }
 }

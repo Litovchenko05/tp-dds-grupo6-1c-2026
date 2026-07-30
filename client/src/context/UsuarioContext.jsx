@@ -9,6 +9,7 @@ export const useUsuario = () => useContext(UsuarioContext)
 
 export const UsuarioProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null)
+  const [cargandoUsuario, setCargandoUsuario] = useState(true)
   const navigate = useNavigate()
 
   const cerrarSesion = useCallback(() => {
@@ -21,7 +22,10 @@ export const UsuarioProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token')
 
-    if (!token) return
+    if (!token) {
+      setCargandoUsuario(false) // no hay token, no hay nada que esperar
+      return
+    }
 
     const cargarUsuario = async () => {
       try {
@@ -48,6 +52,8 @@ export const UsuarioProvider = ({ children }) => {
       } catch (error) {
         console.error('Error al cargar el usuario', error)
         cerrarSesion()
+      } finally {
+        setCargandoUsuario(false)
       }
     }
 
@@ -55,6 +61,8 @@ export const UsuarioProvider = ({ children }) => {
   }, [cerrarSesion])
 
   return (
-    <UsuarioContext.Provider value={{ usuario, cerrarSesion }}>{children}</UsuarioContext.Provider>
+    <UsuarioContext.Provider value={{ usuario, cerrarSesion, cargandoUsuario }}>
+      {children}
+    </UsuarioContext.Provider>
   )
 }

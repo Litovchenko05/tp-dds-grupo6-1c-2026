@@ -17,6 +17,7 @@ import MisTurnosPage from './features/misTurnos/misTurnosPage.jsx'
 import AuthScreen from './features/auth/AuthScreen.jsx'
 import NotificacionesScreen from './features/NotificacionesScreen/NotificacionesScreen.jsx'
 import PerfilScreen from './features/perfil/PerfilScreen.jsx'
+import BusquedaServiciosPage from './features/busquedaDeServicios/BusquedaServiciosPage.jsx'
 
 function ProtectedRoute() {
   const isAuthenticated = !!localStorage.getItem('token')
@@ -40,6 +41,7 @@ function App() {
                 <Route index element={<Home />} />
                 <Route path="turnos/:id" element={<TurnDetailPage />} />
                 <Route path="reserva-de-turnos" element={<ReservarTurnosPage />} />
+                <Route path="busqueda-de-servicios" element={<BusquedaServiciosPage />} />
                 <Route path="checkout" element={<Checkout />} />
                 <Route path="historial" element={<HistorialTurnosPage />} />
                 <Route path="mis-turnos" element={<MisTurnosPage />} />

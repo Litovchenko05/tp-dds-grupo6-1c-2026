@@ -15,10 +15,26 @@ import { pacienteService } from './pacienteService'
 const OBRAS_SOCIALES = ['OSDE', 'Swiss Medical', 'Galeno', 'Medifé', 'Particular / Sin Obra Social']
 
 export default function PacienteSection({ idPaciente }) {
+  const [obrasSociales, setObrasSociales] = useState([])
+  const [planes, setPlanes] = useState([])
+
   const [obraSocial, setObraSocial] = useState('')
   const [plan, setPlan] = useState('')
   const [cargando, setCargando] = useState(false)
   const [guardadoExitoso, setGuardadoExitoso] = useState(false)
+
+  useEffect(() => {
+    const cargarDatos = async () => {
+      const [obrasSociales, planes] = await Promise.all([
+        pacienteService.getObrasSociales(),
+        pacienteService.getPlanes(),
+      ])
+
+      setObrasSociales(obrasSociales.data)
+      setPlanes(planes.data)
+    }
+    cargarDatos()
+  }, [])
 
   useEffect(() => {
     async function cargarCobertura() {
@@ -69,9 +85,9 @@ export default function PacienteSection({ idPaciente }) {
             onChange={(e) => setObraSocial(e.target.value)}
             disabled={cargando}
           >
-            {OBRAS_SOCIALES.map((os) => (
-              <MenuItem key={os} value={os}>
-                {os}
+            {obrasSociales.map((os) => (
+              <MenuItem key={os._id} value={os._id}>
+                {os.nombre}
               </MenuItem>
             ))}
           </Select>
@@ -89,11 +105,11 @@ export default function PacienteSection({ idPaciente }) {
             label="Plan"
             onChange={(e) => setPlan(e.target.value)}
           >
-            <MenuItem value="100">Plan 100 / Base</MenuItem>
-            <MenuItem value="210">Plan 210</MenuItem>
-            <MenuItem value="310">Plan 310</MenuItem>
-            <MenuItem value="410">Plan 410</MenuItem>
-            <MenuItem value="OSO02">Plan OSO02</MenuItem>
+            {planes.map((plan) => (
+              <MenuItem key={plan._id} value={plan._id}>
+                {plan.nombre}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
 

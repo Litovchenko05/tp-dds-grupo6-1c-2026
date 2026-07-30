@@ -1,56 +1,39 @@
 import { useParams, useNavigate } from 'react-router-dom'
+import Button from '@mui/material/Button'
 import { useState, useEffect } from 'react'
-import { turnos } from '../../mockData/turnosMock.js'
 import { useCarrito } from '../../context/CarritoContext.jsx'
 import './turnDetailPage.css'
-
-const conUnidades = (unidades, turno) => ({ ...turno, unidades })
-const obtenerNombreServicio = (turno) =>
-  turno?.practica?.nombre || turno?.especialidad?.nombre || turno?.servicio || ''
+import { getTurnById } from '../../service/turnsService.js'
+import ModalDeAdvertencia from '../../components/modal/ModalDeAdvertencia.jsx'
 
 const TurnDetailPage = () => {
-  const { carrito, actualizarCarrito } = useCarrito()
+  const { actualizarCarrito, verificarTurno } = useCarrito()
   const navigate = useNavigate()
   const { id } = useParams()
-  const turno = turnos.find((t) => t.id === parseInt(id))
+  const [mostrarModal, setMostrarModal] = useState(false)
+  const [turno, setTurno] = useState(null)
 
-  const [unidades, setUnidades] = useState(0)
-  const [obraSocial, setObraSocial] = useState('')
-  const [plan, setPlan] = useState('')
-
-  useEffect(() => {
-    setUnidades(0)
-  }, [id, carrito])
-
-  const agregarAlCarrito = () => {
-    actualizarCarrito(conUnidades(unidades, turno))
+  const cerrarModal = () => {
+    setMostrarModal(false)
     navigate('/')
   }
 
-  const incrementarUnidades = () => {
-    setUnidades(unidades + 1)
-  }
-
-  const decrementarUnidades = () => {
-    if (unidades > 0) {
-      setUnidades(unidades - 1)
+  useEffect(() => {
+    const cargarTurno = async () => {
+      const data = await getTurnById(id)
+      setTurno(data)
     }
-  }
+    cargarTurno()
+  }, [id])
 
-  const calcularCosto = (obraSocial, plan) => {
-    let costoFinal = turno.costo
-
-    if (obraSocial === 'OSDE' && plan === 'BASICO') {
-      costoFinal *= 0.8 * unidades
-      return costoFinal
+  const reservar = (turno) => {
+    const verificacion = verificarTurno(turno)
+    if (verificacion) {
+      setMostrarModal(true)
+      return
     }
-
-    if (obraSocial === 'PAMI' && plan === 'PREMIUM') {
-      costoFinal *= 0.9 * unidades
-      return costoFinal
-    }
-
-    return turno.costo * unidades
+    actualizarCarrito(turno)
+    navigate('/')
   }
 
   if (!turno) {
@@ -64,63 +47,42 @@ const TurnDetailPage = () => {
     )
   }
 
-  const costo = calcularCosto(obraSocial, plan)
+  const fecha = new Date(turno.data.fechaHora)
+  const fechaDeFecha = fecha.toLocaleDateString('es-AR')
+  const horaDeFecha = fecha.toLocaleTimeString('es-AR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
 
   return (
     <div className="turn-detail-container">
-      <h1 class="turn-header ">¡Reserva tu turno ya!</h1>
+      <h1 class="turn-header ">Reserva tu turno </h1>
       <div className="turn-header">
-        <h1 class="turn-nombre">{obtenerNombreServicio(turno)}</h1>
-        <div className="turn-categoria">Médico: {turno.medico}</div>
+        <h1 class="turn-nombre">{turno.data.servicio.nombre}</h1>
+        <div className="turn-categoria">Médico: {turno.data.medico.nombre}</div>
       </div>
 
       <div className="turn-content">
         <div className="turn-info-section">
-          <div className="turn-description">Sede: {turno.sede}</div>
-          <div className="turn-description">Fecha: {turno.fecha}</div>
-          <div className="turn-description">Hora: {turno.fecha}</div>
-          <div className="turn-description">Estado: {turno.estado}</div>
+          <div className="turn-description">Sede: {turno.data.sede.nombre}</div>
+          <div className="turn-description">Fecha: {fechaDeFecha}</div>
+          <div className="turn-description">Hora: {horaDeFecha} hs</div>
+          <div className="turn-description">Estado: {turno.data.estado}</div>
 
-          <div className="input-obra-social">
-            <label>Obra Social</label>
-            <input type="text" value={obraSocial} onChange={(e) => setObraSocial(e.target.value)} />
+          <div className="turn-price-section">
+            <div className="turn-precio">Costo: $ {turno.data.costo}</div>
           </div>
-
-          <div className="input-plan">
-            <label>Plan</label>
-            <input type="text" value={plan} onChange={(e) => setPlan(e.target.value)} />
-          </div>
-
-          <label>Cantidad de turnos</label>
-          <div className="unidades">
-            <button className="btn-carrito" onClick={incrementarUnidades}>
-              +
-            </button>
-            <button className="cantidad" disabled>
-              {unidades}
-            </button>
-            <button className="btn-carrito" onClick={decrementarUnidades} disabled={unidades === 0}>
-              -
-            </button>
-          </div>
-
-          {costo !== null && (
-            <div className="turn-price-section">
-              <div className="turn-precio">Costo: $ {costo.toLocaleString('es-AR')}</div>
-            </div>
-          )}
         </div>
       </div>
 
       <div className="agregar-container">
-        <button
-          className="agregar"
-          onClick={agregarAlCarrito}
-          disabled={unidades === 0 || obraSocial.trim() === '' || plan.trim() === ''}
-        >
+        <button className="agregar" onClick={() => reservar(turno)}>
           Agregar al carrito
         </button>
       </div>
+
+      {mostrarModal && <ModalDeAdvertencia onCerrar={cerrarModal} />}
     </div>
   )
 }

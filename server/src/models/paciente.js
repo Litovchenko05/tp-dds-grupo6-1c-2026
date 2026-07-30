@@ -5,13 +5,16 @@ export class Paciente {
   nombre
   obraSocial
   plan
+  turnos
   historialDeTurnos
+
   constructor(usuario, dni, nombre, obraSocial, plan) {
     this.usuario = usuario
     this.dni = dni
     this.nombre = nombre
     this.obraSocial = obraSocial // es necesario que los pacientes tengan obra social? puede atender a particulares?
     this.plan = plan // cada obraSocial tiene un plan?
+    this.turnos = []
     this.historialDeTurnos = [] // historial de turnos del paciente
   }
 
@@ -43,11 +46,15 @@ export class Paciente {
     return this.historialDeTurnos
   }
 
-  guardarTurnoEnHistorial(turno) {
-    this.historialDeTurnos.push(turno)
+  getTurnos() {
+    return this.turnos
   }
 
-  solicitarCambioDeFechaTurno(turno, nuevaFechaHora, medico) {
-    medico.recibirSolicitud(turno, nuevaFechaHora)
+  guardarTurnoEnTurnos(turno) {
+    this.turnos.push(turno)
+  }
+
+  guardarTurnoEnHistorial(turno) {
+    this.historialDeTurnos.push(turno)
   }
 }

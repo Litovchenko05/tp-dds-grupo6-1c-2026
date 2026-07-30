@@ -1,6 +1,7 @@
 :root {
   --color-primary: #0f2d99; /* Tu azul fuerte con presencia sanatorial */
   --color-primary-dark: #0a206e; /* Azul oscuro profundo para hovers y botones activos */
+  --color-primary-medium: #404eeb;
   --color-primary-light: #eaeeff; /* Celeste pastel ultra suave para fondos de componentes activos */
 
   /* --- ESTRUCTURA GENERAL MEJORADA --- */

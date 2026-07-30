@@ -1,47 +1,79 @@
-import './TurnItem.css'
-import { Link } from 'react-router-dom'
-
-const obtenerNombreServicio = (turno) =>
-  turno?.practica?.nombre || turno?.especialidad?.nombre || turno?.servicio || ''
+import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const TurnItem = ({ turno }) => {
+  const navigate = useNavigate()
+
+  const [menuAbierto, setMenuAbierto] = useState(false)
+
+  const abrirMenu = () => {
+    setMenuAbierto(!menuAbierto)
+  }
+
+  const menuRef = useRef(null)
+
+  useEffect(() => {
+    function cerrarMenu(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuAbierto(false)
+      }
+    }
+
+    document.addEventListener('mousedown', cerrarMenu)
+
+    return () => {
+      document.removeEventListener('mousedown', cerrarMenu)
+    }
+  }, [])
+
+  const fecha = new Date(turno.fechaHora)
+  const fechaDeFecha = fecha.toLocaleDateString('es-AR')
+  const horaDeFecha = fecha.toLocaleTimeString('es-AR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+  const textoNivel = {
+    TOTAL: 'TOTAL',
+    PARCIAL: 'PARCIAL',
+    NO_CUBIERTA: 'NO CUBIERTA',
+  }
+
+  const textoEstado = {
+    disponible: 'Disponible',
+  }
+
+  const formatearCosto = (costo) => {
+    if (costo === null || costo === 0 || costo === undefined) return 'Sin costo'
+    return `$${costo.toLocaleString('es-AR')}`
+  }
+
   return (
-    <div class="card-turno">
-      <h2>Turno</h2>
-      <div class="info-turno">
-        <div class="item">
-          <span class="label">Servicio:</span>
-          <span>{obtenerNombreServicio(turno)}</span>
+    <tr>
+      <td>{turno.servicio.nombre}</td>
+      <td>{turno.medico.nombre}</td>
+      <td>{turno.sede.nombre}</td>
+      <td>{fechaDeFecha}</td>
+      <td>{horaDeFecha}</td>
+      <td>{formatearCosto(turno.costoConCobertura)}</td>
+      <td>{textoNivel[turno.nivelCobertura]}</td>
+      <td>
+        <span className="tipo-badge">{textoEstado[turno.estado]}</span>
+      </td>
+      <td className="acciones">
+        <div ref={menuRef}>
+          <button className="menu-button" onClick={abrirMenu}>
+            ⋮
+          </button>
+
+          {menuAbierto && (
+            <div className="acciones-menu">
+              <button onClick={() => navigate(`/turnos/${turno._id}`)}>Reservar</button>
+            </div>
+          )}
         </div>
-        <div class="item">
-          <span class="label">Médico:</span>
-          <span>{turno.medico}</span>
-        </div>
-        <div class="item">
-          <span class="label">Sede:</span>
-          <span>{turno.sede}</span>
-        </div>
-        <div class="item">
-          <span class="label">Fecha:</span>
-          <span>{turno.fecha}</span>
-        </div>
-        <div class="item">
-          <span class="label">Hora:</span>
-          <span>{turno.hora}</span>
-        </div>
-        <div class="item">
-          <span class="label">Costo:</span>
-          <span>{turno.costo}</span>
-        </div>
-        <div class="item">
-          <span class="label">Estado:</span>
-          <span>{turno.estado}</span>
-        </div>
-      </div>
-      <Link to={`/turnos/${turno.id}`} class="btn-reservar">
-        Reservar
-      </Link>
-    </div>
+      </td>
+    </tr>
   )
 }
 

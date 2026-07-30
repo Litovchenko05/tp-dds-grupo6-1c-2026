@@ -3,7 +3,7 @@ export class Servicio {
   nombre
   tipo
 
-  constructor({ nombre, tipo }) {
+  constructor(nombre, tipo) {
     this.nombre = nombre
     this.tipo = tipo
   }

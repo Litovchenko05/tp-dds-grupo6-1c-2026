@@ -56,10 +56,10 @@ export class PacienteController {
 
   reservarTurno = async (req, res) => {
     try {
-      const pacienteId = req.params.pacienteId
-      const turnoId = req.params.turnoId
+      const usuarioId = req.params.idUsuario
+      const turnoId = req.params.idTurno
 
-      const turnoReservado = await this.pacienteService.reservarTurno(pacienteId, turnoId)
+      const turnoReservado = await this.pacienteService.reservarTurno(usuarioId, turnoId)
 
       return res.status(200).json({ status: 'success', data: turnoReservado })
     } catch (error) {
@@ -88,8 +88,8 @@ export class PacienteController {
 
   consultarHistorial = async (req, res) => {
     try {
-      const pacienteId = req.params.pacienteId
-      const historial = await this.pacienteService.consultarHistorial(pacienteId)
+      const usuarioId = req.params.id
+      const historial = await this.pacienteService.consultarHistorial(usuarioId)
       return res.status(200).json({ status: 'success', data: historial })
     } catch (error) {
       return res.status(400).json({ data: error.message })

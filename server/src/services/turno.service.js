@@ -6,6 +6,9 @@ export class TurnoService {
     this.servicioNotificacion = notificacionService
   }
 
+  async obtenerTurnosReservados(id) {
+    return await this.turnoRepository.findByUsuario(id)
+  }
   async obtenerTodos() {
     return await this.turnoRepository.findAll()
   }
@@ -52,56 +55,8 @@ export class TurnoService {
     }
   }
 
-  async proponerCambioFecha(turnoId, medicoId, nuevaFecha, nuevaHora, motivo = '') {
-    try {
-      const turno = await this.turnoRepository.findById(turnoId)
-
-      if (!turno) {
-        throw new Error('Turno no encontrado')
-      }
-
-      // Validar que el turno pertenece al médico
-      if (turno.medico._id.toString() !== medicoId) {
-        throw new Error('Este turno no pertenece al médico')
-      }
-
-      // Validar que el turno está en estado RESERVADO
-      if (turno.estado !== EstadoTurno.RESERVADO) {
-        throw new Error('Solo se puede proponer cambio de fecha para turnos reservados')
-      }
-
-      // Crear solicitud de cambio (se almacena en historialEstados como estado especial)
-      const cambioFecha = {
-        fechaHoraIngreso: new Date(),
-        estado: 'CAMBIO_PROPUESTO',
-        usuario: medicoId,
-        motivo: motivo || 'Cambio de fecha propuesto por médico',
-        fechaProuesta: nuevaFecha,
-        horaProuesta: nuevaHora,
-        original: {
-          fecha: turno.fechaHora,
-        },
-      }
-
-      // Guardar solicitud
-      const turnoActualizado = await this.turnoRepository.update(turnoId, {
-        $push: { historialEstados: cambioFecha },
-      })
-
-      return turnoActualizado
-    } catch (error) {
-      throw error
-    }
-  }
-
-  obtenerPorId(id) {
-    const turno = this.turnoRepository.obtenerPorId(id)
-
-    return turno
-  }
-
   async cancelar(id_turno, id_usuario, motivo) {
-    const turno = this.turnoRepository.obtenerPorId(id_turno)
+    const turno = await this.turnoRepository.findById(id_turno)
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
@@ -109,11 +64,11 @@ export class TurnoService {
       throw new Error('El turno ya está cancelado')
     }
 
-    const cancelador = turno.quienModifica(id_usuario)
+    // const cancelador = turno.quienModifica(id_usuario)
 
-    if (!cancelador) {
-      throw new Error('No tiene permiso para cancelar este turno.')
-    }
+    // if (!cancelador) {
+    //   throw new Error('No tiene permiso para cancelar este turno.')
+    // }
 
     const unaHoraEnMs = 60 * 60 * 1000
     const tiempoRestante = new Date(turno.fechaHora).getTime() - Date.now()
@@ -122,42 +77,24 @@ export class TurnoService {
       throw new Error('Debe cancelar con al menos 1 hora de anticipación')
     }
 
-    turno.actualizarEstado(EstadoTurno.CANCELADO, cancelador._id, motivo)
+    turno.actualizarEstado(EstadoTurno.CANCELADO, id_usuario, motivo)
 
-    this.turnoRepository.save(turno)
+    await this.turnoRepository.save(turno)
+    await this.turnoRepository.actualizarHistoral(turno, id_usuario)
 
-    this.servicioNotificacion.generarNotificacion(
-      turno.getContraparte(id_usuario),
-      cancelador,
-      'El turno : ' + turno._id + 'ha sido cancelado. Motivo: ' + motivo
-    )
+    // this.servicioNotificacion.generarNotificacion(
+    //   turno.getContraparte(id_usuario),
+    //   id_usuario,
+    //   'El turno : ' + turno._id + 'ha sido cancelado. Motivo: ' + motivo
+    // )
     return turno
-  }
-
-  async solicitarCambioDeFecha(idUsuario, idTurno, nuevaFechaHora) {
-    const turno = this.turnoRepository.obtenerPorId(idTurno)
-    if (!turno) {
-      throw new Error('Turno no encontrado')
-    }
-    const quienSolicita = turno.quienModifica(idUsuario)
-    if (!quienSolicita) {
-      throw new Error('No tiene permiso para solicitar cambio de fecha para este turno.')
-    }
-    const mensaje =
-      'Solicitud de cambio de fecha del turno actual' +
-      idTurno +
-      ' para la nueva fecha: ' +
-      nuevaFechaHora
-    const destinatario = turno.getContraparte(idUsuario)
-    this.servicioNotificacion.generarNotificacion(destinatario, quienSolicita, mensaje)
-    return 'Solicitud de cambio de fecha enviada. La respuesta será notificada.'
   }
 
   marcarComoRealizado(id_turno, id_usuario) {
     if (turno.estado === 'realizado') {
       return turno
     }
-    const turno = this.turnoRepository.obtenerPorId(id_turno)
+    const turno = this.turnoRepository.findBYiD(id_turno)
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
@@ -182,10 +119,51 @@ export class TurnoService {
   }
 
   //paginado
-  async findAllPaginated(page, limit) {
-    return await this.turnoRepository.findAllPaginated(page, limit)
+  async findAllPaginated(idUsuario, page, limit, sortBy, order) {
+    return await this.turnoRepository.findAllPaginated(idUsuario, page, limit, sortBy, order)
   }
 
+  async findAllFilteredPaginated({
+    idUsuario,
+    nombreMedico,
+    idServicio,
+    idSede,
+    fechaDesde,
+    fechaHasta,
+    tipoServicio,
+    page,
+    limit,
+    sortBy,
+    order,
+  }) {
+    // Validaciones opcionales
+
+    if (page && page < 1) {
+      throw new Error('El número de página debe ser mayor que 0')
+    }
+
+    if (limit && limit < 1) {
+      throw new Error('El límite debe ser mayor que 0')
+    }
+
+    if (fechaDesde && fechaHasta && new Date(fechaDesde) > new Date(fechaHasta)) {
+      throw new Error('La fecha desde no puede ser mayor que la fecha hasta')
+    }
+
+    return await this.turnoRepository.findAllFilteredPaginated({
+      idUsuario,
+      nombreMedico,
+      idServicio,
+      idSede,
+      fechaDesde,
+      fechaHasta,
+      tipoServicio,
+      page,
+      limit,
+      sortBy,
+      order,
+    })
+  }
   async buscarTurnos({
     nombreMedico,
     nombreServicio,
@@ -234,7 +212,6 @@ export class TurnoService {
     }
   }
   async buscarTurnos({
-    pacienteId,
     nombreMedico,
     nombreServicio,
     especialidad,

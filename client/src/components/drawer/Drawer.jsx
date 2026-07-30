@@ -23,9 +23,10 @@ export default function TemporaryDrawer() {
   const navigate = useNavigate()
 
   const opciones = [
-    { texto: 'Mis turnos', ruta: '/mis-turnos' },
-    { texto: 'Historial', ruta: '/historial' },
-    { texto: 'Reservar Turnos', ruta: '/reserva-de-turnos' },
+    { texto: 'Gestión de turnos', ruta: '/mis-turnos' },
+    { texto: 'Historial de turnos', ruta: '/historial' },
+    { texto: 'Reservar turnos', ruta: '/reserva-de-turnos' },
+    { texto: 'Búsqueda de servicios', ruta: '/busqueda-de-servicios' },
     { texto: 'Notificaciones', ruta: '/notificaciones' },
   ]
 

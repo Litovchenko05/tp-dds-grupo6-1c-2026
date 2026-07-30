@@ -6,11 +6,11 @@ import { Turno } from './Turno.js'
 export class FactoryNotificacion {
   static crearSegunEstadoTurno(turno) {
     switch (turno.estado) {
-      case RESERVADO:
+      case "RESERVADO":
         return this.crearNotificacionParaTurnoReservado(turno)
-      case ACEPTADO:
+      case "ACEPTADO":
         return this.crearNotificacionParaTurnoAceptado(turno)
-      case CANCELADO:
+      case "CANCELADO":
         return this.crearNotificacionParaTurnoCancelado(turno)
     }
   }

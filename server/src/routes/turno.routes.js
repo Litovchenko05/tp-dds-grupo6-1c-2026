@@ -10,6 +10,19 @@ router.route('/').get((req, res) =>
   turnoController.findAllPaginated(req, res)
 )
 
+router.route('/filtered').get((req, res) =>
+  // #swagger.tags = ['Turnos Filtrados']
+  // #swagger.summary = 'Obtener todos los turnos por filtros, tales como nombre de profesional, especialidad, practica, sede y rango de fechas.'
+  // #swagger.description = 'Recupera un listado global y paginado de los turnos de la clínica filtrado por los filtros que se mandan.'
+  turnoController.findAllFilteredPaginated(req, res)
+)
+router.route('/:idUsuario/reservados').get((req, res) =>
+  // #swagger.tags = ['Pacientes', 'Turnos']
+  // #swagger.summary = 'ver turnos reservados'
+  // #swagger.description = 'Permite al paciente ver sus turnos.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID de usuario del paciente', required: true, type: 'string' } */
+  turnoController.turnosReservados(req, res)
+)
 router
   .route('/:id')
   .get((req, res) =>
@@ -27,7 +40,7 @@ router
     turnoController.solicitarCambioFecha(req, res)
   )
 
-router.route('/:id/cancelar').patch((req, res) =>
+router.route('/:idTurno/cancelar').patch((req, res) =>
   // #swagger.tags = ['Turnos Globales']
   // #swagger.summary = 'Cancelar un turno globalmente'
   // #swagger.description = 'Cambia el estado del turno a cancelado desde el módulo administrador de turnos.'

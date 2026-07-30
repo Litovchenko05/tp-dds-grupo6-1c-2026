@@ -1,23 +1,24 @@
 import mongoose from 'mongoose'
-import { Cobertura } from '../models/cobertura.js'
-import { NivelDeCobertura } from '../models/NivelDeCobertura.js'
+import { Cobertura } from '../models/Cobertura.js'
+import { NivelDeCoberturaSchema } from './nivelSchema.js'
 
 export const CoberturaSchema = new mongoose.Schema(
   {
     servicio: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Servicio',
-      required: true,
     },
     nivel: {
-      type: String,
-      enum: Object.values(NivelDeCobertura),
+      type: NivelDeCoberturaSchema,
       required: true,
     },
   },
   {
     timestamps: true,
+    collection: 'coberturas',
   }
 )
 
 CoberturaSchema.loadClass(Cobertura)
+
+export const CoberturaModel = mongoose.model('Cobertura', CoberturaSchema)

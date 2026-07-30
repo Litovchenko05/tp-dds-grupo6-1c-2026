@@ -73,6 +73,7 @@ export class AuthService {
 
     const adminToken = await this.#getAdminToken()
 
+
     const userPayload = {
       username: username,
       enabled: true,
@@ -128,7 +129,7 @@ export class AuthService {
         `${process.env.KEYCLOAK_BASE_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${keycloakId}`,
         { headers: { Authorization: `Bearer ${adminToken}` } }
       )
-
+        
       throw new Error(error)
     }
   }

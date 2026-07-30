@@ -4,7 +4,8 @@ import { Especialidad } from '../models/Especialidad.js'
 export const EspecialidadSchema = new mongoose.Schema(
   {
     nombre: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Servicio',
       required: true,
       trim: true,
     },
