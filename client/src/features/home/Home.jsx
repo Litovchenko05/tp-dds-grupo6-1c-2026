@@ -1,16 +1,16 @@
-import TurnSearchBar from '../../components/turnSearchBar/TurnSearchBar';
-import TurnsGrid from '../../components/turnsGrid/TurnsGrid';
-import './Home.css';
+import './Home.css'
+import { useUsuario } from '../../context/UsuarioContext.jsx'
+import BannerPage from "../../components/banner/banner.jsx";
+import BodyHome from "../../components/bodyHome/BodyHome.jsx";
 
 const Home = () => {
-    return (
-      <>
-        <div className="home-body">
-          {/* <TurnSearchBar /> */}
-        </div>
-        {/* <TurnsGrid /> */}
-      </>
-    );
-};
+  const { usuario } = useUsuario()
+  return (
+    <>
+    <BannerPage/>
+    <BodyHome/>
+    </>
+  )
+}
 
-export default Home;
+export default Home

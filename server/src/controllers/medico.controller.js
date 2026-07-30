@@ -1,12 +1,11 @@
 import { especialidadSchema } from '../validators/especialidad.schema.js'
 import { medicoSchema } from '../validators/medico.schema.js'
 import { practicaSchema } from '../validators/practica.schema.js'
-import { disponibilidadHorariaSchema } from '../validators/disponibilidadHoraria.schema.js'
-import { disponibilidadDetalladaSchema } from '../validators/disponibilidadPorSedeyServicio.js'
 import { cancelarTurnoSchema } from '../validators/cancelarTurnoSchema.js'
 import { marcarRealizadoSchema } from '../validators/marcarRealizadoSchema.js'
 import { agregarServicioSchema } from '../validators/agregarServicioSchema.js'
 import { crearCambioSchema } from '../validators/cambioFechaTurnoSchema.js'
+import { nuevaDisponibilidadSchema } from '../validators/nuevaDisponibilidad.js'
 
 export class MedicoController {
   constructor({ medicoService, turnoService, pacienteService }) {
@@ -66,7 +65,7 @@ export class MedicoController {
   createDisponibilidad = async (req, res) => {
     try {
       const body = req.body
-      const resultado = disponibilidadDetalladaSchema.safeParse(body)
+      const resultado = nuevaDisponibilidadSchema.safeParse(body)
 
       if (!resultado.success) {
         return res.status(400).json({ status: 'error', message: resultado.error.errors })
@@ -85,7 +84,7 @@ export class MedicoController {
   modificarDisponibilidad = async (req, res) => {
     try {
       const body = req.body
-      const resultado = disponibilidadHorariaSchema.safeParse(body)
+      const resultado = nuevaDisponibilidadSchema.safeParse(body)
 
       if (!resultado.success) {
         return res.status(400).json({ status: 'error', message: resultado.error.errors })

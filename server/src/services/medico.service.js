@@ -12,6 +12,7 @@ export class MedicoService {
     especialidadRepository,
     practicaRepository,
     sedeRepository,
+    servicioRepository
   }) {
     this.medicoRepository = medicoRepository
     this.turnoService = turnoService
@@ -19,11 +20,12 @@ export class MedicoService {
     this.especialidadRepository = especialidadRepository
     this.practicaRepository = practicaRepository
     this.sedeRepository = sedeRepository
+    this.servicioRepository = servicioRepository
   }
 
   async createMedico(medicoData) {
     if (!medicoData.usuario || !medicoData.matricula || !medicoData.nombre) {
-      throw new Error('Todos los campos son requeridos')
+      throw new Error('Faltán los campos de usuario, matricula o nombre!')
     }
 
     const existente = await this.medicoRepository.findByNombre(medicoData.nombre)
@@ -36,61 +38,6 @@ export class MedicoService {
     const medicoGuardado = await this.medicoRepository.save(nuevoMedico)
 
     return medicoGuardado
-  }
-
-  async obtenerIdsEspecialidades(especialidades) {
-    const especialidadesIds = []
-
-    for (const e of especialidades) {
-      const existe = await this.especialidadRepository.findByNombre(e.nombre)
-
-      if (existe) {
-        especialidadesIds.push(existe._id)
-      } else {
-        const especialidad = new Especialidad(e.nombre, e.duracionTurnoEnMins, e.costoConsulta)
-
-        const guardada = await this.especialidadRepository.save(especialidad)
-        especialidadesIds.push(guardada._id)
-      }
-    }
-
-    return especialidadesIds
-  }
-
-  async obtenerIdsPracticas(practicas) {
-    const practicasIds = []
-
-    for (const p of practicas) {
-      const existe = await this.practicaRepository.findByCodigoYNombre(p.codigo, p.nombre)
-
-      if (existe) {
-        practicasIds.push(existe._id)
-      } else {
-        const practica = new Practica(p.codigo, p.nombre, p.duracionTurnoEnMins, p.costo)
-
-        const guardada = await this.practicaRepository.save(practica)
-        practicasIds.push(guardada._id)
-      }
-    }
-    return practicasIds
-  }
-
-  async obtenerIdsSedes(sedes) {
-    const sedesIds = []
-
-    for (const s of sedes) {
-      const existe = await this.sedeRepository.findByNombre(s.nombre)
-
-      if (existe) {
-        sedesIds.push(existe._id)
-      } else {
-        const sede = new Sede(s.nombre, s.direccion)
-
-        const guardada = await this.sedeRepository.save(sede)
-        sedesIds.push(guardada._id)
-      }
-    }
-    return sedesIds
   }
 
   async obtenerTodos() {
@@ -160,7 +107,7 @@ export class MedicoService {
     }
   }
 
-  async agregarDisponibilidad(medicoId, disponibilidadCompleta) {
+  async agregarDisponibilidad(medicoId, disponibilidad) {
     try {
       const medico = await this.medicoRepository.findById(medicoId)
 
@@ -169,7 +116,7 @@ export class MedicoService {
       }
 
       //le agrego la disponibilidad al doc del medico
-      const nuevaDisponibilidad = disponibilidadCompleta.disponibilidadHoraria
+      const nuevaDisponibilidad = new DisponibilidadHoraria(disponibilidad.diaSemana,disponibilidad.horaDesde,disponibilidad.horaHasta);
 
       medico.agregarDisponibilidad(nuevaDisponibilidad)
 
@@ -177,37 +124,21 @@ export class MedicoService {
       await medico.save()
 
       const nuevaDisponibilidadObj = medico.disponibilidades[medico.disponibilidades.length - 1]
-      const objSede = await this.sedeRepository.findByNombre(disponibilidadCompleta.sede.nombre)
-      const tipoDeServicio = disponibilidadCompleta.tipoDeServicio
+      // const objSede = await this.sedeRepository.findById(disponibilidad.sedeId)
+      const tipoDeServicio = disponibilidad.tipoDeServicio
+      const tipoDeServicioNormalizado = tipoDeServicio.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim()
 
-      if (disponibilidadCompleta.servicio.codigo == undefined) {
-        const especialidadObj = await this.especialidadRepository.findByNombre(
-          disponibilidadCompleta.servicio.nombre
-        )
         setImmediate(() => {
           this.generarTurnosPorAnio(
-            medico,
+            medicoId,
             nuevaDisponibilidadObj,
-            objSede,
-            especialidadObj,
-            tipoDeServicio
+            disponibilidad.sedeId,
+            disponibilidad.servicioId,
+            tipoDeServicioNormalizado,
+            disponibilidad.duracion,
+            disponibilidad.costo
           )
         })
-      } else {
-        const practicaObj = await this.practicaRepository.findByCodigoYNombre(
-          disponibilidadCompleta.servicio.codigo,
-          disponibilidadCompleta.servicio.nombre
-        )
-        setImmediate(() => {
-          this.generarTurnosPorAnio(
-            medico,
-            nuevaDisponibilidadObj,
-            objSede,
-            practicaObj,
-            tipoDeServicio
-          )
-        })
-      }
 
       return medico
     } catch (error) {
@@ -215,14 +146,16 @@ export class MedicoService {
     }
   }
 
-  async generarTurnosPorAnio(medico, disponibilidad, sede, servicio, tipoDeServicio) {
+  async generarTurnosPorAnio(medicoId, disponibilidad, sedeId, servicioId, tipoDeServicio, duracion, costo) {
     try {
       this.agendaService.generarTurnosParaDisponibilidad(
-        medico,
+        medicoId,
         disponibilidad,
-        sede,
-        servicio,
-        tipoDeServicio
+        sedeId,
+        servicioId,
+        tipoDeServicio,
+        duracion,
+        costo
       )
     } catch (error) {
       throw error
@@ -265,11 +198,23 @@ export class MedicoService {
       }
       await medico.save()
 
+      const tipoDeServicioNormalizado = null;
+
+      if(nuevaDisponibilidad.tipoDeServicio != undefined){
+         tipoDeServicioNormalizado =  nuevaDisponibilidad.tipoDeServicio.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim()
+      }
+      
+      
       setImmediate(() => {
         this.generarTurnosPorAnioParaDisponibilidadModificada(
           medico,
           disponibilidadAnteriorObj,
-          nuevaDisponibilidadObj
+          nuevaDisponibilidadObj,
+          nuevaDisponibilidad.duracion,
+          nuevaDisponibilidad.sedeId,
+          nuevaDisponibilidad.servicioId,
+          tipoDeServicioNormalizado,
+          nuevaDisponibilidad.costo
         )
       })
 
@@ -340,15 +285,26 @@ export class MedicoService {
       throw error
     }
   }
+
   generarTurnosPorAnioParaDisponibilidadModificada(
     medico,
     disponibilidadAnterior,
-    disponibilidadModificada
+    disponibilidadModificada,
+    duracion,
+    sedeId,
+    servicioId,
+    tipoDeServicio,
+    costo
   ) {
     this.agendaService.cambiarTurnosPorDisponibilidadModificada(
       medico,
       disponibilidadAnterior,
-      disponibilidadModificada
+      disponibilidadModificada,
+      duracion,
+      sedeId,
+      servicioId,
+      tipoDeServicio,
+      costo
     )
   }
 }

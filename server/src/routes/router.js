@@ -4,6 +4,10 @@ import medicoRouter from './medico.routes.js'
 import turnoRouter from './turno.routes.js'
 import pacienteRouter from './paciente.routes.js'
 import authRouter from './auth.routes.js'
+import servicioRouter from './servicio.routes.js'
+import sedeRouter from './sede.routes.js'
+import planRouter from './plan.routes.js'
+import obraSocialRouter from './obraSocial.routes.js'
 
 const router = express.Router()
 
@@ -22,5 +26,9 @@ router.use('/turnos', turnoRouter)
 router.use('/medicos', medicoRouter)
 router.use('/pacientes', pacienteRouter)
 router.use('/auth', authRouter)
+router.use('/sedes', sedeRouter)
+router.use('/servicios', servicioRouter)
+router.use('/plan', planRouter)
+router.use('/obraSocial', obraSocialRouter)
 
 export default router

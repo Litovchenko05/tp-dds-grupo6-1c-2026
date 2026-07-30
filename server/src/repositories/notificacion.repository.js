@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { NotificacionModel } from '../schemasBD/notificacionSchema.js'
 
 export class NotificacionRepository {

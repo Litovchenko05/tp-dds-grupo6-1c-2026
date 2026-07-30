@@ -2,7 +2,6 @@ import * as React from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
-import Divider from '@mui/material/Divider'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -17,13 +16,10 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import IconButton from '@mui/material/IconButton'
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
 import { useNavigate } from 'react-router-dom'
-import { useUsuario } from '../../context/UsuarioContext.jsx'
-
 import './Drawer.css'
 
 export default function TemporaryDrawer({ role = 'paciente', options, showLogout = true }) {
   const [open, setOpen] = React.useState(false)
-  const { cerrarSesion } = useUsuario()
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen)
@@ -31,11 +27,12 @@ export default function TemporaryDrawer({ role = 'paciente', options, showLogout
 
   const navigate = useNavigate()
 
-  const opcionesPaciente = [
-    { texto: 'Mis turnos', ruta: '/mis-turnos', icon: <InboxIcon /> },
-    { texto: 'Historial', ruta: '/historial', icon: <MailIcon /> },
-    { texto: 'Reservar Turnos', ruta: '/reserva-de-turnos', icon: <InboxIcon /> },
-    { texto: 'Notificaciones', ruta: '/notificaciones', icon: <NotificationsIcon /> },
+  const opciones = [
+    { texto: 'Gestión de turnos', ruta: '/mis-turnos' },
+    { texto: 'Historial de turnos', ruta: '/historial' },
+    { texto: 'Reservar turnos', ruta: '/reserva-de-turnos' },
+    { texto: 'Búsqueda de servicios', ruta: '/busqueda-de-servicios' },
+    { texto: 'Notificaciones', ruta: '/notificaciones' },
   ]
 
   const opcionesMedico = [
@@ -50,15 +47,6 @@ export default function TemporaryDrawer({ role = 'paciente', options, showLogout
 
   const DrawerList = (
     <Box className="drawer" role="presentation" onClick={toggleDrawer(false)}>
-      <div className="drawer-header">
-        <img
-          src={'../../../images/logo-sweet-medical.png'}
-          alt="Sweet Medical"
-          className="drawer-logo"
-        />
-        <h4 className="drawer-title">Sweet Medical</h4>
-      </div>
-
       <List className="drawer-list">
         {opcionesFinales.map((opcion, index) => (
           <ListItem key={opcion.texto} disablePadding>

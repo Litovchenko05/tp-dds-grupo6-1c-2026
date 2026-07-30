@@ -1,0 +1,150 @@
+.profile-card-base {
+  padding: var(--spacing-2xl) !important;
+  background-color: var(--color-white) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01) !important;
+  margin-bottom: var(--spacing-xl);
+}
+
+.profile-section-title {
+  color: var(--color-ink);
+  font-weight: 700 !important;
+  margin-bottom: var(--spacing-xs) !important;
+}
+
+.profile-section-subtitle {
+  color: var(--color-muted);
+  margin-bottom: var(--spacing-xl) !important;
+}
+
+.profile-data-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  width: 100%;
+  margin-top: var(--spacing-md);
+}
+
+.profile-readonly-field {
+  flex: 1;
+  min-width: 240px;
+}
+
+.profile-readonly-field .MuiInputBase-root {
+  background-color: var(--color-surface) !important;
+  color: var(--color-ink) !important;
+  pointer-events: none;
+}
+
+.profile-readonly-field .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-border) !important;
+}
+
+.profile-readonly-field .MuiInputLabel-root {
+  color: var(--color-muted) !important;
+}
+
+.profile-cobertura-form {
+  width: 100%;
+}
+
+.profile-actions-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+}
+
+.profile-services-form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.profile-services-form .form-group {
+  margin-bottom: 0;
+  flex-grow: 1;
+}
+
+.profile-services-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.profile-service-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-ink);
+  font-weight: 500;
+}
+
+.profile-btn-primary {
+  background-color: var(--color-primary) !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  height: 48px;
+}
+
+.profile-btn-primary:hover {
+  background-color: var(--color-primary-dark) !important;
+}
+
+.profile-delete-btn {
+  color: var(--color-muted) !important;
+}
+
+.profile-delete-btn:hover {
+  color: var(--color-error) !important;
+  background-color: var(--color-error-surface) !important;
+}
+
+.profile-success-text {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.profile-empty-text {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.profile-data-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  width: 100%;
+  margin-top: var(--spacing-md);
+}
+
+.profile-readonly-field {
+  flex: 1;
+  min-width: 240px;
+}
+
+.popup-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+}
+
+@media (max-width: 600px) {
+  .profile-data-row {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .profile-readonly-field {
+    width: 100%;
+  }
+}

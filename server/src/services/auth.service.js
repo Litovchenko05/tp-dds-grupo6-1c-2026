@@ -73,6 +73,7 @@ export class AuthService {
 
     const adminToken = await this.#getAdminToken()
 
+
     const userPayload = {
       username: username,
       enabled: true,
@@ -124,14 +125,46 @@ export class AuthService {
 
       return nuevoUsuario
     } catch (error) {
-      // Si llegamos acá, significa que falló Mongo (ej: caída de red)
-      // Eliminamos al usuario fantasma para mantener la consistencia
       await axios.delete(
         `${process.env.KEYCLOAK_BASE_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${keycloakId}`,
         { headers: { Authorization: `Bearer ${adminToken}` } }
       )
-
+        
       throw new Error(error)
     }
+  }
+
+  async obtenerPerfilDelUsuario(usuarioMongoId, usuarioRol) {
+    if (!usuarioMongoId || !usuarioRol) {
+      throw new Error('No se pudo determinar el usuario autenticado o su rol.')
+    }
+
+    if (usuarioRol === 'paciente') {
+      const paciente = await this.pacienteRepository.findByUsuario(usuarioMongoId)
+
+      if (!paciente) {
+        throw new Error('Paciente no encontrado para el usuario autenticado.')
+      }
+
+      return {
+        usuarioMongoId,
+        dni: paciente.dni,
+      }
+    }
+
+    if (usuarioRol === 'medico') {
+      const medico = await this.medicoRepository.findByUsuario(usuarioMongoId)
+
+      if (!medico) {
+        throw new Error('Médico no encontrado para el usuario autenticado.')
+      }
+
+      return {
+        usuarioMongoId,
+        matricula: medico.matricula,
+      }
+    }
+
+    throw new Error('El rol del usuario autenticado no es válido.')
   }
 }

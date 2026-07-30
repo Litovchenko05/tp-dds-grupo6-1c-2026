@@ -2,12 +2,6 @@ import mongoose from "mongoose";
 import { Sede } from "../models/Sede.js";
 
 export const SedeSchema = new mongoose.Schema({
-    /*
-        #id
-        #nombre
-        #direccion
-    */
-
     nombre:{
         type: String,
         required: true,
@@ -20,7 +14,7 @@ export const SedeSchema = new mongoose.Schema({
     },
     },{
     timestamps: true,
-    collation: 'sedes',
+    collection: 'sedes',
            
 });
 

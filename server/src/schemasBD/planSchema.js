@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { Plan } from '../models/Plan.js'
-import { CoberturaEspecialidadSchema } from './coberturaEspecialdadSchema.js'
+import { Plan } from '../models/Plan.js';
+import { CoberturaSchema } from "./coberturaSchema.js";
 
 export const PlanSchema = new mongoose.Schema(
   {
@@ -9,12 +9,13 @@ export const PlanSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    coberturasEspecialidad: {
-      type: [CoberturaEspecialidadSchema],
-    },
-    coberturasPractica: {
-    type: mongoose.Schema.Types.Mixed,
-    },
+   coberturasDeServicios: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Cobertura',
+      required: true
+    }
+    ]
   },
   {
     timestamps: true,

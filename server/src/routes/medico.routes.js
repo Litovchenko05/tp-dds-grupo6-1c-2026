@@ -91,7 +91,7 @@ router
     medicoController.createDisponibilidad(req, res)
   )
 
-router.route('/:id/disponibilidades/:idDisponibilidad').put((req, res) =>
+router.route('/:id/disponibilidades/:idDisponibilidad').patch((req, res) =>
   // #swagger.tags = ['Médicos', 'Disponibilidad']
   // #swagger.summary = 'Modificar bloque de disponibilidad'
   // #swagger.description = 'Edita un rango horario existente del médico.'

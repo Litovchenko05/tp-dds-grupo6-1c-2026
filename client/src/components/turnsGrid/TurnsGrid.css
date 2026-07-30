@@ -1,29 +1,26 @@
-.contenedor-turnos {
-  min-height: 60vh;
-  margin: 0 auto;
-  display: grid;
-  background: linear-gradient(
-  90deg,
-  rgba(180, 0, 0, 0.8) 0%,
-  rgba(140, 41, 41, 0.5) 80%,
-  rgba(180, 0, 0, 0.8) 100%
- );
-  padding: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1rem;
-
+.turnos-container {
+  margin: 10px 200px 200px 200px;
+  padding: 0;
 }
-.contenedor-turnos {
-  flex: 1;
-  display: grid;
-  grid-template-columns:
-    repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1rem;
-  padding: 20px;
-  background: linear-gradient(
-    90deg,
-    rgba(180, 0, 0, 0.8) 0%,
-    rgba(140, 41, 41, 0.5) 80%,
-    rgba(180, 0, 0, 0.8) 100%
-  );
+
+.spinner-contenedor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sort-icon {
+  margin-left: 6px;
+  opacity: 0.4;
+  font-size: 0.8em;
+  vertical-align: middle;
+}
+
+.sort-icon.active {
+  opacity: 1;
 }

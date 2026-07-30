@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { MedicoModel } from '../schemasBD/medicoSchema.js'
 
 export class MedicoRepository {
@@ -26,6 +27,10 @@ export class MedicoRepository {
 
   async findByMatricula(matricula) {
     return await this.MedicoModel.findOne({ matricula: matricula })
+  }
+
+  async findByUsuario(usuarioId) {
+    return await this.MedicoModel.findOne({ usuario: usuarioId }).select('matricula usuario')
   }
 
   async save(medico) {

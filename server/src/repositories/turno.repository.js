@@ -1,8 +1,16 @@
+import mongoose from 'mongoose'
 import { TurnoModel } from '../schemasBD/turnoSchema.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
+import { ServicioRepository } from '../repositories/servicios.repository.js'
+import { Cobertura } from '../models/Cobertura.js'
+import { NivelDeCobertura } from '../models/nivelDeCobertura.js'
 export class TurnoRepository {
-  constructor() {
+  constructor(medicoRepository, pacienteRepository, planRepository, coberturaRepository) {
     this.TurnoModel = TurnoModel
+    this.medicoRepository = medicoRepository
+    this.pacienteRepository = pacienteRepository
+    this.planRepository = planRepository
+    this.coberturaRepository = coberturaRepository
   }
 
   async findAll() {
@@ -15,15 +23,31 @@ export class TurnoRepository {
 
   async findById(id) {
     return await this.TurnoModel.findById(id)
+      .populate('medico', 'nombre')
+      .populate('servicio', 'nombre')
+      .populate('sede', 'nombre')
   }
 
   async findByTurnoId(idMedico) {
     return await this.TurnoModel.find({ 'medico.id': idMedico }).populate('servicio')
   }
 
+  async findByUsuario(usuarioId) {
+    const paciente = await this.pacienteRepository.findByUsuario(usuarioId)
+
+    const turnos = await this.TurnoModel.find({
+      paciente: paciente._id,
+      estado: { $in: [EstadoTurno.RESERVADO, EstadoTurno.CONFIRMADO] },
+    })
+      .populate('medico', 'nombre')
+      .populate('servicio', 'nombre')
+      .populate('sede', 'nombre')
+
+    return turnos
+  }
   async save(turno) {
     //Si tiene id es update, si no es create
-    const query = turno.id ? { _id: turno.id } : { _id: new this.TurnoModel()._id }
+    const query = turno._id ? { _id: turno._id } : { _id: new this.TurnoModel()._id }
 
     //Si no existe, lo crea (por upsert: true).
     return await this.TurnoModel.findOneAndUpdate(query, turno.toJSON(), {
@@ -67,6 +91,23 @@ export class TurnoRepository {
       },
     })
   }
+  async actualizarHistoral(turno, idUsuario) {
+    console.log('id usuario', idUsuario)
+    const paciente = await this.pacienteRepository.findByUsuario(idUsuario)
+    if (paciente == null) {
+      console.log('pacientee es null')
+    }
+    console.log(paciente)
+    paciente.historialDeTurnos.push(turno)
+
+    const indice = paciente.turnos.findIndex((t) => t._id.toString() === turno._id.toString())
+
+    if (indice !== -1) {
+      paciente.turnos.splice(indice, 1)
+    }
+    await this.pacienteRepository.save(paciente)
+    return
+  }
 
   async saveMany(turnos) {
     await this.TurnoModel.insertMany(turnos)
@@ -103,39 +144,57 @@ export class TurnoRepository {
     })
   }
 
-  async buscarTurnosPaginated({
+  async findAllFilteredPaginated({
+    idUsuario,
     nombreMedico,
-    nombreServicio,
-    sede,
+    idServicio,
+    idSede,
     fechaDesde,
     fechaHasta,
-    estadoTurno = 'DISPONIBLE',
+    tipoServicio,
     page = 1,
     limit = 5,
     sortBy = 'fechaHora',
     order = 'asc',
   }) {
+    const normalizar = (str) =>
+      str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+
     const skip = (page - 1) * limit
     const sortOrder = order === 'asc' ? 1 : -1
 
     // Construir filtro dinámico
     const filtro = {
-      estado: estadoTurno,
+      estado: 'disponible',
     }
 
     if (nombreMedico) {
-      filtro['medico.nombre'] = { $regex: nombreMedico, $options: 'i' }
+      const todosLosMedicos = await this.medicoRepository.findAll()
+
+      const nombreBuscado = normalizar(nombreMedico)
+
+      const medicos = todosLosMedicos.filter((medico) => {
+        const nombreNormalizado = normalizar(medico.nombre)
+
+        return nombreNormalizado.includes(nombreBuscado)
+      })
+
+      const idsMedicos = medicos.map((m) => m._id)
+
+      filtro.medico = {
+        $in: idsMedicos,
+      }
     }
 
-    if (nombreServicio) {
-      filtro.$or = [
-        { 'practica.nombre': { $regex: nombreServicio, $options: 'i' } },
-        { 'practica.especialidad': { $regex: nombreServicio, $options: 'i' } },
-      ]
+    if (idServicio) {
+      filtro.servicio = idServicio
     }
 
-    if (sede) {
-      filtro['sede.nombre'] = { $regex: sede, $options: 'i' }
+    if (idSede) {
+      filtro.sede = idSede
     }
 
     if (fechaDesde || fechaHasta) {
@@ -144,58 +203,159 @@ export class TurnoRepository {
         filtro.fechaHora.$gte = new Date(fechaDesde)
       }
       if (fechaHasta) {
-        filtro.fechaHora.$lte = new Date(fechaHasta)
+        const hasta = new Date(fechaHasta)
+        hasta.setHours(23, 59, 59, 999)
+        filtro.fechaHora.$lte = hasta
       }
+    }
+
+    if (tipoServicio) {
+      filtro.tipoDeServicio = tipoServicio
     }
 
     // Mapeo de sortBy a campo de Mongoose
     const sortFields = {
       fecha: 'fechaHora',
-      costo: 'practica.costo',
-      medico: 'medico.nombre',
+      costo: 'costo',
     }
     const campoSort = sortFields[sortBy] || 'fechaHora'
 
     // Ejecutar búsqueda
     const turnos = await this.TurnoModel.find(filtro)
+      .populate('medico', 'nombre')
+      .populate('sede', 'nombre')
+      .populate('servicio', 'nombre')
       .sort({ [campoSort]: sortOrder })
       .skip(skip)
       .limit(limit)
-      .lean() // Retorna objetos JavaScript planos, no documentos Mongoose
 
     const total = await this.TurnoModel.countDocuments(filtro)
 
+    const pacienteEncontrado = await this.pacienteRepository.findByUsuario(idUsuario)
+
+    let coberturas = []
+
+    if (pacienteEncontrado?.plan) {
+      const plan = await this.planRepository.findById(pacienteEncontrado.plan)
+
+      if (plan?.coberturasDeServicios?.length) {
+        coberturas = await Promise.all(
+          plan.coberturasDeServicios.map((coberturaId) =>
+            this.coberturaRepository.findById(coberturaId)
+          )
+        )
+      }
+    }
+
+    const turnosConCobertura = turnos.map((turno) => {
+      const turnoObj = turno.toObject ? turno.toObject() : turno
+
+      const cobertura = coberturas.find(
+        (c) => c && c.servicio.toString() === turnoObj.servicio._id.toString()
+      )
+
+      if (cobertura) {
+        return {
+          ...turnoObj,
+          costoConCobertura: this.calcularDescuento(cobertura, turnoObj.costo),
+          nivelCobertura: cobertura.nivel.nivel,
+        }
+      }
+
+      return {
+        ...turnoObj,
+        costoConCobertura: turnoObj.costo,
+        nivelCobertura: 'NO_CUBIERTA',
+      }
+    })
+
     return {
-      turnos,
+      turnos: turnosConCobertura,
       total,
       page,
-      limit,
       totalPages: Math.ceil(total / limit),
     }
   }
   //paginado
   //GET ALL PAGINADO
-  async findAllPaginated(page = 1, limit = 5) {
-    //cuantos documentos hay que saltar
+  async findAllPaginated(idUsuario, page = 1, limit = 5, sortBy = 'fecha', order = 'asc') {
     const skip = (page - 1) * limit
+    const sortOrder = order === 'asc' ? 1 : -1
 
-    const turnos =
-      await this.TurnoModel
-        .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
-        .skip(skip)
-        .limit(limit)
+    const filtro = {
+      estado: 'disponible',
+    }
 
-    const total =
-      await this.TurnoModel.countDocuments({
-        //eliminado: false
-      })
+    const sortFields = {
+      fecha: 'fechaHora',
+      costo: 'costo',
+    }
+    const campoSort = sortFields[sortBy] || 'fechaHora'
+
+    const turnos = await this.TurnoModel.find(filtro)
+      .populate('medico', 'nombre')
+      .populate('sede', 'nombre')
+      .populate('servicio', 'nombre')
+      .sort({ [campoSort]: sortOrder })
+      .skip(skip)
+      .limit(limit)
+
+    const total = await this.TurnoModel.countDocuments(filtro)
+
+    const pacienteEncontrado = await this.pacienteRepository.findByUsuario(idUsuario)
+
+    let coberturas = []
+
+    if (pacienteEncontrado?.plan) {
+      const plan = await this.planRepository.findById(pacienteEncontrado.plan)
+
+      if (plan?.coberturasDeServicios?.length) {
+        coberturas = await Promise.all(
+          plan.coberturasDeServicios.map((coberturaId) =>
+            this.coberturaRepository.findById(coberturaId)
+          )
+        )
+      }
+    }
+
+    const turnosConCobertura = turnos.map((turno) => {
+      const turnoObj = turno.toObject ? turno.toObject() : turno
+
+      const cobertura = coberturas.find(
+        (c) => c && c.servicio.toString() === turnoObj.servicio._id.toString()
+      )
+
+      if (cobertura) {
+        return {
+          ...turnoObj,
+          costoConCobertura: this.calcularDescuento(cobertura, turnoObj.costo),
+          nivelCobertura: cobertura.nivel.nivel,
+        }
+      }
+
+      return {
+        ...turnoObj,
+        costoConCobertura: turnoObj.costo,
+        nivelCobertura: 'NO_CUBIERTA',
+      }
+    })
 
     return {
-      turnos,
+      turnos: turnosConCobertura,
       total,
       page,
-      // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit),
+    }
+  }
+
+  calcularDescuento(cobertura, costoInicial) {
+    const nivel = cobertura.nivel.nivel
+    if (nivel == NivelDeCobertura.TOTAL) {
+      return costoInicial * 0
+    } else if (nivel == NivelDeCobertura.PARCIAL) {
+      return costoInicial / 2
+    } else if (nivel == NivelDeCobertura.NO_CUBIERTA) {
+      return costoInicial
     }
   }
 }

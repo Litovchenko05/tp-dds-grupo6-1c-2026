@@ -1,4 +1,7 @@
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
+import mongoose from 'mongoose'
+import { Types } from 'mongoose'
+
 export class PacienteService {
   constructor({ pacienteRepository, turnoRepository, medicoRepository, turnoService }) {
     this.pacienteRepository = pacienteRepository
@@ -39,26 +42,29 @@ export class PacienteService {
     return paciente
   }
 
-  async reservarTurno(pacienteId, turnoId) {
-    const paciente = await this.pacienteRepository.findById(pacienteId)
+  async reservarTurno(usuarioId, turnoId) {
+    const paciente = await this.pacienteRepository.findOne({
+      usuario: new Types.ObjectId(usuarioId),
+    })
 
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
-    const turno = await this.turnoRepository.findById(turnoId)
+
+    const turno = await this.turnoRepository.findById(new Types.ObjectId(turnoId))
 
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
 
-    //TODO DELEGAR EN TURNO SERVICE
-    if (turno.estado == 'DISPONIBLE') {
+    if (turno.estado == EstadoTurno.DISPONIBLE) {
       turno.paciente = paciente
-      turno.estado = EstadoTurno.DISPONIBLE
-      turno.save()
+      // turno.estado = EstadoTurno.RESERVADO
+      turno.actualizarEstado(EstadoTurno.RESERVADO, usuarioId, 'Reservación de turno')
+      await this.turnoRepository.save(turno)
 
-      paciente.historialDeTurnos.push(turno)
-      paciente.save()
+      paciente.turnos.push(turno)
+      await this.pacienteRepository.save(paciente)
 
       return turno
     } else {
@@ -82,13 +88,18 @@ export class PacienteService {
     }
   }
 
-  async consultarHistorial(pacienteId) {
-    const paciente = await this.pacienteRepository.findById(pacienteId)
+  async consultarHistorial(usuarioId) {
+    const paciente = await this.pacienteRepository.findByUsuario(usuarioId)
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
     const historial = paciente.historialDeTurnos
-    return historial
+
+    const turnosDeHistorial = await Promise.all(
+      historial.map((t) => this.turnoRepository.findById(t._id))
+    )
+
+    return turnosDeHistorial
   }
 
   async findAllPaginated(page, limit) {

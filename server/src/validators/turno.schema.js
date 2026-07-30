@@ -21,6 +21,7 @@ export const turnoSchema = z.object({
   estado: EstadoTurnoSchema, // Valida que el estado sea uno de los valores definidos en estadoTurno
   historialEstados: z.array(EstadoTurnoSchema.nullable()), // Valida que sea un valor posible de estadoTurno o null
   costo: z.number().int().positive(), // Valida que el costo sea un número entero positivo
+  duracion: z.number().int().positive()
 })
 
 export const cancelarTurnoSchema = z.object({

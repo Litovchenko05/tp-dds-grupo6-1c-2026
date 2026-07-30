@@ -2,16 +2,9 @@ import mongoose from "mongoose";
 import { Especialidad } from "../models/Especialidad.js";
 
 export const EspecialidadSchema = new mongoose.Schema({
-
-    /*
-    #nombre
-    #duracionTurnoEnMins
-    #costoConsulta
-    */
-
-
-    nombre:{
-        type: String,
+    servicio:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Servicio',
         required: true,
         trim: true,
     }

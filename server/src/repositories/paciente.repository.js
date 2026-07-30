@@ -1,7 +1,7 @@
+import mongoose from 'mongoose'
 import { PacienteModel } from '../schemasBD/pacienteSchema.js'
 
 export class PacienteRepository {
-
   constructor() {
     this.PacienteModel = PacienteModel
   }
@@ -14,6 +14,10 @@ export class PacienteRepository {
     return await this.PacienteModel.find(filtros)
   }
 
+  async findOne(filtros = {}) {
+    return await this.PacienteModel.findOne(filtros)
+  }
+
   async findById(id) {
     return await this.PacienteModel.findById(id)
   }
@@ -22,18 +26,18 @@ export class PacienteRepository {
     return await this.PacienteModel.findOne({ dni: dniPaciente })
   }
 
+  async findByUsuario(usuarioId) {
+    return await this.PacienteModel.findOne({ usuario: usuarioId })
+  }
+
   async save(paciente) {
     const query = paciente.id ? { _id: paciente.id } : { _id: new this.PacienteModel()._id }
 
-    return await this.PacienteModel.findOneAndUpdate(
-      query,
-      paciente,
-      {
-        returnDocument: 'after',
-        runValidators: true,
-        upsert: true,
-      }
-    )
+    return await this.PacienteModel.findOneAndUpdate(query, paciente, {
+      returnDocument: 'after',
+      runValidators: true,
+      upsert: true,
+    })
   }
 
   async delete(id) {
@@ -52,23 +56,20 @@ export class PacienteRepository {
     //cuantos documentos hay que saltar
     const skip = (page - 1) * limit
 
-    const pacientes =
-      await this.PacienteModel
-        .find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
-        .skip(skip)
-        .limit(limit)
+    const pacientes = await this.PacienteModel.find() //.find({ eliminado: false }) -> recrodar si usamos esto para baja logica
+      .skip(skip)
+      .limit(limit)
 
-    const total =
-      await this.PacienteModel.countDocuments({
-        //eliminado: false
-      })
+    const total = await this.PacienteModel.countDocuments({
+      //eliminado: false
+    })
 
     return {
       pacientes,
       total,
       page,
       // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit),
     }
   }
 }

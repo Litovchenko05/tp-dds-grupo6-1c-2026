@@ -15,8 +15,10 @@ import Checkout from './features/checkout/Checkout.jsx'
 import ReservarTurnosPage from './features/reservarTurnosPage/reservarTurnosPage.jsx'
 import HistorialTurnosPage from './features/historial/historial.jsx'
 import MisTurnosPage from './features/misTurnos/misTurnosPage.jsx'
-import AuthScreen from './features/AuthScreen/AuthScreen.jsx'
+import AuthScreen from './features/auth/AuthScreen.jsx'
 import NotificacionesScreen from './features/NotificacionesScreen/NotificacionesScreen.jsx'
+import PerfilScreen from './features/perfil/PerfilScreen.jsx'
+import BusquedaServiciosPage from './features/busquedaDeServicios/BusquedaServiciosPage.jsx'
 
 // Componentes / Features médico
 import MedicoAgenda from './features/medico/agenda/MedicoAgenda'
@@ -33,7 +35,7 @@ function ProtectedRoute() {
 }
 
 function GuestRoute() {
-  const isAuthenticated = isDevBypassEnabled() || !!localStorage.getItem('token')
+  const isAuthenticated = !!localStorage.getItem('token')
   return isAuthenticated ? <Navigate to="/" replace /> : <AuthScreen />
 }
 
@@ -50,10 +52,12 @@ function App() {
                 <Route index element={<Home />} />
                 <Route path="turnos/:id" element={<TurnDetailPage />} />
                 <Route path="reserva-de-turnos" element={<ReservarTurnosPage />} />
+                <Route path="busqueda-de-servicios" element={<BusquedaServiciosPage />} />
                 <Route path="checkout" element={<Checkout />} />
                 <Route path="historial" element={<HistorialTurnosPage />} />
                 <Route path="mis-turnos" element={<MisTurnosPage />} />
                 <Route path="notificaciones" element={<NotificacionesScreen />} />
+                <Route path="perfil" element={<PerfilScreen />} />
               </Route>
 
               <Route path="/medico/home" element={<Layout />}>

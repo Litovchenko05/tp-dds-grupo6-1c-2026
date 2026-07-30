@@ -9,7 +9,6 @@ export const NotificacionesProvider = ({ children }) => {
   const [notificaciones, setNotificaciones] = useState([])
   const [noLeidas, setNoLeidas] = useState(0)
 
-  // Recibe 'pendientes', 'todas' o 'leidas' (por defecto 'pendientes')
   const cargarNotificaciones = useCallback(async (filtro = 'pendientes') => {
     const token = localStorage.getItem('token')
     if (!token) return

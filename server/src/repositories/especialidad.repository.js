@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { EspecialidadModel } from '../schemasBD/especialidadSchema.js'
 
 export class EspecialidadRepository {
