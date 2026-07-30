@@ -50,6 +50,7 @@ const Checkout = () => {
       }
       setMostrarModal(true)
     } catch (error) {
+      console.log(error)
       alert(`Error al guardar la reserva. Por favor, intente nuevamente `)
     }
   }

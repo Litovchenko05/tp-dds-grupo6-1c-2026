@@ -39,10 +39,10 @@ export class Turno {
   }
 
   quienModifica(id_usuario) {
-    if (this.paciente.id === id_usuario) {
+    if (this.paciente._id === id_usuario) {
       return this.paciente
     }
-    if (this.medico.id === id_usuario) {
+    if (this.medico._id === id_usuario) {
       return this.medico
     }
     return null

@@ -32,6 +32,19 @@ export class TurnoRepository {
     return await this.TurnoModel.find({ 'medico.id': idMedico }).populate('servicio')
   }
 
+  async findByUsuario(usuarioId) {
+    const paciente = await this.pacienteRepository.findByUsuario(usuarioId)
+
+    const turnos = await this.TurnoModel.find({
+      paciente: paciente._id,
+      estado: EstadoTurno.RESERVADO,
+    })
+      .populate('medico', 'nombre')
+      .populate('servicio', 'nombre')
+      .populate('sede', 'nombre')
+
+    return turnos
+  }
   async save(turno) {
     //Si tiene id es update, si no es create
     const query = turno._id ? { _id: turno._id } : { _id: new this.TurnoModel()._id }
@@ -77,6 +90,23 @@ export class TurnoRepository {
         $lte: new Date(fechaFinal),
       },
     })
+  }
+  async actualizarHistoral(turno, idUsuario) {
+    console.log('id usuario', idUsuario)
+    const paciente = await this.pacienteRepository.findByUsuario(idUsuario)
+    if (paciente == null) {
+      console.log('pacientee es null')
+    }
+    console.log(paciente)
+    paciente.historialDeTurnos.push(turno)
+
+    const indice = paciente.turnos.findIndex((t) => t._id.toString() === turno._id.toString())
+
+    if (indice !== -1) {
+      paciente.turnos.splice(indice, 1)
+    }
+    await this.pacienteRepository.save(paciente)
+    return
   }
 
   async saveMany(turnos) {

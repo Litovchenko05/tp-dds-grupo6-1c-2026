@@ -1,5 +1,5 @@
-import { EstadoTurno } from '../models/estadoTurno.enum.js';
-import mongoose from "mongoose";
+import { EstadoTurno } from '../models/estadoTurno.enum.js'
+import mongoose from 'mongoose'
 import { Types } from 'mongoose'
 
 export class PacienteService {
@@ -11,9 +11,9 @@ export class PacienteService {
   }
 
   async createPaciente(pacienteData) {
-    const { usuario, dni, nombre} = pacienteData
+    const { usuario, dni, nombre } = pacienteData
 
-    if (!usuario || !dni || !nombre ) {
+    if (!usuario || !dni || !nombre) {
       throw new Error('Todos los campos son requeridos')
     }
 
@@ -23,7 +23,7 @@ export class PacienteService {
       throw new Error('El Paciente ya existe')
     }
 
-    const nuevoPaciente = { dni, nombre, usuario}
+    const nuevoPaciente = { dni, nombre, usuario }
 
     const pacienteGuardado = await this.pacienteRepository.save(nuevoPaciente)
 
@@ -43,14 +43,14 @@ export class PacienteService {
   }
 
   async reservarTurno(usuarioId, turnoId) {
-
-    console.log(usuarioId)
-    const paciente = await this.pacienteRepository.findOne({usuario:new Types.ObjectId(usuarioId)})
+    const paciente = await this.pacienteRepository.findOne({
+      usuario: new Types.ObjectId(usuarioId),
+    })
 
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
-    console.log(turnoId)
+
     const turno = await this.turnoRepository.findById(new Types.ObjectId(turnoId))
 
     if (!turno) {
@@ -58,13 +58,13 @@ export class PacienteService {
     }
 
     if (turno.estado == EstadoTurno.DISPONIBLE) {
-
       turno.paciente = paciente
-      turno.estado = EstadoTurno.RESERVADO
-      await this.turnoRepository.save(turno);
-      
-      paciente.turnos.push(turno);
-      await this.pacienteRepository.save(paciente);
+      // turno.estado = EstadoTurno.RESERVADO
+      turno.actualizarEstado(EstadoTurno.RESERVADO, usuarioId, 'Reservación de turno')
+      await this.turnoRepository.save(turno)
+
+      paciente.turnos.push(turno)
+      await this.pacienteRepository.save(paciente)
 
       return turno
     } else {
@@ -88,13 +88,18 @@ export class PacienteService {
     }
   }
 
-  async consultarHistorial(pacienteId) {
-    const paciente = await this.pacienteRepository.findById(pacienteId)
+  async consultarHistorial(usuarioId) {
+    const paciente = await this.pacienteRepository.findByUsuario(usuarioId)
     if (!paciente) {
       throw new Error('Paciente no encontrado')
     }
     const historial = paciente.historialDeTurnos
-    return historial
+
+    const turnosDeHistorial = await Promise.all(
+      historial.map((t) => this.turnoRepository.findById(t._id))
+    )
+
+    return turnosDeHistorial
   }
 
   async findAllPaginated(page, limit) {

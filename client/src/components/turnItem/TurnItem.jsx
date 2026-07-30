@@ -39,6 +39,15 @@ const TurnItem = ({ turno }) => {
     NO_CUBIERTA: 'NO CUBIERTA',
   }
 
+  const textoEstado = {
+    disponible: 'Disponible',
+  }
+
+  const formatearCosto = (costo) => {
+    if (costo === null || costo === 0 || costo === undefined) return 'Sin costo'
+    return `$${costo.toLocaleString('es-AR')}`
+  }
+
   return (
     <tr>
       <td>{turno.servicio.nombre}</td>
@@ -46,10 +55,10 @@ const TurnItem = ({ turno }) => {
       <td>{turno.sede.nombre}</td>
       <td>{fechaDeFecha}</td>
       <td>{horaDeFecha}</td>
-      <td>{turno.costoConCobertura}</td>
+      <td>{formatearCosto(turno.costoConCobertura)}</td>
       <td>{textoNivel[turno.nivelCobertura]}</td>
       <td>
-        <span className="tipo-badge">{turno.estado}</span>
+        <span className="tipo-badge">{textoEstado[turno.estado]}</span>
       </td>
       <td className="acciones">
         <div ref={menuRef}>

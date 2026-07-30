@@ -3,6 +3,21 @@ export class TurnoController {
     this.turnoService = turnoService
   }
 
+  turnosReservados = async (req, res) => {
+    try {
+      const { idUsuario } = req.params
+      const resultado = await this.turnoService.obtenerTurnosReservados(idUsuario)
+
+      return res.status(200).json({
+        status: 'success',
+        data: resultado,
+      })
+    } catch (error) {
+      return res.status(400).json({
+        data: error.message,
+      })
+    }
+  }
   findAll = async (req, res) => {
     try {
       const resultado = await this.turnoService.obtenerTodos()
@@ -35,14 +50,15 @@ export class TurnoController {
   }
 
   cancelarTurno = async (req, res) => {
+    console.log('llegue al controller')
     try {
-      const { id } = req.params
+      const { idTurno } = req.params
+
       const { motivo, idUsuario } = req.body
-      const resultado = this.turnoService.cancelarTurno({
-        id,
-        idUsuario,
-        motivo,
-      })
+      console.log('idTurno:', idTurno)
+      console.log('idUsuario:', idUsuario)
+      console.log('motivo:', motivo)
+      const resultado = await this.turnoService.cancelar(idTurno, idUsuario, motivo)
 
       return res.status(200).json({
         status: 'success',

@@ -5,7 +5,7 @@ import TurnItem from '../turnItem/TurnItem'
 import Paginacion from '../paginacion/Paginacion.jsx'
 import { Spinner } from 'react-bootstrap'
 import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa'
-import { useUsuario, cargandoUsuario } from '../../context/UsuarioContext.jsx'
+import { useUsuario } from '../../context/UsuarioContext.jsx'
 
 export default function TurnsGrid({ filtros }) {
   const [turnos, setTurnos] = useState([])
@@ -47,7 +47,7 @@ export default function TurnsGrid({ filtros }) {
   }
   //para que cuando se monte el componente, cargue los turnos
   useEffect(() => {
-    if (cargandoUsuario) return // esperamos a que UsuarioContext termine de resolver
+    if (cargandoUsuario) return
     cargarTurnos(1)
   }, [filtros, sortBy, order, cargandoUsuario])
 

@@ -56,7 +56,6 @@ export class PacienteController {
 
   reservarTurno = async (req, res) => {
     try {
-
       const usuarioId = req.params.idUsuario
       const turnoId = req.params.idTurno
 
@@ -89,8 +88,8 @@ export class PacienteController {
 
   consultarHistorial = async (req, res) => {
     try {
-      const pacienteId = req.params.pacienteId
-      const historial = await this.pacienteService.consultarHistorial(pacienteId)
+      const usuarioId = req.params.id
+      const historial = await this.pacienteService.consultarHistorial(usuarioId)
       return res.status(200).json({ status: 'success', data: historial })
     } catch (error) {
       return res.status(400).json({ data: error.message })

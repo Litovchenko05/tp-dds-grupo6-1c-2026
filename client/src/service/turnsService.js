@@ -12,7 +12,6 @@ export const getTurnsSlowly = () =>
 
 export const getTurns = async (page, idUsuario, { sortBy, order } = {}) => {
   try {
-    console.log(idUsuario)
     const response = await axios.get(`${REACT_APP_API_URL}/turnos`, {
       params: {
         idUsuario,
@@ -89,6 +88,52 @@ export const getTurnsFiltered = async (
     return response.data
   } catch (error) {
     console.error('Error en el fetching de turnos filtrados:', error)
+    throw error
+  }
+}
+
+export const getMisTurns = async (idUsuario) => {
+  try {
+    const response = await axios.get(`${REACT_APP_API_URL}/turnos/${idUsuario}/reservados`)
+
+    return response.data
+  } catch (error) {
+    console.error('Error en el fetching de turnos:', error)
+    throw error
+  }
+}
+
+export const cancelarTurno = async (idTurno, idUsuario, motivo) => {
+  try {
+    const response = await axios.patch(`${REACT_APP_API_URL}/turnos/${idTurno}/cancelar`, {
+      idUsuario,
+      motivo,
+    })
+
+    return
+  } catch (error) {
+    console.error('Error cancelando un turno:', error)
+
+    if (error.response) {
+      console.log(error.response.status)
+      console.log(error.response.data)
+    }
+    throw error
+  }
+}
+
+export const historial = async (id) => {
+  try {
+    const response = await axios.get(`${REACT_APP_API_URL}/pacientes/${id}/historial`)
+
+    return response
+  } catch (error) {
+    console.error('Error con el historial de un paciente:', error)
+
+    if (error.response) {
+      console.log(error.response.status)
+      console.log(error.response.data)
+    }
     throw error
   }
 }

@@ -6,6 +6,9 @@ export class TurnoService {
     this.servicioNotificacion = notificacionService
   }
 
+  async obtenerTurnosReservados(id) {
+    return await this.turnoRepository.findByUsuario(id)
+  }
   async obtenerTodos() {
     return await this.turnoRepository.findAll()
   }
@@ -53,7 +56,7 @@ export class TurnoService {
   }
 
   async cancelar(id_turno, id_usuario, motivo) {
-    const turno = this.turnoRepository.findById(id_turno)
+    const turno = await this.turnoRepository.findById(id_turno)
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
@@ -61,11 +64,11 @@ export class TurnoService {
       throw new Error('El turno ya está cancelado')
     }
 
-    const cancelador = turno.quienModifica(id_usuario)
+    // const cancelador = turno.quienModifica(id_usuario)
 
-    if (!cancelador) {
-      throw new Error('No tiene permiso para cancelar este turno.')
-    }
+    // if (!cancelador) {
+    //   throw new Error('No tiene permiso para cancelar este turno.')
+    // }
 
     const unaHoraEnMs = 60 * 60 * 1000
     const tiempoRestante = new Date(turno.fechaHora).getTime() - Date.now()
@@ -74,15 +77,16 @@ export class TurnoService {
       throw new Error('Debe cancelar con al menos 1 hora de anticipación')
     }
 
-    turno.actualizarEstado(EstadoTurno.CANCELADO, cancelador._id, motivo)
+    turno.actualizarEstado(EstadoTurno.CANCELADO, id_usuario, motivo)
 
-    this.turnoRepository.save(turno)
+    await this.turnoRepository.save(turno)
+    await this.turnoRepository.actualizarHistoral(turno, id_usuario)
 
-    this.servicioNotificacion.generarNotificacion(
-      turno.getContraparte(id_usuario),
-      cancelador,
-      'El turno : ' + turno._id + 'ha sido cancelado. Motivo: ' + motivo
-    )
+    // this.servicioNotificacion.generarNotificacion(
+    //   turno.getContraparte(id_usuario),
+    //   id_usuario,
+    //   'El turno : ' + turno._id + 'ha sido cancelado. Motivo: ' + motivo
+    // )
     return turno
   }
 

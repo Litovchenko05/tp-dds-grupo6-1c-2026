@@ -1,91 +1,108 @@
 .titulo-modal {
-    font-size: 36px;
-    color: var(--color-primary);
-    letter-spacing: -0.01em;
-    max-width: 640px;
-    margin-bottom: 14px;
+  font-size: 36px;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+  max-width: 640px;
+  margin-bottom: 14px;
 }
 
-h2.advertencia{
-    color: var(--color-error);
+h2.advertencia {
+  color: var(--color-error);
 }
-
 
 .modal-overlay-turnos {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.45);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:1000;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-
-.modal-turnos{
-    background:var(--color-white);
-    width:850px;
-    max-height:80vh;
-    overflow:auto;
-    border-radius:20px;
-    padding:35px;
-    position:relative;
+.modal-turnos {
+  background: var(--color-white);
+  width: 850px;
+  max-height: 80vh;
+  overflow: auto;
+  border-radius: 20px;
+  padding: 35px;
+  position: relative;
 }
-
 
 .modal-close {
-    position:absolute;
-    right:20px;
-    top:15px;
-    border:none;
-    background:none;
-    font-size:32px;
-    cursor:pointer;
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  border: none;
+  background: none;
+  font-size: 32px;
+  cursor: pointer;
 }
-
 
 .turnos-grid {
-    margin-top:20px;
+  margin-top: 20px;
 }
-
 
 .grid-header,
 .grid-row {
-    display:grid;
-    grid-template-columns:
-    1.2fr 1.2fr 1.5fr .8fr .8fr .6fr;
+  display: grid;
+  grid-template-columns: 1.2fr 1.2fr 1.5fr 0.8fr 0.8fr 0.6fr;
 
-    padding:12px;
-    align-items:center;
+  padding: 12px;
+  align-items: center;
 }
-
 
 .grid-header {
-    font-weight:bold;
-    border-bottom:2px solid var( --color-border);
+  font-weight: bold;
+  border-bottom: 2px solid var(--color-border);
 }
-
 
 .grid-row {
-    border-bottom:1px solid var( --color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
-.conteiner-button{
- display: flex;
- justify-content: center;
+.conteiner-button {
+  display: flex;
+  justify-content: center;
 }
 .modal-button {
-    margin-top:25px;
-    width:120px;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:var(--color-primary-medium);
-    color:var( --color-white);
-    font-size:16px;
-    cursor:pointer;
+  margin-top: 25px;
+  width: 120px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-primary-medium);
+  color: var(--color-white);
+  font-size: 16px;
+  cursor: pointer;
 }
 .modal-button:hover {
   background-color: var(--color-primary);
   color: var(--color-white);
+}
+
+.motivo-cancelacion {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  margin-top: 1rem;
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.motivo-cancelacion:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.modal-botones {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
 }

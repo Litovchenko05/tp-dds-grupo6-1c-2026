@@ -46,19 +46,15 @@ export class Paciente {
     return this.historialDeTurnos
   }
 
-  getTurnos(){
+  getTurnos() {
     return this.turnos
   }
-  
-  guardarTurnoEnTurnos(turno){
+
+  guardarTurnoEnTurnos(turno) {
     this.turnos.push(turno)
   }
-  
+
   guardarTurnoEnHistorial(turno) {
     this.historialDeTurnos.push(turno)
-  }
-
-  solicitarCambioDeFechaTurno(turno, nuevaFechaHora, medico) {
-    medico.recibirSolicitud(turno, nuevaFechaHora)
   }
 }

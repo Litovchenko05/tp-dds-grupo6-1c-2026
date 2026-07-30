@@ -26,7 +26,6 @@ router.route('/:id').get((req, res) =>
   pacienteController.findById(req, res)
 )
 
-
 router.route('/:id/turnos/:turnoId').patch((req, res) =>
   // #swagger.tags = ['Pacientes', 'Turnos']
   // #swagger.summary = 'Cambiar estado de un turno'
@@ -48,11 +47,8 @@ router.route('/:id/historial').get((req, res) =>
   // #swagger.tags = ['Pacientes', 'Historial Clínico']
   // #swagger.summary = 'Consultar historial clínico propio'
   // #swagger.description = 'Recupera el historial de atenciones médicas y antecedentes del paciente.'
-  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del paciente', required: true, type: 'string' } */
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del usuario', required: true, type: 'string' } */
   pacienteController.consultarHistorial(req, res)
 )
-
-
-
 
 export default router
