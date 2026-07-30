@@ -12,7 +12,7 @@ export class MedicoService {
     especialidadRepository,
     practicaRepository,
     sedeRepository,
-    servicioRepository
+    servicioRepository,
   }) {
     this.medicoRepository = medicoRepository
     this.turnoService = turnoService
@@ -116,7 +116,11 @@ export class MedicoService {
       }
 
       //le agrego la disponibilidad al doc del medico
-      const nuevaDisponibilidad = new DisponibilidadHoraria(disponibilidad.diaSemana,disponibilidad.horaDesde,disponibilidad.horaHasta);
+      const nuevaDisponibilidad = new DisponibilidadHoraria(
+        disponibilidad.diaSemana,
+        disponibilidad.horaDesde,
+        disponibilidad.horaHasta
+      )
 
       medico.agregarDisponibilidad(nuevaDisponibilidad)
 
@@ -126,19 +130,23 @@ export class MedicoService {
       const nuevaDisponibilidadObj = medico.disponibilidades[medico.disponibilidades.length - 1]
       // const objSede = await this.sedeRepository.findById(disponibilidad.sedeId)
       const tipoDeServicio = disponibilidad.tipoDeServicio
-      const tipoDeServicioNormalizado = tipoDeServicio.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim()
+      const tipoDeServicioNormalizado = tipoDeServicio
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
 
-        setImmediate(() => {
-          this.generarTurnosPorAnio(
-            medicoId,
-            nuevaDisponibilidadObj,
-            disponibilidad.sedeId,
-            disponibilidad.servicioId,
-            tipoDeServicioNormalizado,
-            disponibilidad.duracion,
-            disponibilidad.costo
-          )
-        })
+      setImmediate(() => {
+        this.generarTurnosPorAnio(
+          medicoId,
+          nuevaDisponibilidadObj,
+          disponibilidad.sedeId,
+          disponibilidad.servicioId,
+          tipoDeServicioNormalizado,
+          disponibilidad.duracion,
+          disponibilidad.costo
+        )
+      })
 
       return medico
     } catch (error) {
@@ -146,7 +154,15 @@ export class MedicoService {
     }
   }
 
-  async generarTurnosPorAnio(medicoId, disponibilidad, sedeId, servicioId, tipoDeServicio, duracion, costo) {
+  async generarTurnosPorAnio(
+    medicoId,
+    disponibilidad,
+    sedeId,
+    servicioId,
+    tipoDeServicio,
+    duracion,
+    costo
+  ) {
     try {
       this.agendaService.generarTurnosParaDisponibilidad(
         medicoId,
@@ -198,13 +214,16 @@ export class MedicoService {
       }
       await medico.save()
 
-      const tipoDeServicioNormalizado = null;
+      const tipoDeServicioNormalizado = null
 
-      if(nuevaDisponibilidad.tipoDeServicio != undefined){
-         tipoDeServicioNormalizado =  nuevaDisponibilidad.tipoDeServicio.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim()
+      if (nuevaDisponibilidad.tipoDeServicio != undefined) {
+        tipoDeServicioNormalizado = nuevaDisponibilidad.tipoDeServicio
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .trim()
       }
-      
-      
+
       setImmediate(() => {
         this.generarTurnosPorAnioParaDisponibilidadModificada(
           medico,

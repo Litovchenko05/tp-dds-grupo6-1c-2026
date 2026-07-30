@@ -23,6 +23,19 @@ router.route('/:idUsuario/reservados').get((req, res) =>
   /* #swagger.parameters['id'] = { in: 'path', description: 'ID de usuario del paciente', required: true, type: 'string' } */
   turnoController.turnosReservados(req, res)
 )
+
+router.route('/servicios').get((req, res) => turnoController.obtenerTodosLosServicios(req, res))
+
+router
+  .route('/especialidades')
+  .get((req, res) => turnoController.obtenerTodasLasEspecialidades(req, res))
+router
+  .route('/especialidades/:id')
+  .get((req, res) => turnoController.obtenerLaEspecialidad(req, res))
+
+router.route('/practicas').get((req, res) => turnoController.obtenerTodasLasPracticas(req, res))
+router.route('/practicas/:id').get((req, res) => turnoController.obtenerLaPractica(req, res))
+
 router
   .route('/:id')
   .get((req, res) =>
