@@ -37,7 +37,7 @@ export class TurnoRepository {
 
     const turnos = await this.TurnoModel.find({
       paciente: paciente._id,
-      estado: EstadoTurno.RESERVADO,
+      estado: { $in: [EstadoTurno.RESERVADO, EstadoTurno.CONFIRMADO] },
     })
       .populate('medico', 'nombre')
       .populate('servicio', 'nombre')
