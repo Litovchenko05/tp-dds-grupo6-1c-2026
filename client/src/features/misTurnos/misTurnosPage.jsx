@@ -9,20 +9,20 @@ import ModalCancelarTurno from '../../components/modal/ModalDeCancelar.jsx'
 const MisTurnosPage = () => {
   const [turnos, setTurnos] = useState([])
   const { usuario } = useUsuario()
-  const [cargando, setCargando] = useState(false)
+  // const [cargando, setCargando] = useState(false)
   const { cargandoUsuario } = useUsuario()
   const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false)
   const [turnoSeleccionado, setTurnoSeleccionado] = useState(null)
 
   const cargarTurnos = async () => {
-    setCargando(true)
+    // setCargando(true)
     try {
       const response = await getMisTurns(usuario._id)
       setTurnos(response.data)
     } catch (error) {
       console.error('Error al cargar turnos reservados:', error)
     } finally {
-      setCargando(false)
+      // setCargando(false)
     }
   }
 
@@ -62,7 +62,7 @@ const MisTurnosPage = () => {
   return (
     <Box className="app-view-container">
       <Typography variant="h4" className="page-title">
-        Mis turnos reservados
+        Mis turnos
       </Typography>
       {turnos.length === 0 ? (
         <Typography variant="h6" sx={{ mt: 4, textAlign: 'center' }}>
@@ -120,9 +120,6 @@ const MisTurnosPage = () => {
         <ModalCancelarTurno
           onCerrar={cerrarModalCancelar}
           onAceptar={async (motivo) => {
-            console.log('Entró a onAceptar')
-            console.log('Motivo:', motivo)
-            console.log('Turno:', turnoSeleccionado)
             try {
               await cancelarTurno(turnoSeleccionado._id, usuario._id, motivo)
 

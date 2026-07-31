@@ -94,7 +94,6 @@ export class MedicoService {
         data.horaHasta
       )
       medico.agregarDisponibilidad(nuevaDisponibilidad)
-      console.log(medico)
       await this.medicoRepository.save(medico)
 
       const nuevaDisponibilidadObj = medico.disponibilidades[medico.disponibilidades.length - 1]

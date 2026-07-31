@@ -15,15 +15,17 @@ import {
   FaTimes,
 } from 'react-icons/fa'
 
-const TurnSearchBar = ({ onBuscar }) => {
-  const [tipoServicio, setTipoServicio] = useState('')
+const TurnSearchBar = ({ onBuscar, filtrosIniciales }) => {
+  const [tipoServicio, setTipoServicio] = useState(filtrosIniciales?.tipoServicio || '')
+  // const [tipoServicio, setTipoServicio] = useState('')
   const [especialidades, setEspecialidades] = useState([])
   const [practicas, setPracticas] = useState([])
   const [sedes, setSedes] = useState([])
 
-  const [nombreMedico, setNombreMedico] = useState('')
-  const [idServicio, setIdServicio] = useState('')
-  const [idSede, setIdSede] = useState('')
+  const [nombreMedico, setNombreMedico] = useState(filtrosIniciales?.nombreMedico || '')
+  const [idServicio, setIdServicio] = useState(filtrosIniciales?.idServicio || '')
+  const [idSede, setIdSede] = useState(filtrosIniciales?.idSede || '')
+
   const [fechaDesde, setFechaDesde] = useState('')
   const [fechaHasta, setFechaHasta] = useState('')
 
@@ -53,6 +55,19 @@ const TurnSearchBar = ({ onBuscar }) => {
       tipoServicio,
     })
   }
+
+  useEffect(() => {
+    if (filtrosIniciales) {
+      onBuscar({
+        nombreMedico: filtrosIniciales.nombreMedico || '',
+        idServicio: filtrosIniciales.idServicio || '',
+        idSede: filtrosIniciales.idSede || '',
+        fechaDesde: '',
+        fechaHasta: '',
+        tipoServicio: filtrosIniciales.tipoServicio || '',
+      })
+    }
+  }, [])
 
   const limpiarFiltros = () => {
     setNombreMedico('')

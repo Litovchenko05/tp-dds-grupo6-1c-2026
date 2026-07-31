@@ -3,7 +3,7 @@ import { Especialidad } from '../models/Especialidad.js'
 
 export const EspecialidadSchema = new mongoose.Schema(
   {
-    nombre: {
+    servicio: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Servicio',
       required: true,

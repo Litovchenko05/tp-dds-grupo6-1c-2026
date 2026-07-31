@@ -1,307 +1,205 @@
-import React, { useState, useEffect, useRef } from "react";
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import './BusquedaServiciosPage.css';
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import './BusquedaServiciosPage.css'
+import { Link } from 'react-router-dom'
+import { FaSearch, FaStethoscope, FaMicroscope } from 'react-icons/fa'
+import Button from '@mui/material/Button'
+import { getEspecialidades, getPracticas } from '../../service/serviciosService.js'
+import { getTodosLosServicios } from '../../service/serviciosService.js'
+import Paginacion from '../../components/paginacion/Paginacion.jsx'
 
 const BusquedaServiciosPage = () => {
+  const [menuAbierto, setMenuAbierto] = useState(null)
 
-    const serviciosMock = [
-        {
-            id: 1,
-            medico: "Dra. Ana Gómez",
-            sede: "Centro Médico Palermo",
-            servicio: "Cardiológica",
-            tipo: "Especialidad",
-            costo: "$8500"
-        },
-        {
-            id: 2,
-            medico: "Dr. Juan Pérez",
-            sede: "Clínica Belgrano",
-            servicio: "Electrocardiograma",
-            tipo: "Práctica",
-            costo: "$5000"
-        },
-        {
-            id: 3,
-            medico: "Dra. Laura Díaz",
-            sede: "Centro Médico Norte",
-            servicio: "Dermatología",
-            tipo: "Especialidad",
-            costo: "$7000"
-        },
-        {
-            id: 4,
-            medico: "Dra. Laura Díaz",
-            sede: "Centro Médico Norte",
-            servicio: "Dermatología",
-            tipo: "Especialidad",
-            costo: "$7000"
-        },
-        {
-            id: 5,
-            medico: "Dra. Laura Díaz",
-            sede: "Centro Médico Norte",
-            servicio: "Dermatología",
-            tipo: "Especialidad",
-            costo: "$7000"
-        }
-    ];
+  const [especialidadSeleccionada, setEspecialidadSeleccionada] = useState('')
+  const [practicaSeleccionada, setPracticaSeleccionada] = useState('')
 
+  const [especialidades, setEspecialidades] = useState([])
+  const [practicas, setPracticas] = useState([])
 
-    const especialidades = [
-            "Cardiología",
-            "Dermatología",
-            "Pediatría"
-        ];
+  const [servicios, setServicios] = useState([])
+  const [paginaActual, setPaginaActual] = useState(1)
+  const [totalPaginas, setTotalPaginas] = useState(1)
 
+  const menuRef = useRef(null)
 
-    const practicas = [
-            "Electrocardiograma",
-            "Radiografía",
-            "Análisis de sangre"
-        ];
+  const abrirMenu = (id) => {
+    setMenuAbierto(menuAbierto === id ? null : id)
+  }
 
-    const [menuAbierto, setMenuAbierto] = useState(null);
-    const [especialidadSeleccionada, setEspecialidadSeleccionada] = useState("");
-    const [practicaSeleccionada, setPracticaSeleccionada] = useState("");
-    const [paginaActual, setpaginaActual] = useState(1);
-    const elementosPorPagina = 3;
+  useEffect(() => {
+    function cerrarMenu(event) {
+      if (!event.target.closest('.acciones-menu') && !event.target.closest('.menu-button')) {
+        setMenuAbierto(null)
+      }
+    }
 
+    document.addEventListener('mousedown', cerrarMenu)
+    return () => document.removeEventListener('mousedown', cerrarMenu)
+  }, [])
 
-    const abrirMenu = (id) => {
-        setMenuAbierto(menuAbierto === id ? null : id);
-    };
+  useEffect(() => {
+    const cargarDatos = async () => {
+      const [especialidades, practicas] = await Promise.all([getEspecialidades(), getPracticas()])
 
-    const menuRef = useRef(null);
-    
-        useEffect(() => {
-    
-        function cerrarMenu(event) {
-          if (
-                menuRef.current &&
-                !menuRef.current.contains(event.target)
-            ) {
-                setMenuAbierto(false);
-            }
-    
-        }
-    
-        document.addEventListener("mousedown", cerrarMenu);
-    
-        return () => {
-            document.removeEventListener("mousedown", cerrarMenu);
-        };
-    
-          }, []);
-    
-  
-    
-    const serviciosFiltrados = serviciosMock.filter((servicio)=>{
+      setEspecialidades(especialidades.data)
+      setPracticas(practicas.data)
+    }
 
+    cargarDatos()
+  }, [])
 
-    const coincideEspecialidad =
-        especialidadSeleccionada === "" ||
-        (
-            servicio.tipo === "Especialidad" &&
-            servicio.servicio === especialidadSeleccionada
-        );
+  const cargarServicios = async (page = 1) => {
+    try {
+      const respuesta = await getTodosLosServicios(
+        page,
+        especialidadSeleccionada,
+        practicaSeleccionada
+      )
+      const { turnos, totalPages } = respuesta.data
 
+      setServicios(turnos)
+      setPaginaActual(page)
+      setTotalPaginas(totalPages)
+    } catch (error) {
+      console.error('Error cargando servicios:', error)
+    }
+  }
 
-    const coincidePractica =
-        practicaSeleccionada === "" ||
-        (
-            servicio.tipo === "Práctica" &&
-            servicio.servicio === practicaSeleccionada
-        );
+  useEffect(() => {
+    cargarServicios(1)
+  }, [])
 
+  const textoEstado = {
+    especialidad: 'Especialidad',
+    practica: 'Practica',
+  }
 
-    return (
+  return (
+    <Box className="app-view-container">
+      <div className="servicios-filtros">
+        <Typography variant="h4" className="page-title">
+          Búsqueda de servicios
+        </Typography>
 
-        coincideEspecialidad &&
-        coincidePractica
-    );
+        <div className="filtros-container">
+          <label className="filtro-label">Filtrar por especialidad</label>
 
-});
-   
-   
-        const indiceUltimo = paginaActual * elementosPorPagina;
-        const indicePrimero = indiceUltimo - elementosPorPagina;
-
-
-        const serviciosPagina =
-            serviciosFiltrados.slice(
-                indicePrimero,
-                indiceUltimo
-            );
-
-
-        const cantidadPaginas =
-            Math.ceil(
-                serviciosFiltrados.length / elementosPorPagina
-            );
-
-
-    return (
-        <Box className="app-view-container">
-
-            <Typography variant="h4" className="page-title">
-                Búsqueda de servicios
-            </Typography>
-
-            <div className="filtros-container">
-
-            <label className="filtro-label">
-                   Filtrar por especialidad
-            </label>
-            <div className="input-wrapper">
-                <select
-                    className="filtro-select"
-                    value={especialidadSeleccionada}
-                    onChange={(e) => {
-                    setEspecialidadSeleccionada(e.target.value);
-                    setpaginaActual(1);
-                    }}
-                >
-                    <option value="">Todas</option>
-
-                    {especialidades.map((esp) => (
-                    <option key={esp}>{esp}</option>
-                    ))}
-                </select>
-            </div>
-
-
-            <label className="filtro-label">
-                   Filtrar por práctica
-            </label>
-            <div className="input-wrapper">
-                <select
-                    className="filtro-select"
-                    value={practicaSeleccionada}
-                    onChange={(e)=>{
-                    setPracticaSeleccionada(e.target.value);
-                    setpaginaActual(1);
-                }}
-                >
-                <option value="">Todas</option>
-                {practicas.map((prac)=>(
-                    <option key={prac}>{prac}</option>
-                ))
-                }
-                </select>
-            </div>
-
-            </div>
-
-            <div className="servicios-container">
-                <div className="tabla-container">
-                    <table className="servicios-table">
-                        <thead>
-                            <tr>
-                                <th>Médico</th>
-                                <th>Sede</th>
-                                <th>Servicio</th>
-                                <th>Tipo</th>
-                                <th>Costo</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-
-
-                        <tbody>
-
-                            {serviciosPagina.map((servicio) => (
-
-                                <tr key={servicio.id}>
-
-                                    <td>{servicio.medico}</td>
-
-                                    <td>{servicio.sede}</td>
-
-                                    <td>{servicio.servicio}</td>
-
-                                    <td>
-                                        <span className="tipo-badge">
-                                            {servicio.tipo}
-                                        </span>
-                                    </td>
-
-                                    <td className="precio">
-                                        {servicio.costo}
-                                    </td>
-
-
-                                    <td className="acciones">
-                                    <div ref={menuRef}>
-                                        <button
-                                            className="menu-button"
-                                            onClick={() => abrirMenu(servicio.id)}
-                                        >
-                                            ⋮
-                                        </button>
-
-                                        {menuAbierto === servicio.id && (
-                                        <div className="acciones-menu">
-                                             {/* /* esto esta mal, tengo que reimplementarlo, pero por ahora lo dejo asi */}
-                                             <Link to={`/turnos/${servicio.id}`} class="btn-reservar"> 
-                                             <button>
-                                                 Reservar
-                                            </button>
-                                            </Link>     
-                                        </div>
-                                        )}
-                                    </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-           <div className="paginacion">
-            <button
-            disabled={paginaActual === 1}
-            onClick={()=>setpaginaActual(paginaActual-1)}
+          <div className="input-wrapper">
+            <FaStethoscope className="search-icon" />
+            <select
+              className="filtro-select"
+              value={especialidadSeleccionada}
+              onChange={(e) => setEspecialidadSeleccionada(e.target.value)}
             >
-            ‹
-            </button>
+              <option value="todas">Todas</option>
+              <option value="ninguna">Ninguna</option>
+              {especialidades.map((especialidad) => (
+                <option key={especialidad._id} value={especialidad._id}>
+                  {especialidad.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
 
-
-            {
-            Array.from(
-            {length:cantidadPaginas},
-            (_,i)=>i+1
-            )
-            .map(num=>(
-
-            <button
-            key={num}
-            className={
-            paginaActual===num 
-            ? "pagina-activa"
-            : ""
-            }
-            onClick={()=>setpaginaActual(num)}
+          <label className="filtro-label">Filtrar por práctica</label>
+          <div className="input-wrapper">
+            <FaMicroscope className="search-icon" />
+            <select
+              className="filtro-select"
+              value={practicaSeleccionada}
+              onChange={(e) => setPracticaSeleccionada(e.target.value)}
             >
-            {num}
-            </button>
-            ))
-            }
+              <option value="todas">Todas</option>
+              <option value="ninguna">Ninguna</option>
+              {practicas.map((practica) => (
+                <option key={practica._id} value={practica._id}>
+                  {practica.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div class="div-search-button">
+          <Button
+            variant="contained"
+            id="search-button"
+            startIcon={<FaSearch id="iconoBotonSearch" />}
+            onClick={() => cargarServicios(1)}
+          >
+            <span className="text-buscador">Buscar</span>
+          </Button>
+        </div>
+      </div>
+      <div className="servicios-container">
+        <div className="tabla-container">
+          <table className="servicios-table">
+            <thead>
+              <tr>
+                <th>Médico</th>
+                <th>Sede</th>
+                <th>Servicio</th>
+                <th>Tipo</th>
+                <th>Costo</th>
+                <th></th>
+              </tr>
+            </thead>
 
-            <button
-            disabled={paginaActual===cantidadPaginas}
-            onClick={()=>setpaginaActual(paginaActual+1)}
-            >
-            ›
-            </button>
+            <tbody>
+              {servicios.map((servicio) => (
+                <tr key={servicio._id}>
+                  <td>{servicio.medico?.nombre}</td>
 
-            </div>
-        </Box>
-    );
-};
+                  <td>{servicio.sede?.nombre}</td>
 
+                  <td>{servicio.servicio?.nombre}</td>
 
-export default BusquedaServiciosPage;
+                  <td>
+                    <span className="tipo-badge">{textoEstado[servicio.servicio.tipo]}</span>
+                  </td>
+
+                  <td className="">${servicio.costo ?? 'Sin costo'}</td>
+
+                  <td className="acciones">
+                    <div>
+                      <button className="menu-button" onClick={() => abrirMenu(servicio._id)}>
+                        ⋮
+                      </button>
+                      {menuAbierto === servicio._id && (
+                        <div className="acciones-menu">
+                          <Link
+                            to="/reserva-de-turnos"
+                            state={{
+                              nombreMedico: servicio.medico.nombre,
+                              idServicio: servicio.servicio._id,
+                              tipoServicio: servicio.servicio.tipo,
+                              idSede: servicio.sede._id,
+                            }}
+                            className="btn-reservar"
+                          >
+                            <button>Reservar</button>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="paginacion">
+        <Paginacion
+          paginaActual={paginaActual}
+          totalDePaginas={totalPaginas}
+          cambioDePagina={(page) => cargarServicios(page)}
+        />
+      </div>
+    </Box>
+  )
+}
+
+export default BusquedaServiciosPage

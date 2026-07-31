@@ -73,8 +73,11 @@ const Checkout = () => {
   return (
     <div className="conteiner">
       <div className="tittle-container">
-        <h1> Confirma las reservas de tu carrito</h1>
-        <p>
+        <div className="titulo-checkout">
+          <h1> Confirma las reservas de tu carrito</h1>
+        </div>
+
+        <p className="parrafo-checkout">
           Ingresa tus datos personales a continuación para enviar el comprobante de compra a tu
           mail.
         </p>
