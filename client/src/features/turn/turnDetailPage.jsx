@@ -59,7 +59,8 @@ const TurnDetailPage = () => {
     <div className="turn-detail-container">
       <h1 class="turn-header ">Reserva tu turno </h1>
       <div className="turn-header">
-        <h1 class="turn-nombre">{turno.data.servicio.nombre}</h1>
+        <div className="turn-categoria">Servicio: {turno.data.servicio.nombre}</div>
+        {/* <h1 class="turn-nombre">{turno.data.servicio.nombre}</h1> */}
         <div className="turn-categoria">Médico: {turno.data.medico.nombre}</div>
       </div>
 
@@ -68,7 +69,9 @@ const TurnDetailPage = () => {
           <div className="turn-description">Sede: {turno.data.sede.nombre}</div>
           <div className="turn-description">Fecha: {fechaDeFecha}</div>
           <div className="turn-description">Hora: {horaDeFecha} hs</div>
-          <div className="turn-description">Estado: {turno.data.estado}</div>
+          <div className="turn-description">
+            Estado: <span className="mayuscula"> {turno.data.estado}</span>
+          </div>
 
           <div className="turn-price-section">
             <div className="turn-precio">Costo: $ {turno.data.costo}</div>

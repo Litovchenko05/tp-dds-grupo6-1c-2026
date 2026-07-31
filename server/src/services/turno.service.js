@@ -171,4 +171,8 @@ export class TurnoService {
       practicaId
     )
   }
+
+  async eliminarTurnosDeServicioPorMedico(idMedico, idServicio) {
+    await this.turnoRepository.eliminarTurnosDeServicioPorMedico(idMedico, idServicio)
+  }
 }

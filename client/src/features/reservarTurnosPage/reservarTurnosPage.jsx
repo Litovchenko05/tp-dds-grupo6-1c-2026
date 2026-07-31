@@ -10,13 +10,14 @@ const ReservarTurnosPage = () => {
   const filtrosIniciales = location.state || null
 
   return (
-    <>
-      <div className="home-body">
+    <div className="">
+      <div className="">
         <TurnSearchBar onBuscar={setFiltros} filtrosIniciales={filtrosIniciales} />
+        <div className="">
+          <TurnsGrid filtros={filtros} />
+        </div>
       </div>
-
-      <TurnsGrid filtros={filtros} />
-    </>
+    </div>
   )
 }
 

@@ -69,7 +69,7 @@ export default function TurnsGrid({ filtros }) {
   }
 
   return (
-    <div className="turnos-container">
+    <div className="servicios-container app-view-container ">
       <div className="tabla-container">
         <table className="servicios-table">
           <thead>

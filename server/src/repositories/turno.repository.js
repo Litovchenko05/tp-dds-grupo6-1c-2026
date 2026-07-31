@@ -116,6 +116,15 @@ export class TurnoRepository {
     return await this.TurnoModel.findByIdAndDelete(id)
   }
 
+  async eliminarTurnosDeServicioPorMedico(idMedico, idServicio) {
+    const resultado = await TurnoModel.deleteMany({
+      medico: idMedico,
+      servicio: idServicio,
+      estado: 'disponible',
+    })
+    return resultado
+  }
+
   async update(id, turnoModificado) {
     return await this.TurnoModel.findByIdAndUpdate(id, turnoModificado, { new: true })
   }
@@ -366,7 +375,6 @@ export class TurnoRepository {
     const condiciones = []
 
     if (especialidadId === 'ninguna') {
-      //no agrego condiciones
     } else if (especialidadId === 'todas') {
       condiciones.push({ 'servicioInfo.tipo': 'especialidad' })
     } else {
@@ -374,7 +382,6 @@ export class TurnoRepository {
     }
 
     if (practicaId === 'ninguna') {
-      //no agrego condiciones
     } else if (practicaId === 'todas') {
       condiciones.push({ 'servicioInfo.tipo': 'practica' })
     } else {
