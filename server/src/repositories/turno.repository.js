@@ -14,7 +14,10 @@ export class TurnoRepository {
   }
 
   async findAll() {
-    return await this.TurnoModel.find().populate('servicio').populate('sede')
+    return await this.TurnoModel.find()
+      .populate('practica')
+      .populate('especialidad')
+      .populate('sede')
   }
 
   async findByFilters(filtros = {}) {
@@ -63,17 +66,13 @@ export class TurnoRepository {
 
   async obtenerTurnosPorEspecialidad(nombreDeEspecialidad) {
     return (await this.findAll()).filter(
-      (t) =>
-        t.servicio.nombre.toLowerCase() == nombreDeEspecialidad.toLowerCase() &&
-        t.tipoDeServicio == 'Especialidad'
+      (t) => t.especialidad?.nombre?.toLowerCase() == nombreDeEspecialidad.toLowerCase()
     )
   }
 
   async obtenerTurnosPorPractica(nombreDePractica) {
     return (await this.findAll()).filter(
-      (t) =>
-        t.servicio.nombre.toLowerCase() == nombreDePractica.toLowerCase() &&
-        t.tipoDeServicio == 'Practica'
+      (t) => t.practica?.nombre?.toLowerCase() == nombreDePractica.toLowerCase()
     )
   }
 

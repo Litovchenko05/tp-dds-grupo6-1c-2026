@@ -314,11 +314,7 @@ export class MedicoController {
         return res.status(400).json({ status: 'error', message: resultado.error.errors })
       }
 
-      const medicoActualizado = await this.medicoService.agregarServicio(
-        medicoId,
-        resultado.data.servicioId,
-        resultado.data.tipo
-      )
+      const medicoActualizado = await this.medicoService.agregarServicio(medicoId, resultado)
 
       return res.status(201).json({
         status: 'success',

@@ -8,6 +8,8 @@ export class MedicoRepository {
 
   async findAll() {
     return await this.MedicoModel.find()
+      .populate('servicios.practica')
+      .populate('servicios.especialidad')
   }
 
   async findByFilters(filtros = {}) {

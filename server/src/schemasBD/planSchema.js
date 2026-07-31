@@ -1,6 +1,5 @@
-import mongoose from "mongoose";
-import { Plan } from '../models/Plan.js';
-import { CoberturaSchema } from "./coberturaSchema.js";
+import mongoose from 'mongoose'
+import { Plan } from '../models/Plan.js'
 
 export const PlanSchema = new mongoose.Schema(
   {
@@ -9,20 +8,18 @@ export const PlanSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-   coberturasDeServicios: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Cobertura',
-      required: true
-    }
-    ]
+    coberturasDeServicios: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cobertura',
+        required: true,
+      },
+    ],
   },
   {
     timestamps: true,
-    collection: 'planes',
   }
 )
 
 PlanSchema.loadClass(Plan)
-
 export const PlanModel = mongoose.model('Plan', PlanSchema)

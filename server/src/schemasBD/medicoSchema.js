@@ -20,31 +20,19 @@ export const MedicoSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    especialidades: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Especialidad',
-        },
-      ],
+    practicas: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'Practica',
       default: [],
     },
-    practicas: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Practica',
-        },
-      ],
+    especialidades: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'Especialidad',
       default: [],
     },
     sedes: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Sede',
-        },
-      ],
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'Sede',
       default: [],
     },
     disponibilidades: {

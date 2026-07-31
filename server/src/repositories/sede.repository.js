@@ -1,8 +1,6 @@
-import mongoose from "mongoose";
 import { SedeModel } from '../schemasBD/sedeSchema.js'
 
 export class SedeRepository {
-
   constructor() {
     this.SedeModel = SedeModel
   }
@@ -14,7 +12,6 @@ export class SedeRepository {
   async findByFilters(filtros = {}) {
     return await this.SedeModel.find(filtros)
   }
-
 
   async findById(id) {
     return await this.SedeModel.findById(id)
@@ -28,20 +25,14 @@ export class SedeRepository {
     //Si tiene id es update, si no es create
     const query = sede.id ? { _id: sede.id } : { _id: new this.SedeModel()._id }
 
-    return await this.SedeModel.findOneAndUpdate(
-      query,
-      sede,
-      {
-        returnDocument: 'after',
-        runValidators: true,
-        upsert: true
-      }
-    )
+    return await this.SedeModel.findOneAndUpdate(query, sede, {
+      returnDocument: 'after',
+      runValidators: true,
+      upsert: true,
+    })
   }
-
 
   async delete(id) {
     return await this.SedeModel.findByIdAndDelete(id)
   }
-
 }

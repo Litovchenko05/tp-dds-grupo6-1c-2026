@@ -5,14 +5,19 @@ import { EstadoTurno } from './EstadoTurno.enum.js'
 import { Medico } from './medico.js'
 import { DiasSemana } from './DiaSemana.enum.js'
 import { DisponibilidadHoraria } from './DisponibilidadHoraria.js'
-import { Sede } from './Sede.js';
+import { Sede } from './Sede.js'
 import { Paciente } from './Paciente.js'
 
-
 export class Agenda {
-  
-  static generarTurnos(medicoId, disponibilidad, sedeId, servicioId, tipoDeServicio, duracion, costo) {
-
+  static generarTurnos(
+    medicoId,
+    disponibilidad,
+    sedeId,
+    servicioId,
+    tipoDeServicio,
+    duracion,
+    costo
+  ) {
     const nuevosTurnos = []
     const fechaActual = new Date()
     const año = fechaActual.getFullYear()
@@ -46,25 +51,31 @@ export class Agenda {
           minutoHasta
         )
 
-        while (fechaHoraInicial <= fechaHoraFinal ) {
+        while (fechaHoraInicial <= fechaHoraFinal) {
+          let anteUltimaFechaDeTurno = new Date(fechaHoraInicial)
 
-          let anteUltimaFechaDeTurno = new Date(fechaHoraInicial);
+          anteUltimaFechaDeTurno.setMinutes(anteUltimaFechaDeTurno.getMinutes() + duracion)
 
-          anteUltimaFechaDeTurno.setMinutes(anteUltimaFechaDeTurno.getMinutes() + duracion);
-
-          if(anteUltimaFechaDeTurno <= fechaHoraFinal){
+          if (anteUltimaFechaDeTurno <= fechaHoraFinal) {
             // console.log('La fecha del siguiente turno es ' + fechaHoraInicial.toLocaleString('es-AR'));
 
-            const fechaTurno = new Date(fechaHoraInicial);
-            const nuevoTurno = new Turno(medicoId, fechaTurno, sedeId, servicioId, tipoDeServicio, duracion, costo);
-            
-            nuevosTurnos.push(nuevoTurno);
+            const fechaTurno = new Date(fechaHoraInicial)
+            const nuevoTurno = new Turno(
+              medicoId,
+              fechaTurno,
+              sedeId,
+              servicioId,
+              tipoDeServicio,
+              duracion,
+              costo
+            )
+
+            nuevosTurnos.push(nuevoTurno)
             //le sumo duracion en min a la hora inicial de la fecha inicial para generar los turnos
-            fechaHoraInicial.setMinutes(fechaHoraInicial.getMinutes() + duracion);
-          }else{
-            break;
+            fechaHoraInicial.setMinutes(fechaHoraInicial.getMinutes() + duracion)
+          } else {
+            break
           }
-          
         }
       }
 
@@ -73,19 +84,18 @@ export class Agenda {
     return nuevosTurnos
   }
 
-  static obtenerNuevaFechaDelTurno(fechaHoraVieja, disponibilidadAnterior, disponibilidadModificada){  
+  static obtenerNuevaFechaDelTurno(
+    fechaHoraVieja,
+    disponibilidadAnterior,
+    disponibilidadModificada
+  ) {
+    const nuevaFechaHora = new Date(fechaHoraVieja)
+    const diaAnt = DiasSemana[disponibilidadAnterior.getDiaSemana()]
+    const diaMod = DiasSemana[disponibilidadModificada.getDiaSemana()]
+    const diffDias = diaMod - diaAnt
+    // moverse de fecha en la semana
+    nuevaFechaHora.setDate(nuevaFechaHora.getDate() + diffDias)
 
-        const nuevaFechaHora = new Date(fechaHoraVieja); 
-        const diaAnt = DiasSemana[disponibilidadAnterior.getDiaSemana()];
-        const diaMod = DiasSemana[disponibilidadModificada.getDiaSemana()];
-        const diffDias = diaMod - diaAnt;   
-        // moverse de fecha en la semana
-        nuevaFechaHora.setDate(nuevaFechaHora.getDate() + diffDias);
-
-        return nuevaFechaHora;
+    return nuevaFechaHora
   }
-
-
-
-  
 }

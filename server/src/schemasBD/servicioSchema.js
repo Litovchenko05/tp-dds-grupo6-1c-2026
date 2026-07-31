@@ -6,18 +6,14 @@ export const ServicioSchema = new mongoose.Schema(
     nombre: {
       type: String,
       required: true,
-      trim: true,
     },
     tipo: {
       type: String,
+      enum: ['especialidad, practica'],
       required: true,
-      trim: true,
     },
   },
-  {
-    timestamps: true,
-    collection: 'servicios',
-  }
+  { collection: 'servicios' }
 )
 
 ServicioSchema.loadClass(Servicio)

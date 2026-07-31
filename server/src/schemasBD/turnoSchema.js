@@ -5,7 +5,6 @@ import { PacienteSchema } from './pacienteSchema.js'
 import { SedeSchema } from './sedeSchema.js'
 import { CambioEstadoTurnoSchema } from './cambioEstadoTurnoSchema.js'
 
-
 export const TurnoSchema = new mongoose.Schema(
   {
     medico: {
@@ -19,6 +18,16 @@ export const TurnoSchema = new mongoose.Schema(
       required: false,
       default: null,
     },
+    practica: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Practica',
+      default: null,
+    },
+    especialidad: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Especialidad',
+      default: null,
+    },
     fechaHora: {
       type: Date,
       required: true,
@@ -26,18 +35,18 @@ export const TurnoSchema = new mongoose.Schema(
     sede: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Sede',
-      required: true
+      required: true,
     },
     servicio: {
       type: mongoose.Schema.Types.ObjectId,
       default: null,
       ref: 'Servicio',
-      required: true
+      required: true,
     },
     tipoDeServicio: {
       type: String,
       required: true,
-      enum: ['especialidad', 'practica']
+      enum: ['especialidad', 'practica'],
     },
     estado: {
       type: String,
@@ -52,19 +61,31 @@ export const TurnoSchema = new mongoose.Schema(
     },
     costo: {
       type: Number,
-      required: false,
+      required: true,
       default: null,
     },
-    duracion:{
+    duracion: {
       type: Number,
       required: true,
-    }
+    },
   },
   {
     timestamps: true,
     collection: 'turnos',
   }
 )
+
+TurnoSchema.pre('validate', function (next) {
+  const tienePractica = this.practica != null
+  const tieneEspecialidad = this.especialidad != null
+
+  if (tienePractica === tieneEspecialidad) {
+    next(new Error('El turno debe tener exactamente una referencia: practica o especialidad'))
+    return
+  }
+
+  next()
+})
 
 TurnoSchema.loadClass(Turno)
 

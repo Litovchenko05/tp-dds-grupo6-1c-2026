@@ -1,4 +1,3 @@
-import { NivelDeCobertura } from './NivelDeCobertura.js'
 export class CoberturaPractica {
   practica
   nivel

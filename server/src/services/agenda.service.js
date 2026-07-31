@@ -7,7 +7,15 @@ export class AgendaService {
   }
 
   //generar turnos mediante un proceso batch
-  async generarTurnosParaDisponibilidad(medicoId, disponibilidad, sedeId, servicioId, tipoDeServicio, duracion, costo) {
+  async generarTurnosParaDisponibilidad(
+    medicoId,
+    disponibilidad,
+    sedeId,
+    servicioId,
+    tipoDeServicio,
+    duracion,
+    costo
+  ) {
     const todosLosTurnosGenerados = Agenda.generarTurnos(
       medicoId,
       disponibilidad,
@@ -16,9 +24,9 @@ export class AgendaService {
       tipoDeServicio,
       duracion,
       costo
-    ); //acá me llegan todos los turnos con estado DISPONIBLE, para una disponibilidad del médico
+    ) //acá me llegan todos los turnos con estado DISPONIBLE, para una disponibilidad del médico
 
-    const TAMANIO_BATCH = 10; // Defino que el tamaño del lote a procesar, va a ser de a 10 turnos por vez
+    const TAMANIO_BATCH = 10 // Defino que el tamaño del lote a procesar, va a ser de a 10 turnos por vez
 
     for (let i = 0; i < todosLosTurnosGenerados.length; i += TAMANIO_BATCH) {
       const batch = todosLosTurnosGenerados.slice(i, i + TAMANIO_BATCH)
@@ -39,18 +47,19 @@ export class AgendaService {
   ) {
     try {
       const fechaActual = new Date()
-    
+
       const turnosDelMedicoAModificar = await this.turnoRepository.findByFilters({
-        medico : medico._id,
+        medico: medico._id,
         fechaHora: { $gte: fechaActual },
         estado: 'disponible',
         $expr: {
-        $eq: [
-          { $dayOfWeek: "$fechaHora" },
-          disponibilidadAnterior.obtenerIndiceDelDiaDeSemana(disponibilidadAnterior.getDiaSemana()) + 1
-           
-        ]
-      }
+          $eq: [
+            { $dayOfWeek: '$fechaHora' },
+            disponibilidadAnterior.obtenerIndiceDelDiaDeSemana(
+              disponibilidadAnterior.getDiaSemana()
+            ) + 1,
+          ],
+        },
       })
       // console.log("Turnos encontrados:", turnosDelMedicoAModificar.length);
       // console.log("medico buscado:", medico._id);
@@ -62,10 +71,16 @@ export class AgendaService {
       //   )
       // );
 
-      if(duracion == undefined && sedeId == undefined &&  servicioId == undefined &&
-         tipoDeServicio == undefined && costo == undefined && disponibilidadAnterior.horaDesde == disponibilidadModificada.horaDesde 
-         && disponibilidadAnterior.horaHasta == disponibilidadModificada.horaHasta && disponibilidadModificada.diaSemana != disponibilidadAnterior.diaSemana){
-        
+      if (
+        duracion == undefined &&
+        sedeId == undefined &&
+        servicioId == undefined &&
+        tipoDeServicio == undefined &&
+        costo == undefined &&
+        disponibilidadAnterior.horaDesde == disponibilidadModificada.horaDesde &&
+        disponibilidadAnterior.horaHasta == disponibilidadModificada.horaHasta &&
+        disponibilidadModificada.diaSemana != disponibilidadAnterior.diaSemana
+      ) {
         for (const turno of turnosDelMedicoAModificar) {
           const nuevaFechaHora = Agenda.obtenerNuevaFechaDelTurno(
             turno.fechaHora,
@@ -75,47 +90,44 @@ export class AgendaService {
 
           turno.fechaHora = nuevaFechaHora
 
-          await this.turnoRepository.save(turno);
+          await this.turnoRepository.save(turno)
         }
-      }else{
-         
-       if(turnosDelMedicoAModificar.length != 0){
-         if(sedeId == undefined){
-          sedeId =  turnosDelMedicoAModificar[0].sede._id;
-        }
-        if(servicioId == undefined){
-          servicioId =  turnosDelMedicoAModificar[0].servicio._id;
-        }
-        if(tipoDeServicio == undefined){
-          tipoDeServicio =  turnosDelMedicoAModificar[0].tipoDeServicio;
-        }
-        if(duracion == undefined){
-          duracion =  turnosDelMedicoAModificar[0].duracion
-        }
-        if(costo == undefined){
-          costo =  turnosDelMedicoAModificar[0].costo
-        }
+      } else {
+        if (turnosDelMedicoAModificar.length != 0) {
+          if (sedeId == undefined) {
+            sedeId = turnosDelMedicoAModificar[0].sede._id
+          }
+          if (servicioId == undefined) {
+            servicioId = turnosDelMedicoAModificar[0].servicio._id
+          }
+          if (tipoDeServicio == undefined) {
+            tipoDeServicio = turnosDelMedicoAModificar[0].tipoDeServicio
+          }
+          if (duracion == undefined) {
+            duracion = turnosDelMedicoAModificar[0].duracion
+          }
+          if (costo == undefined) {
+            costo = turnosDelMedicoAModificar[0].costo
+          }
 
-        for (const turno of turnosDelMedicoAModificar) {
-           await this.turnoRepository.delete(turno._id);
-        }
+          for (const turno of turnosDelMedicoAModificar) {
+            await this.turnoRepository.delete(turno._id)
+          }
 
-        await this.generarTurnosParaDisponibilidad(
-          medico._id,
-          disponibilidadModificada,
-          sedeId,
-          servicioId,
-          tipoDeServicio,
-          duracion,
-          costo
-        )
-       }
-       
+          await this.generarTurnosParaDisponibilidad(
+            medico._id,
+            disponibilidadModificada,
+            sedeId,
+            servicioId,
+            tipoDeServicio,
+            duracion,
+            costo
+          )
+        }
       }
-
     } catch (error) {
       // console.error(error);
-      throw error;
+      throw error
     }
   }
 

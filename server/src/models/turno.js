@@ -6,7 +6,8 @@ export class Turno {
   paciente
   fechaHora
   sede
-  servicio
+  practica
+  especialidad
   estado
   historialEstados
   costo
@@ -18,7 +19,8 @@ export class Turno {
     this.paciente = null // Inicialmente sin paciente asignado
     this.fechaHora = fechaHora //date
     this.sede = sede
-    this.servicio = servicio //practica o especialidad asociado al turno
+    this.practica = servicio.practica ?? null
+    this.especialidad = servicio.especialidad ?? null
     this.estado = EstadoTurno.DISPONIBLE // Estado inicial
     this.historialEstados = []
     this.costo = costo
@@ -58,52 +60,8 @@ export class Turno {
     return null
   }
 
-  getId() {
-    return this.id
-  }
-
-  getMedico() {
-    return this.medico
-  }
-
-  getPaciente() {
-    return this.paciente
-  }
-
-  getFechaHora() {
-    return this.fechaHora
-  }
-
-  getSede() {
-    return this.sede
-  }
-
-  getServicio() {
-    return this.servicio
-  }
-
-  getEstado() {
-    return this.estado
-  }
-
-  getHistorialEstados() {
-    return this.historialEstados
-  }
-
-  getCosto() {
-    return this.costo
-  }
-
-  getFechaTurno() {
-    return this.fechaHora
-  }
-
   getUltimoCambioEstado() {
     return this.historialEstados.at(-1)
-  }
-
-  getEstadoActual() {
-    return this.estado
   }
 
   reservar(paciente) {
@@ -128,6 +86,29 @@ export class Turno {
   }
 
   getNombreServicio() {
-    return this.practica.nombre
+    return this.practica?.nombre ?? this.especialidad?.nombre ?? ''
+  }
+
+  costoFinal() {
+    const plan = this.paciente.plan
+    const cobertura = this.obtenerNivelCobertura(this, plan)
+
+    if (cobertura == null) {
+      return this.costo
+    }
+
+    return this.costo - (this.costo * cobertura) / 100
+  }
+
+  obtenerNivelCobertura(turno, plan) {
+    if (this.practica) {
+      return plan.obtenerCoberturaPractica(this.practica)
+    }
+
+    if (this.especialidad) {
+      return plan.obtenerCoberturaEspecialidad(this.especialidad)
+    }
+
+    return null
   }
 }
