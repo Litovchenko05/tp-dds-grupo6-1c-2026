@@ -16,8 +16,7 @@ export default function TurnsGrid({ filtros }) {
   const [sortBy, setSortBy] = useState('fecha')
   const [order, setOrder] = useState('asc')
 
-  const { usuario } = useUsuario()
-  const { cargandoUsuario } = useUsuario()
+  const { usuario, cargandoUsuario } = useUsuario()
 
   const cargarTurnos = async (page = 1) => {
     setCargando(true)

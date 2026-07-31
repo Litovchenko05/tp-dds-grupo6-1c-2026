@@ -5,6 +5,7 @@
   flex-direction: column;
   height: 100%;
   background-color: var(--color-white);
+  margin-top: 20px;
 }
 
 .drawer-header {

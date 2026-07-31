@@ -1,6 +1,18 @@
 .servicios-container {
   width: 100%;
 }
+.servicios-filtros {
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1100px;
+  margin: 30px auto;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
 
 .tabla-container {
   background: var(--color-white);
