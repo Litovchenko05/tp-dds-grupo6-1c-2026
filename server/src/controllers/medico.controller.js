@@ -64,15 +64,13 @@ export class MedicoController {
 
   createDisponibilidad = async (req, res) => {
     try {
+      const { medicoId } = req.params
       const body = req.body
       const resultado = nuevaDisponibilidadSchema.safeParse(body)
 
       if (!resultado.success) {
         return res.status(400).json({ status: 'error', message: resultado.error.errors })
       }
-
-      const medicoId = req.params.id
-
       const medico = await this.medicoService.agregarDisponibilidad(medicoId, resultado.data)
 
       return res.status(201).json({ status: 'success', data: medico })
@@ -307,7 +305,6 @@ export class MedicoController {
     try {
       const { medicoId } = req.params
       const body = req.body
-
       const resultado = agregarServicioSchema.safeParse(body)
 
       if (!resultado.success) {

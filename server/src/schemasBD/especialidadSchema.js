@@ -17,6 +17,12 @@ export const EspecialidadSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    sede: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Sede',
+      required: true,
+      trim: true,
+    },
   },
   {
     timestamps: true,

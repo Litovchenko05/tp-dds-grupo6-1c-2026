@@ -75,18 +75,6 @@ export const TurnoSchema = new mongoose.Schema(
   }
 )
 
-TurnoSchema.pre('validate', function (next) {
-  const tienePractica = this.practica != null
-  const tieneEspecialidad = this.especialidad != null
-
-  if (tienePractica === tieneEspecialidad) {
-    next(new Error('El turno debe tener exactamente una referencia: practica o especialidad'))
-    return
-  }
-
-  next()
-})
-
 TurnoSchema.loadClass(Turno)
 
 export const TurnoModel = mongoose.model('Turno', TurnoSchema)

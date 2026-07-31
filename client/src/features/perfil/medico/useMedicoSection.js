@@ -86,15 +86,21 @@ export function useMedicoSection(idMedico) {
 
       const idCreado = servicioCreado?._id || servicioObjeto._id
 
+      const diaSemanaFormateado = diaSemana
+        .toUpperCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+
       const tipoDisponibilidadEnum = tipoSeleccionado
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
 
       const nuevaDisponibilidadData = {
-        diaSemana,
+        diaSemana: diaSemanaFormateado,
         horaDesde,
         horaHasta,
         duracion: duracionMinutos,
+        costo: Number(precioInput),
         sedeId: sedeObjeto._id,
         servicioId: idCreado,
         tipoDeServicio: tipoDisponibilidadEnum,

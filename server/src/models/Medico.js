@@ -1,5 +1,3 @@
-import { Sede } from './sede.js'
-import { DisponibilidadHoraria } from './disponibilidadHoraria.js'
 import { Especialidad } from './Especialidad.js'
 import { Practica } from './Practica.js'
 
@@ -154,12 +152,12 @@ export class Medico {
    this.especialidades[index].duracionTurnoEnMins = nuevoServicio.duracionTurnoEnMins;
    this.especialidades[index].costoConsulta = nuevoServicio.costoConsulta;
  }}*/
-  darDeAltaServicio(servicio) {
-    if ('codigo' in servicio) {
-      this.practicas = this.darDeAlta(servicio, this.practicas)
-    } else {
-      this.especialidades = this.darDeAlta(servicio, this.especialidades)
-    }
+  darDeAltaPractica(practica) {
+    this.practicas = this.darDeAlta(practica, this.practicas)
+  }
+
+  darDeAltaEspecialidad(especialidad) {
+    this.especialidades = this.darDeAlta(especialidad, this.especialidades)
   }
 
   darDeBajaServicio(servicio) {
@@ -200,15 +198,14 @@ export class Medico {
     })
   }
 
-  darDeAlta(servicio, listaServicio) {
-    if (this.servicioExiste(servicio, listaServicio)) {
-      throw new Error('Servicio ya está dado de alta')
-    } else if (!listaServicio) {
-      listaServicio = []
-      return listaServicio.push(servicio)
-    } else {
-      listaServicio.push(servicio)
-      return listaServicio
+  darDeAlta(servicio, listaServicio = []) {
+    const lista = Array.isArray(listaServicio) ? listaServicio : []
+
+    if (this.servicioExiste(servicio, lista)) {
+      throw new Error('El servicio ya está dado de alta')
     }
+
+    lista.push(servicio)
+    return lista
   }
 }

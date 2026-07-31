@@ -3,7 +3,7 @@ import { Practica } from '../models/Practica.js'
 
 export const PracticaSchema = new mongoose.Schema(
   {
-    nombre: {
+    servicio: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Servicio',
       required: true,
@@ -15,6 +15,12 @@ export const PracticaSchema = new mongoose.Schema(
     costo: {
       type: Number,
       required: true,
+    },
+    sede: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Sede',
+      required: true,
+      trim: true,
     },
   },
   { timestamps: true, collection: 'practicas' }

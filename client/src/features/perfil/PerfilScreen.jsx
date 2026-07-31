@@ -64,8 +64,8 @@ export default function PerfilScreen() {
 
       <Divider className="my-xl" />
 
-      {usuario.rol === 'medico' && <MedicoSection idMedico={usuario._id} />}
-      {usuario.rol === 'paciente' && <PacienteSection idPaciente={usuario._id} />}
+      {usuario.rol === 'medico' && <MedicoSection idMedico={usuario.medicoId} />}
+      {usuario.rol === 'paciente' && <PacienteSection idPaciente={usuario.pacienteId} />}
     </Box>
   )
 }

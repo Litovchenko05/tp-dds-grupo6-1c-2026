@@ -75,7 +75,7 @@ router.route('/:id/turnos/:idTurno/cambios').post((req, res) =>
 )
 
 router
-  .route('/:id/disponibilidades')
+  .route('/:medicoId/disponibilidades')
   .get((req, res) =>
     // #swagger.tags = ['Médicos', 'Disponibilidad']
     // #swagger.summary = 'Obtener disponibilidades del médico'
@@ -101,7 +101,7 @@ router.route('/:id/disponibilidades/:idDisponibilidad').patch((req, res) =>
 )
 
 router
-  .route('/:id/servicios')
+  .route('/:medicoId/servicios')
   .get((req, res) =>
     // #swagger.tags = ['Médicos', 'Servicios']
     // #swagger.summary = 'Obtener servicios del médico'
