@@ -1,3 +1,4 @@
+import './MedicoAgenda.css'
 import { useMemo, useState } from 'react'
 import Collapse from '@mui/material/Collapse'
 import Button from '@mui/material/Button'
@@ -9,7 +10,6 @@ import AgendaFiltros from './components/AgendaFiltros'
 import AgendaTurnoCard from './components/AgendaTurnoCard'
 import AgendaTurnosTable from './components/AgendaTurnosTable'
 import turnosAgendaMock from './mock/turnosAgendaMock'
-import './MedicoAgenda.css'
 
 const MedicoAgenda = () => {
   const filtrosIniciales = {
