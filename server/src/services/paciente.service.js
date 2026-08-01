@@ -58,12 +58,12 @@ export class PacienteService {
     }
 
     if (turno.estado == EstadoTurno.DISPONIBLE) {
-      turno.paciente = paciente
+      turno.paciente = paciente._id
       // turno.estado = EstadoTurno.RESERVADO
       turno.actualizarEstado(EstadoTurno.RESERVADO, usuarioId, 'Reservación de turno')
       await this.turnoRepository.save(turno)
 
-      paciente.turnos.push(turno)
+      paciente.turnos.push(turno._id)
       await this.pacienteRepository.save(paciente)
 
       return turno

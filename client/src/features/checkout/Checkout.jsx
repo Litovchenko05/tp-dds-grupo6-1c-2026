@@ -44,6 +44,7 @@ const Checkout = () => {
 
   const handleGuardar = async (e) => {
     e.preventDefault()
+
     try {
       for (const turno of carrito) {
         await crearReserva(usuario._id, turno.data._id)

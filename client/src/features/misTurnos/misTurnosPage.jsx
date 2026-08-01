@@ -5,6 +5,7 @@ import { getMisTurns, cancelarTurno } from '../../service/turnsService'
 import { useUsuario } from '../../context/UsuarioContext.jsx'
 import './misTurnosPage.css'
 import ModalCancelarTurno from '../../components/modal/ModalDeCancelar.jsx'
+import ModalTiempoExcedido from '../../components/modal/ModalTiempoExcedido.jsx'
 
 const MisTurnosPage = () => {
   const [turnos, setTurnos] = useState([])
@@ -13,6 +14,12 @@ const MisTurnosPage = () => {
   const { cargandoUsuario } = useUsuario()
   const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false)
   const [turnoSeleccionado, setTurnoSeleccionado] = useState(null)
+
+  const [mostrarModalTiempoExcedido, setMostrarModalTiempoExcedido] = useState(false)
+
+  const cerrarModalTiempoExcedido = () => {
+    setMostrarModalTiempoExcedido(false)
+  }
 
   const cargarTurnos = async () => {
     // setCargando(true)
@@ -127,11 +134,18 @@ const MisTurnosPage = () => {
 
               cargarTurnos()
             } catch (error) {
-              console.error(error)
+              if (error.response?.status === 400) {
+                cerrarModalCancelar()
+                setMostrarModalTiempoExcedido(true)
+              } else {
+                console.error(error)
+              }
             }
           }}
         />
       )}
+
+      {mostrarModalTiempoExcedido && <ModalTiempoExcedido onCerrar={cerrarModalTiempoExcedido} />}
     </Box>
   )
 }
