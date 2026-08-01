@@ -1,100 +1,137 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import '../../styles/sharedTables.css'
-
-import ActionMenu from '../../components/common/ActionMenu'
+import './BusquedaServiciosPage.css'
 import { Link } from 'react-router-dom'
+import { FaSearch, FaStethoscope, FaMicroscope } from 'react-icons/fa'
+import Button from '@mui/material/Button'
+import { getEspecialidades, getPracticas } from '../../service/serviciosService.js'
+import { getTodosLosServicios } from '../../service/serviciosService.js'
+import Paginacion from '../../components/paginacion/Paginacion.jsx'
 
 const BusquedaServiciosPage = () => {
   const [menuAbierto, setMenuAbierto] = useState(null)
+
   const [especialidadSeleccionada, setEspecialidadSeleccionada] = useState('')
   const [practicaSeleccionada, setPracticaSeleccionada] = useState('')
-  const [paginaActual, setpaginaActual] = useState(1)
-  const elementosPorPagina = 3
+
+  const [especialidades, setEspecialidades] = useState([])
+  const [practicas, setPracticas] = useState([])
+
+  const [servicios, setServicios] = useState([])
+  const [paginaActual, setPaginaActual] = useState(1)
+  const [totalPaginas, setTotalPaginas] = useState(1)
+
+  const menuRef = useRef(null)
 
   const abrirMenu = (id) => {
     setMenuAbierto(menuAbierto === id ? null : id)
   }
 
-  const menuRef = useRef(null)
-
   useEffect(() => {
     function cerrarMenu(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setMenuAbierto(false)
+      if (!event.target.closest('.acciones-menu') && !event.target.closest('.menu-button')) {
+        setMenuAbierto(null)
       }
     }
 
     document.addEventListener('mousedown', cerrarMenu)
-
-    return () => {
-      document.removeEventListener('mousedown', cerrarMenu)
-    }
+    return () => document.removeEventListener('mousedown', cerrarMenu)
   }, [])
 
-  const serviciosFiltrados = serviciosMock.filter((servicio) => {
-    const coincideEspecialidad =
-      especialidadSeleccionada === '' ||
-      (servicio.tipo === 'Especialidad' && servicio.servicio === especialidadSeleccionada)
+  useEffect(() => {
+    const cargarDatos = async () => {
+      const [especialidades, practicas] = await Promise.all([getEspecialidades(), getPracticas()])
 
-    const coincidePractica =
-      practicaSeleccionada === '' ||
-      (servicio.tipo === 'Práctica' && servicio.servicio === practicaSeleccionada)
+      setEspecialidades(especialidades.data)
+      setPracticas(practicas.data)
+    }
 
-    return coincideEspecialidad && coincidePractica
-  })
+    cargarDatos()
+  }, [])
 
-  const indiceUltimo = paginaActual * elementosPorPagina
-  const indicePrimero = indiceUltimo - elementosPorPagina
+  const cargarServicios = async (page = 1) => {
+    try {
+      const respuesta = await getTodosLosServicios(
+        page,
+        especialidadSeleccionada,
+        practicaSeleccionada
+      )
+      const { turnos, totalPages } = respuesta.data
 
-  const serviciosPagina = serviciosFiltrados.slice(indicePrimero, indiceUltimo)
+      setServicios(turnos)
+      setPaginaActual(page)
+      setTotalPaginas(totalPages)
+    } catch (error) {
+      console.error('Error cargando servicios:', error)
+    }
+  }
 
-  const cantidadPaginas = Math.ceil(serviciosFiltrados.length / elementosPorPagina)
+  useEffect(() => {
+    cargarServicios(1)
+  }, [])
+
+  const textoEstado = {
+    especialidad: 'Especialidad',
+    practica: 'Practica',
+  }
 
   return (
     <Box className="app-view-container">
-      <Typography variant="h4" className="page-title">
-        Búsqueda de servicios
-      </Typography>
+      <div className="servicios-filtros">
+        <Typography variant="h4" className="page-title">
+          Búsqueda de servicios
+        </Typography>
 
-      <div className="filtros-container">
-        <label className="filtro-label">Filtrar por especialidad</label>
-        <div className="input-wrapper">
-          <select
-            className="filtro-select"
-            value={especialidadSeleccionada}
-            onChange={(e) => {
-              setEspecialidadSeleccionada(e.target.value)
-              setpaginaActual(1)
-            }}
-          >
-            <option value="">Todas</option>
+        <div className="filtros-container">
+          <label className="filtro-label">Filtrar por especialidad</label>
 
-            {especialidades.map((esp) => (
-              <option key={esp}>{esp}</option>
-            ))}
-          </select>
+          <div className="input-wrapper">
+            <FaStethoscope className="search-icon" />
+            <select
+              className="filtro-select"
+              value={especialidadSeleccionada}
+              onChange={(e) => setEspecialidadSeleccionada(e.target.value)}
+            >
+              <option value="todas">Todas</option>
+              <option value="ninguna">Ninguna</option>
+              {especialidades.map((especialidad) => (
+                <option key={especialidad._id} value={especialidad._id}>
+                  {especialidad.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <label className="filtro-label">Filtrar por práctica</label>
+          <div className="input-wrapper">
+            <FaMicroscope className="search-icon" />
+            <select
+              className="filtro-select"
+              value={practicaSeleccionada}
+              onChange={(e) => setPracticaSeleccionada(e.target.value)}
+            >
+              <option value="todas">Todas</option>
+              <option value="ninguna">Ninguna</option>
+              {practicas.map((practica) => (
+                <option key={practica._id} value={practica._id}>
+                  {practica.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-
-        <label className="filtro-label">Filtrar por práctica</label>
-        <div className="input-wrapper">
-          <select
-            className="filtro-select"
-            value={practicaSeleccionada}
-            onChange={(e) => {
-              setPracticaSeleccionada(e.target.value)
-              setpaginaActual(1)
-            }}
+        <div class="div-search-button">
+          <Button
+            variant="contained"
+            id="search-button"
+            startIcon={<FaSearch id="iconoBotonSearch" />}
+            onClick={() => cargarServicios(1)}
           >
-            <option value="">Todas</option>
-            {practicas.map((prac) => (
-              <option key={prac}>{prac}</option>
-            ))}
-          </select>
+            <span className="text-buscador">Buscar</span>
+          </Button>
         </div>
       </div>
-
       <div className="servicios-container">
         <div className="tabla-container">
           <table className="servicios-table">
@@ -110,34 +147,42 @@ const BusquedaServiciosPage = () => {
             </thead>
 
             <tbody>
-              {serviciosPagina.map((servicio) => (
-                <tr key={servicio.id}>
-                  <td>{servicio.medico}</td>
+              {servicios.map((servicio) => (
+                <tr key={servicio._id}>
+                  <td>{servicio.medico?.nombre}</td>
 
-                  <td>{servicio.sede}</td>
+                  <td>{servicio.sede?.nombre}</td>
 
-                  <td>{servicio.servicio}</td>
+                  <td>{servicio.servicio?.nombre}</td>
 
                   <td>
-                    <span className="tipo-badge">{servicio.tipo}</span>
+                    <span className="tipo-badge">{textoEstado[servicio.servicio.tipo]}</span>
                   </td>
 
-                  <td className="precio">{servicio.costo}</td>
+                  <td className="">${servicio.costo ?? 'Sin costo'}</td>
 
                   <td className="acciones">
-                    <ActionMenu
-                      ariaLabel="Menu de acciones servicio"
-                      actions={[
-                        {
-                          label: (
-                            <Link to={`/turnos/${servicio.id}`} className="btn-reservar">
-                              Reservar
-                            </Link>
-                          ),
-                          onClick: () => {},
-                        },
-                      ]}
-                    />
+                    <div>
+                      <button className="menu-button" onClick={() => abrirMenu(servicio._id)}>
+                        ⋮
+                      </button>
+                      {menuAbierto === servicio._id && (
+                        <div className="acciones-menu">
+                          <Link
+                            to="/reserva-de-turnos"
+                            state={{
+                              nombreMedico: servicio.medico.nombre,
+                              idServicio: servicio.servicio._id,
+                              tipoServicio: servicio.servicio.tipo,
+                              idSede: servicio.sede._id,
+                            }}
+                            className="btn-reservar"
+                          >
+                            <button>Reservar</button>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -147,26 +192,11 @@ const BusquedaServiciosPage = () => {
       </div>
 
       <div className="paginacion">
-        <button disabled={paginaActual === 1} onClick={() => setpaginaActual(paginaActual - 1)}>
-          ‹
-        </button>
-
-        {Array.from({ length: cantidadPaginas }, (_, i) => i + 1).map((num) => (
-          <button
-            key={num}
-            className={paginaActual === num ? 'pagina-activa' : ''}
-            onClick={() => setpaginaActual(num)}
-          >
-            {num}
-          </button>
-        ))}
-
-        <button
-          disabled={paginaActual === cantidadPaginas}
-          onClick={() => setpaginaActual(paginaActual + 1)}
-        >
-          ›
-        </button>
+        <Paginacion
+          paginaActual={paginaActual}
+          totalDePaginas={totalPaginas}
+          cambioDePagina={(page) => cargarServicios(page)}
+        />
       </div>
     </Box>
   )
