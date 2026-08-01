@@ -60,7 +60,8 @@ export class MedicoService {
         const nuevaPractica = new Practica(
           data.data.servicioId,
           data.data.duracion,
-          data.data.costo
+          data.data.costo,
+          data.data.sede
         )
         const practicaGuardada = await this.practicaRepository.save(nuevaPractica)
         medico.darDeAltaPractica(practicaGuardada)
@@ -68,7 +69,8 @@ export class MedicoService {
         const nuevaEspecialidad = new Especialidad(
           data.data.servicioId,
           data.data.duracion,
-          data.data.costo
+          data.data.costo,
+          data.data.sede
         )
         const especialidadGuardada = await this.especialidadRepository.save(nuevaEspecialidad)
         medico.darDeAltaEspecialidad(especialidadGuardada)
@@ -87,7 +89,6 @@ export class MedicoService {
         throw new Error('Médico no encontrado')
       }
 
-      //le agrego la disponibilidad al doc del medico
       const nuevaDisponibilidad = new DisponibilidadHoraria(
         data.diaSemana,
         data.horaDesde,
@@ -97,7 +98,6 @@ export class MedicoService {
       await this.medicoRepository.save(medico)
 
       const nuevaDisponibilidadObj = medico.disponibilidades[medico.disponibilidades.length - 1]
-      // const objSede = await this.sedeRepository.findById(disponibilidad.sedeId)
       const tipoDeServicio = data.tipoDeServicio
       const tipoDeServicioNormalizado = tipoDeServicio
         .normalize('NFD')
@@ -223,7 +223,6 @@ export class MedicoService {
         const practicaAnterior = medico.practicas.find((n) => n.nombre == servicioNombre)
 
         const servicioNuevo = new Practica(
-          nuevoServicio.codigo, // TODO: Sacar codigo
           nuevoServicio.nombre,
           nuevoServicio.duracionTurnoEnMins,
           nuevoServicio.costo
@@ -298,9 +297,43 @@ export class MedicoService {
 
   async obtenerServicios(medicoId) {
     try {
-      const medico = this.medicoRepository.findById(medicoId)
-      const todosLosServicios = [...(medico.especialidades || []), ...(medico.practicas || [])]
-      return todosLosServicios
+      const medico = await this.medicoRepository.findWithDetallesById(medicoId)
+
+      if (!medico) {
+        throw new Error('Médico no encontrado')
+      }
+
+      const especialidades = medico.especialidades || []
+      const practicas = medico.practicas || []
+      const disponibilidades = medico.disponibilidades || []
+
+      console.log(disponibilidades)
+
+      const combinados = [
+        ...especialidades.map((e) => ({ item: e, tipo: 'Especialidad' })),
+        ...practicas.map((p) => ({ item: p, tipo: 'Practica' })),
+      ]
+
+      const respuestaEnriquecida = combinados.map(({ item, tipo }) => {
+        const disp = disponibilidades.find(
+          (d) =>
+            d.servicioId?.toString() === item._id?.toString() ||
+            d.servicioId?.toString() === item.servicio?._id?.toString()
+        )
+        return {
+          _id: item._id,
+          nombre: item.servicio?.nombre || 'Servicio Sin Nombre',
+          tipo: tipo,
+          sede: item.sede?.nombre || 'Sede sin asignar',
+          duracion: `${item.duracionTurnoEnMins || item.duracionEnMins || 30} min`,
+          precio: item.costoConsulta || item.costo || 0,
+          diaSemana: disp?.diaSemana || null,
+          horaDesde: disp?.horaDesde || null,
+          horaHasta: disp?.horaHasta || null,
+        }
+      })
+
+      return respuestaEnriquecida
     } catch (error) {
       throw error
     }

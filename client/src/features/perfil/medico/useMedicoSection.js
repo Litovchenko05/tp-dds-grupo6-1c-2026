@@ -80,6 +80,7 @@ export function useMedicoSection(idMedico) {
         tipo: tipoNormalizado,
         costo: Number(precioInput),
         duracion: duracionMinutos,
+        sede: sedeObjeto._id,
       }
 
       const servicioCreado = await medicoService.agregarServicio(idMedico, nuevoServicioData)
@@ -111,9 +112,14 @@ export function useMedicoSection(idMedico) {
       const servicioParaVista = {
         _id: idCreado,
         nombre: servicioObjeto.nombre,
+        tipo: tipoSeleccionado,
         sede: sedeObjeto.nombre,
         duracion: `${duracionMinutos} min`,
         precio: Number(precioInput),
+        costo: Number(precioInput),
+        diaSemana: diaSemana,
+        horaDesde,
+        horaHasta,
       }
 
       setServicios((prev) => [...prev, servicioParaVista])

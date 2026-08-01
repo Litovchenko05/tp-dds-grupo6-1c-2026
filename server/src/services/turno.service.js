@@ -1,9 +1,10 @@
+import { formatearFechaHora } from '../config/utils.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 
 export class TurnoService {
   constructor({ turnoRepository, notificacionService }) {
     this.turnoRepository = turnoRepository
-    this.servicioNotificacion = notificacionService
+    this.notificacionService = notificacionService
   }
 
   async obtenerTurnosReservados(id) {
@@ -64,12 +65,6 @@ export class TurnoService {
       throw new Error('El turno ya está cancelado')
     }
 
-    // const cancelador = turno.quienModifica(id_usuario)
-
-    // if (!cancelador) {
-    //   throw new Error('No tiene permiso para cancelar este turno.')
-    // }
-
     const unaHoraEnMs = 60 * 60 * 1000
     const tiempoRestante = new Date(turno.fechaHora).getTime() - Date.now()
 
@@ -82,11 +77,13 @@ export class TurnoService {
     await this.turnoRepository.save(turno)
     await this.turnoRepository.actualizarHistoral(turno, id_usuario)
 
-    // this.servicioNotificacion.generarNotificacion(
-    //   turno.getContraparte(id_usuario),
-    //   id_usuario,
-    //   'El turno : ' + turno._id + 'ha sido cancelado. Motivo: ' + motivo
-    // )
+    const { fecha, hora } = formatearFechaHora(turno.fechaHora)
+
+    await this.notificacionService.crearNotificacion({
+      destinatarioId: turno.medico.usuario,
+      mensaje: `Ha sido cancelado su turno para la ${turno.tipoDeServicio}: ${turno.servicio.nombre} del día ${fecha} a las ${hora} hs`,
+    })
+
     return turno
   }
 

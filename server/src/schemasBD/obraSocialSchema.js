@@ -1,6 +1,5 @@
 import { ObraSocial } from '../models/ObraSocial.js'
-import { PlanSchema } from './planSchema.js'
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 export const ObraSchema = new mongoose.Schema(
   {
@@ -12,13 +11,12 @@ export const ObraSchema = new mongoose.Schema(
     planes: {
       type: [
         {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Plan',
-        required:true,
-        }
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Plan',
+          required: true,
+        },
       ],
       default: [],
-     
     },
   },
   {

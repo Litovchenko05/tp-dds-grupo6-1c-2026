@@ -50,14 +50,10 @@ export class TurnoController {
   }
 
   cancelarTurno = async (req, res) => {
-    console.log('llegue al controller')
     try {
       const { idTurno } = req.params
 
       const { motivo, idUsuario } = req.body
-      console.log('idTurno:', idTurno)
-      console.log('idUsuario:', idUsuario)
-      console.log('motivo:', motivo)
       const resultado = await this.turnoService.cancelar(idTurno, idUsuario, motivo)
 
       return res.status(200).json({

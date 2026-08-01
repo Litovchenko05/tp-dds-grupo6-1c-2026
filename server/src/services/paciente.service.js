@@ -1,13 +1,20 @@
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
-import mongoose from 'mongoose'
 import { Types } from 'mongoose'
+import { formatearFechaHora } from '../config/utils.js'
 
 export class PacienteService {
-  constructor({ pacienteRepository, turnoRepository, medicoRepository, turnoService }) {
+  constructor({
+    pacienteRepository,
+    turnoRepository,
+    medicoRepository,
+    turnoService,
+    notificacionService,
+  }) {
     this.pacienteRepository = pacienteRepository
     this.turnoRepository = turnoRepository
     this.medicoRepository = medicoRepository
     this.turnoService = turnoService
+    this.notificacionService = notificacionService
   }
 
   async createPaciente(pacienteData) {
@@ -59,12 +66,16 @@ export class PacienteService {
 
     if (turno.estado == EstadoTurno.DISPONIBLE) {
       turno.paciente = paciente
-      // turno.estado = EstadoTurno.RESERVADO
       turno.actualizarEstado(EstadoTurno.RESERVADO, usuarioId, 'Reservación de turno')
       await this.turnoRepository.save(turno)
 
       paciente.turnos.push(turno)
       await this.pacienteRepository.save(paciente)
+      const { fecha, hora } = formatearFechaHora(turno.fechaHora)
+      await this.notificacionService.crearNotificacion({
+        destinatarioId: turno.medico.usuario,
+        mensaje: `El paciente ${paciente.nombre} ha reservado un turno para la ${turno.tipoDeServicio}: ${turno.servicio.nombre} el día ${fecha} a las ${hora} hs`,
+      })
 
       return turno
     } else {
@@ -104,5 +115,22 @@ export class PacienteService {
 
   async findAllPaginated(page, limit) {
     return await this.pacienteRepository.findAllPaginated(page, limit)
+  }
+
+  async obtenerCoberturaMedica(id) {
+    return await this.pacienteRepository.findByIdWithCobertura(id)
+  }
+
+  async definirCoberturaMedica(id, obraSocialId, planId) {
+    const paciente = await this.pacienteRepository.findById(id)
+
+    if (!paciente) {
+      throw new Error('Paciente no encontrado')
+    }
+
+    paciente.obraSocial = obraSocialId ? new Types.ObjectId(obraSocialId) : null
+    paciente.plan = planId ? new Types.ObjectId(planId) : null
+
+    return await this.pacienteRepository.save(paciente)
   }
 }

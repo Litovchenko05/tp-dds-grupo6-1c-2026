@@ -32,7 +32,6 @@ export class NotificacionService {
   async crearNotificacion(data) {
     const nuevaNotificacion = new Notificacion({
       destinatario: data.destinatarioId,
-      remitente: data.remitenteId,
       mensaje: data.mensaje,
     })
 
@@ -43,7 +42,6 @@ export class NotificacionService {
     const loteNotificaciones = listaData.map((data) => {
       return new Notificacion({
         destinatario: data.destinatarioId,
-        remitente: data.remitenteId,
         mensaje: data.mensaje,
       })
     })
@@ -59,6 +57,6 @@ export class NotificacionService {
       fechaHoraCreacion: new Date(),
       leida: false,
     }
-  this.notificacionRepository.crear(nuevaNotificacion)
+    this.notificacionRepository.crear(nuevaNotificacion)
   }
 }

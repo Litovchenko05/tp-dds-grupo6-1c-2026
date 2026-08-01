@@ -1,4 +1,5 @@
 import cron from 'node-cron'
+import { formatearFechaHora } from '../config/utils.js'
 
 export class RecordatorioTask {
   constructor({ turnoRepository, notificacionService }) {
@@ -15,16 +16,15 @@ export class RecordatorioTask {
         const loteData = []
 
         for (const turno of turnosDeManiana) {
+          const { _, hora } = formatearFechaHora(turno.fechaHora)
           loteData.push({
-            destinatarioId: turno.pacienteId,
-            remitenteId: 'SISTEMA_ID',
-            mensaje: `Recordatorio: Mañana tenés un turno con el Dr. ${turno.medico.nombre} a las ${turno.hora} hs.`,
+            destinatarioId: turno.paciente.usuario,
+            mensaje: `Recordatorio: Mañana tenés un turno con el Dr. ${turno.medico.nombre} a las ${hora} hs para la ${turno.tipoDeServicio}: ${turno.servicio.nombre} en ${turno.sede.nombre} - ${turno.sede.direccion}.`,
           })
 
           loteData.push({
-            destinatarioId: turno.medicoId,
-            remitenteId: 'SISTEMA_ID',
-            mensaje: `Recordatorio: Mañana tenés un turno agendado a las ${turno.hora} hs.`,
+            destinatarioId: turno.medico.usuario,
+            mensaje: `Recordatorio: Mañana tenés un turno agendado a las ${hora} hs en ${turno.sede.nombre}.`,
           })
         }
         if (loteData.length > 0) {

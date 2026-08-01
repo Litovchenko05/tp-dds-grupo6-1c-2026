@@ -51,4 +51,9 @@ router.route('/:id/historial').get((req, res) =>
   pacienteController.consultarHistorial(req, res)
 )
 
+router
+  .route('/:id/cobertura')
+  .get((req, res) => pacienteController.obtenerCoberturaMedica(req, res))
+  .post((req, res) => pacienteController.definirCoberturaMedica(req, res))
+
 export default router

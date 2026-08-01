@@ -20,8 +20,8 @@ export const pacienteService = {
     return response.data.data
   },
 
-  actualizarCobertura: async (idPaciente, coberturaData) => {
-    const response = await axios.put(
+  definirCobertura: async (idPaciente, coberturaData) => {
+    const response = await axios.post(
       `${API_URL}/pacientes/${idPaciente}/cobertura`,
       coberturaData,
       getAuthHeaders()
@@ -30,12 +30,7 @@ export const pacienteService = {
   },
 
   getObrasSociales: async () => {
-    const response = await axios.get(`${API_URL}/obraSocial`)
-    return response.data
-  },
-
-  getPlanes: async () => {
-    const response = await axios.get(`${API_URL}/plan`)
+    const response = await axios.get(`${API_URL}/obrasSociales`)
     return response.data
   },
 }

@@ -113,4 +113,44 @@ export class PacienteController {
       })
     }
   }
+
+  async obtenerCoberturaMedica(req, res) {
+    try {
+      const { id } = req.params
+      const resultado = await this.pacienteService.obtenerCoberturaMedica(id)
+      return res.status(200).json({
+        status: 'success',
+        data: resultado,
+      })
+    } catch (error) {
+      return res.status(400).json({
+        status: 'error',
+        message: error.message,
+      })
+    }
+  }
+
+  async definirCoberturaMedica(req, res) {
+    try {
+      const { id } = req.params
+      const { obraSocialId, planId } = req.body
+
+      const pacienteActualizado = await this.pacienteService.definirCoberturaMedica(
+        id,
+        obraSocialId,
+        planId
+      )
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'Cobertura médica actualizada correctamente',
+        data: pacienteActualizado,
+      })
+    } catch (error) {
+      return res.status(400).json({
+        status: 'error',
+        message: error.message,
+      })
+    }
+  }
 }

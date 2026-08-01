@@ -1,8 +1,5 @@
-import mongoose from 'mongoose'
 import { TurnoModel } from '../schemasBD/turnoSchema.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
-import { ServicioRepository } from '../repositories/servicios.repository.js'
-import { Cobertura } from '../models/Cobertura.js'
 import { NivelDeCobertura } from '../models/nivelDeCobertura.js'
 import { Types } from 'mongoose'
 export class TurnoRepository {
@@ -27,7 +24,7 @@ export class TurnoRepository {
 
   async findById(id) {
     return await this.TurnoModel.findById(id)
-      .populate('medico', 'nombre')
+      .populate('medico')
       .populate('servicio', 'nombre')
       .populate('sede', 'nombre')
   }
@@ -149,6 +146,10 @@ export class TurnoRepository {
       },
       estado: EstadoTurno.RESERVADO,
     })
+      .populate('medico', 'nombre usuario')
+      .populate('paciente', 'nombre usuario')
+      .populate('servicio', 'nombre')
+      .populate('sede')
   }
 
   async findAllFilteredPaginated({

@@ -12,10 +12,10 @@ export class Paciente {
     this.usuario = usuario
     this.dni = dni
     this.nombre = nombre
-    this.obraSocial = obraSocial // es necesario que los pacientes tengan obra social? puede atender a particulares?
-    this.plan = plan // cada obraSocial tiene un plan?
+    this.obraSocial = obraSocial
+    this.plan = plan
     this.turnos = []
-    this.historialDeTurnos = [] // historial de turnos del paciente
+    this.historialDeTurnos = []
   }
 
   getId() {

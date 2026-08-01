@@ -1,8 +1,5 @@
 import mongoose from 'mongoose'
 import { Turno } from '../models/turno.js'
-import { MedicoSchema } from './medicoSchema.js'
-import { PacienteSchema } from './pacienteSchema.js'
-import { SedeSchema } from './sedeSchema.js'
 import { CambioEstadoTurnoSchema } from './cambioEstadoTurnoSchema.js'
 
 export const TurnoSchema = new mongoose.Schema(
@@ -16,16 +13,6 @@ export const TurnoSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Paciente',
       required: false,
-      default: null,
-    },
-    practica: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Practica',
-      default: null,
-    },
-    especialidad: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Especialidad',
       default: null,
     },
     fechaHora: {

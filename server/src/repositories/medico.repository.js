@@ -68,4 +68,16 @@ export class MedicoRepository {
       totalPages: Math.ceil(total / limit),
     }
   }
+
+  async findWithDetallesById(id) {
+    return await this.MedicoModel.findById(id)
+      .populate({
+        path: 'especialidades',
+        populate: [{ path: 'servicio' }, { path: 'sede' }],
+      })
+      .populate({
+        path: 'practicas',
+        populate: [{ path: 'servicio' }, { path: 'sede' }],
+      })
+  }
 }

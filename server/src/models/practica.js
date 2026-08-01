@@ -3,11 +3,13 @@ export class Practica {
   servicio //es el nombre de la práctica
   duracionEnMins
   costo
+  sede
 
-  constructor(servicio, duracionEnMins, costo) {
+  constructor(servicio, duracionEnMins, costo, sede) {
     this.servicio = servicio
     this.duracionEnMins = duracionEnMins
     this.costo = costo
+    this.sede = sede
   }
   modificarPractica(id, servicio, duracionEnMins, costo) {
     this.id = id

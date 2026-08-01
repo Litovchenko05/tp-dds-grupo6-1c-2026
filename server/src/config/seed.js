@@ -1,5 +1,8 @@
 import { ServicioModel } from '../schemasBD/servicioSchema.js'
 import { SedeModel } from '../schemasBD/sedeSchema.js'
+import { ObraSocialModel } from '../schemasBD/obraSocialSchema.js'
+import { PlanModel } from '../schemasBD/planSchema.js'
+import { CoberturaModel } from '../schemasBD/coberturaSchema.js'
 
 const SERVICIOS_INICIALES = [
   { nombre: 'Cardiología', tipo: 'especialidad' },
@@ -22,19 +25,44 @@ const SEDES_INICIALES = [
   { nombre: 'Sede Villa Urquiza', direccion: 'Av. Triunvirato 4100' },
 ]
 
+const ESTRUCTURA_OBRAS_SOCIALES = [
+  {
+    obraSocial: 'OSDE',
+    planes: [
+      { nombre: '210', nivelGlobal: 'PARCIAL' },
+      { nombre: '310', nivelGlobal: 'TOTAL' },
+      { nombre: '410', nivelGlobal: 'TOTAL' },
+    ],
+  },
+  {
+    obraSocial: 'Swiss Medical',
+    planes: [
+      { nombre: 'SMG20', nivelGlobal: 'PARCIAL' },
+      { nombre: 'SMG30', nivelGlobal: 'TOTAL' },
+    ],
+  },
+  {
+    obraSocial: 'Galeno',
+    planes: [
+      { nombre: 'Plata 220', nivelGlobal: 'PARCIAL' },
+      { nombre: 'Oro 330', nivelGlobal: 'TOTAL' },
+    ],
+  },
+]
+
 export const cargarDatosIniciales = async () => {
   try {
-    console.log('🌱 Iniciando la carga de datos iniciales (Seeding)...')
+    console.log('🌱 Iniciando proceso de Seeding jerárquico...')
 
-    const operacionesServicios = SERVICIOS_INICIALES.map((servicio) => ({
+    const opsServicios = SERVICIOS_INICIALES.map((serv) => ({
       updateOne: {
-        filter: { nombre: servicio.nombre },
-        update: { $setOnInsert: servicio },
+        filter: { nombre: serv.nombre },
+        update: { $setOnInsert: serv },
         upsert: true,
       },
     }))
 
-    const operacionesSedes = SEDES_INICIALES.map((sede) => ({
+    const opsSedes = SEDES_INICIALES.map((sede) => ({
       updateOne: {
         filter: { nombre: sede.nombre },
         update: { $setOnInsert: sede },
@@ -42,10 +70,56 @@ export const cargarDatosIniciales = async () => {
       },
     }))
 
-    await ServicioModel.bulkWrite(operacionesServicios)
-    await SedeModel.bulkWrite(operacionesSedes)
-    console.log('✅ Catálogo de servicios y sedes sincronizado correctamente.')
+    await ServicioModel.bulkWrite(opsServicios)
+    await SedeModel.bulkWrite(opsSedes)
+
+    const serviciosGuardados = await ServicioModel.find()
+
+    for (const itemOS of ESTRUCTURA_OBRAS_SOCIALES) {
+      const planIdsAsociados = []
+
+      for (const infoPlan of itemOS.planes) {
+        const coberturaIdsAsociadas = []
+
+        for (const servicio of serviciosGuardados) {
+          const coberturaDoc = await CoberturaModel.findOneAndUpdate(
+            {
+              servicio: servicio._id,
+              'nivel.nivel': infoPlan.nivelGlobal,
+            },
+            {
+              $setOnInsert: {
+                servicio: servicio._id,
+                nivel: { nivel: infoPlan.nivelGlobal },
+              },
+            },
+            { upsert: true, returnDocument: 'after' }
+          )
+          coberturaIdsAsociadas.push(coberturaDoc._id)
+        }
+        const planDoc = await PlanModel.findOneAndUpdate(
+          { nombre: infoPlan.nombre },
+          {
+            $setOnInsert: {
+              nombre: infoPlan.nombre,
+              coberturasDeServicios: coberturaIdsAsociadas,
+            },
+          },
+          { upsert: true, returnDocument: 'after' }
+        )
+
+        planIdsAsociados.push(planDoc._id)
+      }
+      await ObraSocialModel.findOneAndUpdate(
+        { nombre: itemOS.obraSocial },
+        {
+          $setOnInsert: { nombre: itemOS.obraSocial },
+          $set: { planes: planIdsAsociados },
+        },
+        { upsert: true, returnDocument: 'after' }
+      )
+    }
   } catch (error) {
-    console.error('❌ Error al poblar la base de datos:', error.message)
+    console.error('❌ Error durante la ejecución del Seed:', error.message)
   }
 }

@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import { ObraSocialModel } from '../schemasBD/obraSocialSchema.js'
 
 export class ObraSocialRepository {
@@ -7,7 +6,7 @@ export class ObraSocialRepository {
   }
 
   async findAll() {
-    return await this.ObraSocialModel.find()
+    return await this.ObraSocialModel.find().populate('planes')
   }
 
   async findByFilters(filtros = {}) {

@@ -18,6 +18,7 @@ export const PlanSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    collection: 'planes',
   }
 )
 

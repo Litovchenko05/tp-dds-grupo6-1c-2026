@@ -6,8 +6,7 @@ export class Turno {
   paciente
   fechaHora
   sede
-  practica
-  especialidad
+  servicio
   estado
   historialEstados
   costo
@@ -19,8 +18,7 @@ export class Turno {
     this.paciente = null // Inicialmente sin paciente asignado
     this.fechaHora = fechaHora //date
     this.sede = sede
-    this.practica = servicio.practica ?? null
-    this.especialidad = servicio.especialidad ?? null
+    this.servicio = servicio //practica o especialidad asociado al turno
     this.estado = EstadoTurno.DISPONIBLE // Estado inicial
     this.historialEstados = []
     this.costo = costo

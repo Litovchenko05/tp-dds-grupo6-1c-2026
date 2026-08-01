@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { NotificacionModel } from '../schemasBD/notificacionSchema.js'
 
 export class NotificacionRepository {
@@ -7,10 +6,7 @@ export class NotificacionRepository {
   }
 
   #consultaBase() {
-    return this.NotificacionModel.find()
-      .sort({ fechaHoraCreacion: -1 }) // Orden descendente
-      .populate('destinatario')
-      .populate('remitente')
+    return this.NotificacionModel.find().sort({ fechaHoraCreacion: -1 }).populate('destinatario')
   }
 
   #filtroPorUsuario(idUsuario, consulta) {
@@ -39,9 +35,7 @@ export class NotificacionRepository {
       returnDocument: 'after',
       runValidators: true,
       upsert: true,
-    })
-      .populate('destinatario')
-      .populate('remitente')
+    }).populate('destinatario')
   }
 
   async obtenerTodos() {
@@ -49,9 +43,7 @@ export class NotificacionRepository {
   }
 
   async obtenerPorId(idNotificacion) {
-    return await this.NotificacionModel.findById(idNotificacion)
-      .populate('destinatario')
-      .populate('remitente')
+    return await this.NotificacionModel.findById(idNotificacion).populate('destinatario')
   }
 
   async marcarComoLeida(idNotificacion) {
@@ -65,9 +57,7 @@ export class NotificacionRepository {
         returnDocument: 'after',
         runValidators: true,
       }
-    )
-      .populate('destinatario')
-      .populate('remitente')
+    ).populate('destinatario')
   }
 
   async obtenerTodosDeUsuario(idUsuario) {
