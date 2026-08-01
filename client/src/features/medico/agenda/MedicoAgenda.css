@@ -1,11 +1,21 @@
 .medico-agenda {
-  margin: 64px auto 0;
-  padding: 24px;
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-xl);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-sm);
+  color: var(--color-ink);
+}
+
+.medico-agenda--filters-closed {
+  max-width: 80rem;
+}
+
+.medico-agenda--filters-closed .agenda-desktop,
+.medico-agenda--filters-closed .agenda-mobile {
   width: 100%;
-  max-width: 1240px;
 }
 
 .agenda-toggle-search {
@@ -17,8 +27,13 @@
 
 .agenda-search-panel {
   overflow: hidden;
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-xl);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
   transition:
-    max-height 0.35s ease,
+    max-height 0.55s ease,
     opacity 0.25s ease,
     margin-top 0.25s ease;
 }
@@ -36,37 +51,52 @@
   pointer-events: none;
 }
 
-.medico-agenda__top-panel {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)),
-    url('../../../../public/images/Medico/calendario1.webp');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border: 1px solid rgba(120, 120, 120, 0.24);
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: 0 10px 26px rgba(45, 45, 45, 0.22);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.medico-agenda__hero {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--spacing-xl);
+  background: var(--color-white);
+  box-shadow: 0 4px 15px rgba(15, 45, 153, 0.08);
+  margin-top: -10px;
 }
 
-.medico-agenda__hero {
-  border: 1px solid rgba(120, 120, 120, 0.24);
-  border-radius: 12px;
-  padding: 16px 18px;
-  background: rgba(255, 255, 255, 0.58);
-  box-shadow: 0 6px 16px rgba(45, 45, 45, 0.16);
-  text-align: center;
+.medico-agenda__hero-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-xl);
+}
+
+.medico-agenda__eyebrow {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .medico-agenda__hero h1 {
   margin: 0;
-  color: #1b1f3b;
+  color: var(--color-ink);
   font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.medico-agenda__guide {
+  max-width: 44rem;
+  margin: var(--spacing-sm) 0 0;
+  color: var(--color-muted);
+}
+
+.agenda-filter-toggle {
+  flex-shrink: 0;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
 }
 
 .agenda-filtros {
@@ -76,23 +106,33 @@
   align-items: start;
   border-radius: 12px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.62);
-  box-shadow: 0 8px 20px rgba(45, 45, 45, 0.18);
+}
+
+.agenda-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
 }
 
 .agenda-filtros input,
 .agenda-filtros select {
   width: 100%;
-  border: 1px solid #d9dbe8;
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 0.95rem;
+  min-height: 42px;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 0.75rem;
+  color: var(--color-ink);
+  background: var(--color-white);
+  font-size: 1rem;
   outline: none;
+  transition: all 0.2s ease;
 }
 
 .agenda-filtros input:focus,
 .agenda-filtros select:focus {
-  border-color: #4656d6;
+  border-color: var(--color-primary-medium);
+  box-shadow: 0 0 0 4px rgba(64, 78, 235, 0.2);
 }
 
 .agenda-filtro-fecha {
@@ -123,9 +163,10 @@
 .agenda-table-wrapper {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #edf0f7;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
 }
 
 .agenda-table {
@@ -136,26 +177,50 @@
 
 .agenda-table thead th {
   text-align: left;
-  font-size: 0.9rem;
-  color: #47506a;
-  background: #f7f8fc;
-  border-bottom: 1px solid #eceef6;
-  padding: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.agenda-desktop {
+  width: 100%;
+  padding: var(--spacing-xl) var(--spacing-xl);
 }
 
 .agenda-table tbody td {
-  border-bottom: 1px solid #f0f2f8;
-  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-md) var(--spacing-lg);
   font-size: 0.95rem;
-  color: #21263a;
+  color: var(--color-ink);
+}
+
+.agenda-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.agenda-table tbody tr:hover {
+  background: var(--color-primary-light);
 }
 
 .agenda-table tbody tr.estado-confirmado {
-  background: rgb(121, 29, 29);
+  background: var(--color-success-surface);
+}
+
+.agenda-table tbody tr.estado-realizado {
+  background: var(--color-primary-light);
+}
+
+.agenda-table tbody tr.estado-realizado td {
+  color: var(--color-ink);
 }
 
 .agenda-table tbody tr.estado-confirmado td {
-  color: #fff;
+  color: var(--color-ink);
 }
 
 .agenda-table tbody tr.estado-disponible {
@@ -176,11 +241,7 @@
 }
 
 .agenda-table tbody tr.estado-cancelado {
-  background: rgba(219, 58, 58, 0.14);
-}
-
-.agenda-table tbody tr {
-  box-shadow: 0 6px 14px rgba(18, 27, 53, 0.1);
+  background: var(--color-error-surface);
 }
 
 .agenda-actions {
@@ -262,35 +323,21 @@
 
 .agenda-tools {
   display: flex;
-  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-sm);
   flex-wrap: wrap;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
   border-radius: 12px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.62);
-  box-shadow: 0 8px 20px rgba(45, 45, 45, 0.18);
+  background: var(--color-surface);
 }
 
-.agenda-tools button {
-  border: 1px solid #d8dcef;
-  background: #fff;
-  color: #243054;
+.agenda-tools #search-button {
+  min-width: 280px;
   border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-.agenda-tools button:hover {
-  background: #f6f8ff;
-}
-
-.agenda-tools__buscar {
-  background: #2f6fec !important;
-  color: #fff !important;
-  border-color: #2f6fec !important;
-}
-
-.agenda-tools__buscar:hover {
-  background: #245ad0 !important;
+  padding: 10px;
+  font-weight: 700;
 }
 
 .agenda-feedback {
@@ -477,7 +524,15 @@
 
 @media (max-width: 900px) {
   .medico-agenda {
-    padding: 20px;
+    padding: var(--spacing-xl);
+  }
+
+  .medico-agenda__hero-heading {
+    flex-direction: column;
+  }
+
+  .agenda-filter-toggle {
+    width: 100%;
   }
 
   .medico-agenda__hero h1 {
@@ -615,8 +670,21 @@
 
 @media (max-width: 560px) {
   .medico-agenda {
-    margin-top: 64px;
-    padding: 16px;
+    margin-top: 0;
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+
+  .medico-agenda__hero {
+    padding: var(--spacing-xl);
+  }
+
+  .agenda-tools {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .agenda-tools .MuiButton-root {
+    width: 100%;
   }
 
   .medico-agenda__hero h1 {

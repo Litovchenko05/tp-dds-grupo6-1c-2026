@@ -22,6 +22,8 @@ const Navbar = () => {
   const { usuario, cerrarSesion } = useUsuario()
   const { noLeidas } = useNotificaciones()
   const [cantUnidades, setCantUnidades] = useState(0)
+  const esMedico = usuario?.rol === 'medico'
+  const rutaHome = esMedico ? '/medico/home' : '/'
 
   const [anchorEl, setAnchorEl] = useState(null)
   const menuAbierto = Boolean(anchorEl)
@@ -69,7 +71,7 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-section center">
-          <Link to="/home" className="link-no-style brand">
+          <Link to={rutaHome} className="link-no-style brand">
             <HeartPulse className="nav-pulse-icon" />
             <h1 className="brand-text">Sweet Medical</h1>
           </Link>
@@ -82,11 +84,13 @@ const Navbar = () => {
             </Badge>
           </IconButton>
 
-          <IconButton aria-label="view cart with items" onClick={irACheckout}>
-            <Badge badgeContent={cantUnidades} color="error">
-              <ShoppingCartIcon id="iconoDeCart" style={{ color: 'var(--color-primary)' }} />
-            </Badge>
-          </IconButton>
+          {!esMedico && (
+            <IconButton aria-label="view cart with items" onClick={irACheckout}>
+              <Badge badgeContent={cantUnidades} color="error">
+                <ShoppingCartIcon id="iconoDeCart" style={{ color: 'var(--color-primary)' }} />
+              </Badge>
+            </IconButton>
+          )}
 
           <IconButton
             aria-label="abrir menú de usuario"

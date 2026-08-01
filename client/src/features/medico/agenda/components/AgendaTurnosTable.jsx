@@ -1,24 +1,41 @@
-import React, { useState } from 'react'
+import React from 'react'
+import ActionMenu from '../../../../components/common/ActionMenu'
+import '../../../../styles/sharedTables.css'
 
 const AgendaTurnosTable = ({ turnos, onAction }) => {
-  const [menuOpenId, setMenuOpenId] = useState(null)
-
   if (!turnos.length) {
     return <p className="agenda-empty">No hay turnos para los filtros seleccionados.</p>
   }
 
-  const toggleMenu = (turnoId) => {
-    setMenuOpenId((prev) => (prev === turnoId ? null : turnoId))
-  }
-
-  const ejecutarAccion = (accion, turnoId) => {
-    onAction?.(accion, turnoId)
-    setMenuOpenId(null)
+  const accionesPorEstado = (turno) => {
+    const acciones = []
+    if (turno.estado === 'CONFIRMADO') {
+      acciones.push({
+        label: 'Marcar como realizado',
+        onClick: () => onAction('Marcar realizado', turno.id),
+      })
+    }
+    if (turno.estado === 'CONFIRMADO' || turno.estado === 'DISPONIBLE') {
+      acciones.push({ label: 'Cancelar', onClick: () => onAction('Cancelar', turno.id) })
+    }
+    if (turno.estado === 'CANCELADO' && turno.permiteReactivarDisponible) {
+      acciones.push({
+        label: 'Marcar como disponible',
+        onClick: () => onAction('Marcar como disponible', turno.id),
+      })
+    }
+    if (turno.estado !== 'DISPONIBLE') {
+      acciones.push({
+        label: 'Ver historial del paciente',
+        onClick: () => onAction('Ver historial del paciente', turno.id),
+      })
+    }
+    return acciones
   }
 
   return (
     <div className="agenda-table-wrapper">
-      <table className="agenda-table">
+      <table className="table">
         <thead>
           <tr>
             <th>Fecha</th>
@@ -40,70 +57,10 @@ const AgendaTurnosTable = ({ turnos, onAction }) => {
               <td>{turno.sede}</td>
               <td>{turno.estado}</td>
               <td className="agenda-actions">
-                <div className="agenda-table-menu-container">
-                  <button
-                    type="button"
-                    className="agenda-table-menu-trigger"
-                    aria-label="Abrir acciones del turno"
-                    onClick={() => toggleMenu(turno.id)}
-                  >
-                    ⋮
-                  </button>
-
-                  {menuOpenId === turno.id && (
-                    <div className="agenda-table-menu" role="menu" aria-label="Acciones del turno">
-                      {turno.estado === 'CONFIRMADO' && (
-                        <button
-                          type="button"
-                          role="menuitem"
-                          onClick={() => ejecutarAccion('Marcar realizado', turno.id)}
-                        >
-                          Marcar como realizado
-                        </button>
-                      )}
-
-                      {(turno.estado === 'CONFIRMADO' || turno.estado === 'DISPONIBLE') && (
-                        <button
-                          type="button"
-                          role="menuitem"
-                          onClick={() => ejecutarAccion('Cancelar', turno.id)}
-                        >
-                          Cancelar
-                        </button>
-                      )}
-
-                      {turno.estado === 'CANCELADO' && turno.permiteReactivarDisponible && (
-                        <button
-                          type="button"
-                          role="menuitem"
-                          onClick={() => ejecutarAccion('Marcar como disponible', turno.id)}
-                        >
-                          Marcar como disponible
-                        </button>
-                      )}
-
-                      {turno.estado === 'REALIZADO' ? (
-                        <button
-                          type="button"
-                          role="menuitem"
-                          onClick={() => ejecutarAccion('Ver historial del paciente', turno.id)}
-                        >
-                          Ver historial del paciente
-                        </button>
-                      ) : (
-                        turno.estado !== 'DISPONIBLE' && (
-                          <button
-                            type="button"
-                            role="menuitem"
-                            onClick={() => ejecutarAccion('Ver historial del paciente', turno.id)}
-                          >
-                            Ver historial del paciente
-                          </button>
-                        )
-                      )}
-                    </div>
-                  )}
-                </div>
+                <ActionMenu
+                  ariaLabel="Menú de acciones del turno"
+                  actions={accionesPorEstado(turno)}
+                />
               </td>
             </tr>
           ))}

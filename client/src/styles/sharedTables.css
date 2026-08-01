@@ -1,0 +1,84 @@
+/* Estilos compartidos para tablas y badges en vistas como busquedaDeServicios y agenda */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+.table thead tr {
+  background-color: #004e8c;
+  color: white;
+  text-align: left;
+  font-weight: 600;
+}
+
+.table thead th,
+.table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.table tbody tr:hover {
+  background-color: #f0f8ff;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+
+.badge.Especialidad {
+  background-color: #007fff;
+}
+
+.badge.Practica {
+  background-color: #009688;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 0 5px;
+  color: #555;
+}
+
+.menu-button:hover {
+  color: #007fff;
+}
+
+/* Ajustes para acciones dentro de tabla agenda y busqueda */
+.agenda-table-menu,
+.acciones-menu {
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  background-color: white;
+  padding: 6px 0;
+  min-width: 160px;
+  white-space: nowrap;
+  z-index: 1300;
+}
+
+.agenda-table-menu button,
+.acciones-menu button {
+  background: none;
+  border: none;
+  width: 100%;
+  padding: 8px 16px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.agenda-table-menu button:hover,
+.acciones-menu button:hover {
+  background-color: #f0f8ff;
+}

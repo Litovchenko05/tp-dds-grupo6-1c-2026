@@ -14,12 +14,15 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import IconButton from '@mui/material/IconButton'
+import Divider from '@mui/material/Divider'
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
 import { useNavigate } from 'react-router-dom'
+import { useUsuario } from '../../context/UsuarioContext.jsx'
 import './Drawer.css'
 
 export default function TemporaryDrawer({ role = 'paciente', options, showLogout = true }) {
   const [open, setOpen] = React.useState(false)
+  const { cerrarSesion } = useUsuario()
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen)
@@ -27,7 +30,7 @@ export default function TemporaryDrawer({ role = 'paciente', options, showLogout
 
   const navigate = useNavigate()
 
-  const opciones = [
+  const opcionesPaciente = [
     { texto: 'Gestión de turnos', ruta: '/mis-turnos' },
     { texto: 'Historial de turnos', ruta: '/historial' },
     { texto: 'Reservar turnos', ruta: '/reserva-de-turnos' },
@@ -66,7 +69,13 @@ export default function TemporaryDrawer({ role = 'paciente', options, showLogout
           <Divider className="drawer-divider" />
           <List className="drawer-footer">
             <ListItem disablePadding>
-              <ListItemButton className="logout-btn" onClick={cerrarSesion}>
+              <ListItemButton
+                className="logout-btn"
+                onClick={() => {
+                  setOpen(false)
+                  cerrarSesion()
+                }}
+              >
                 <ListItemIcon>
                   <LogoutIcon className="logout-icon" />
                 </ListItemIcon>

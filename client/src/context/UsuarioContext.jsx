@@ -33,6 +33,12 @@ export const UsuarioProvider = ({ children }) => {
   }, [navigate])
 
   useEffect(() => {
+    if (isDevBypassEnabled()) {
+      setUsuario(getDevMockUser())
+      setCargandoUsuario(false)
+      return
+    }
+
     const token = localStorage.getItem('token')
 
     if (!token) {

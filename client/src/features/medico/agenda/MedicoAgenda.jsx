@@ -1,10 +1,9 @@
 import { useMemo, useState } from 'react'
 import Collapse from '@mui/material/Collapse'
-import IconButton from '@mui/material/IconButton'
 import Button from '@mui/material/Button'
-import CircularProgress from '@mui/material/CircularProgress'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import SearchIcon from '@mui/icons-material/Search'
+import FilterListIcon from '@mui/icons-material/FilterList'
+import LoadingSpinner from '../../../components/common/LoadingSpinner'
 import TurnGridSkeleton from '../../../components/common/TurnGridSkeleton'
 import AgendaFiltros from './components/AgendaFiltros'
 import AgendaTurnoCard from './components/AgendaTurnoCard'
@@ -24,7 +23,7 @@ const MedicoAgenda = () => {
 
   const [filtrosDraft, setFiltrosDraft] = useState(filtrosIniciales)
   const [filtrosAplicados, setFiltrosAplicados] = useState(filtrosIniciales)
-  const [mostrarBusqueda, setMostrarBusqueda] = useState(true)
+  const [mostrarBusqueda, setMostrarBusqueda] = useState(false)
   const [turnos, setTurnos] = useState(turnosAgendaMock)
   const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -250,40 +249,45 @@ const MedicoAgenda = () => {
 
   return (
     <>
-      <main className="medico-agenda">
-        <section className="medico-agenda__top-panel">
-          <section className="medico-agenda__hero">
-            <h1>AGENDA MÉDICA</h1>
-            <p className="medico-agenda__guide">
-              Gestioná tus turnos aplicando filtros por paciente, fecha o estado.
-            </p>
-          </section>
-
+      <main
+        className={`medico-agenda ${mostrarBusqueda ? 'medico-agenda--filters-open' : 'medico-agenda--filters-closed'}`}
+      >
+        <section className="medico-agenda__hero">
+          <div className="medico-agenda__hero-heading">
+            <div>
+              <span className="medico-agenda__eyebrow">Panel profesional</span>
+              <h1>Agenda médica</h1>
+              <p className="medico-agenda__guide">
+                Gestioná tus turnos aplicando filtros por paciente, fecha o estado.
+              </p>
+            </div>
+            <Button
+              variant="outlined"
+              startIcon={<FilterListIcon />}
+              onClick={() => setMostrarBusqueda((prev) => !prev)}
+              className="agenda-filter-toggle"
+            >
+              {mostrarBusqueda ? 'Ocultar filtros' : 'Mostrar filtros'}
+            </Button>
+          </div>
           <Collapse in={mostrarBusqueda} timeout={300} unmountOnExit={false}>
             <section className="agenda-search-panel">
               <AgendaFiltros filtros={filtrosDraft} onChange={onChangeFiltro} />
-
               <div className="agenda-tools">
-                <button type="button" className="agenda-tools__buscar" onClick={buscarTurnos}>
+                <Button
+                  variant="contained"
+                  id="search-button"
+                  startIcon={<SearchIcon />}
+                  onClick={buscarTurnos}
+                >
                   Buscar
-                </button>
-                <button type="button" onClick={limpiarFiltros}>
+                </Button>
+                <Button variant="outlined" startIcon={<FilterListIcon />} onClick={limpiarFiltros}>
                   Limpiar filtros
-                </button>
+                </Button>
               </div>
             </section>
           </Collapse>
-
-          <div className="agenda-collapse-toggle">
-            <IconButton
-              type="button"
-              className="agenda-toggle-search"
-              onClick={() => setMostrarBusqueda((prev) => !prev)}
-              aria-label={mostrarBusqueda ? 'Ocultar búsqueda' : 'Mostrar búsqueda'}
-            >
-              {mostrarBusqueda ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </div>
         </section>
 
         {feedbackMsg && (
@@ -385,7 +389,7 @@ const MedicoAgenda = () => {
             <div className="paciente-historial-panel__content">
               {isHistorialLoading ? (
                 <div className="paciente-historial-loading" role="status" aria-live="polite">
-                  <CircularProgress size={34} thickness={4.5} />
+                  <LoadingSpinner size={34} color="primary" />
                   <p>Cargando historial del paciente...</p>
                 </div>
               ) : historialPaciente.length ? (
