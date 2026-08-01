@@ -50,14 +50,10 @@ export class TurnoController {
   }
 
   cancelarTurno = async (req, res) => {
-    console.log('llegue al controller')
     try {
       const { idTurno } = req.params
 
       const { motivo, idUsuario } = req.body
-      console.log('idTurno:', idTurno)
-      console.log('idUsuario:', idUsuario)
-      console.log('motivo:', motivo)
       const resultado = await this.turnoService.cancelar(idTurno, idUsuario, motivo)
 
       return res.status(200).json({
@@ -176,86 +172,23 @@ export class TurnoController {
     }
   }
 
-  findTurnosByProfesional = async (req, res) => {
+  async obtenerTodosLosServicios(req, res) {
     try {
-      const nombreDeProfesional = req.query.profesional
-      if (!nombreDeProfesional) {
-        const turnos = await this.turnoService.obtenerTodos()
+      const page = req.query.page ? Number(req.query.page) : undefined
+      const limit = req.query.limit ? Number(req.query.limit) : undefined
+      const especialidadId = req.query.especialidadId || 'todas'
+      const practicaId = req.query.practicaId || 'todas'
 
-        return res.status(200).json({ status: 'succes', data: turnos })
-      }
-      const turnosFiltradosPorProfesional =
-        await this.turnoService.obtenerTurnosPorProfesional(nombreDeProfesional)
-
-      return res.status(200).json({ status: 'success', data: turnosFiltradosPorProfesional })
-    } catch (error) {
-      return res.status(400).json({ data: error.message })
-    }
-  }
-
-  findTurnosByEspecialidad = async (req, res) => {
-    try {
-      const nombreDeEspecialidad = req.query.especialidad
-      if (!nombreDeEspecialidad) {
-        const turnos = await this.turnoService.obtenerTodos()
-        return res.status(200).json({ status: 'succes', data: turnos })
-      }
-
-      const turnosFiltradosEspecialidad =
-        await this.turnoService.obtenerTurnosPorEspecialidad(nombreDeEspecialidad)
-      return res.status(200).json({ status: 'success', data: turnosFiltradosEspecialidad })
-    } catch (error) {
-      return res.status(400).json({ data: error.message })
-    }
-  }
-
-  findTurnosByPractica = async (req, res) => {
-    try {
-      const nombreDePractica = req.query.practica
-      if (!nombreDePractica) {
-        const turnos = await this.turnoService.obtenerTodos()
-        return res.status(200).json({ status: 'succes', data: turnos })
-      }
-
-      const turnosFiltradosPractica =
-        await this.turnoService.obtenerTurnosPorPractica(nombreDePractica)
-      return res.status(200).json({ status: 'success', data: turnosFiltradosPractica })
-    } catch (error) {
-      return res.status(400).json({ data: error.message })
-    }
-  }
-
-  findTurnosBySede = async (req, res) => {
-    try {
-      const nombreDeSede = req.query.sede
-      if (!nombreDeSede) {
-        const turnos = await this.turnoService.obtenerTodos()
-        return res.status(200).json({ status: 'succes', data: turnos })
-      }
-
-      const turnosFiltradosSede = await this.turnoService.obtenerTurnosPorSede(nombreDeSede)
-      return res.status(200).json({ status: 'success', data: turnosFiltradosSede })
-    } catch (error) {
-      return res.status(400).json({ data: error.message })
-    }
-  }
-
-  findTurnosByRangoDeFechas = async (req, res) => {
-    try {
-      const fechaIncial = req.query.LI
-      const fechaFinal = req.query.FF
-
-      if (!fechaIncial || !fechaFinal) {
-        const turnos = await this.turnoService.obtenerTodos()
-        return res.status(200).json({ status: 'succes', data: turnos })
-      }
-      const turnosFiltradosRango = await this.turnoService.obtenerTurnosPorRango(
-        fechaIncial,
-        fechaFinal
+      const resultado = await this.turnoService.obtenerTodosLosServicios(
+        page,
+        limit,
+        especialidadId,
+        practicaId
       )
-      return res.status(200).json({ status: 'success', data: turnosFiltradosRango })
+
+      return res.status(200).json({ status: 'success', data: resultado })
     } catch (error) {
-      return res.status(400).json({ data: error.message })
+      return res.status(400).json({ status: 'error', message: error.message })
     }
   }
 }

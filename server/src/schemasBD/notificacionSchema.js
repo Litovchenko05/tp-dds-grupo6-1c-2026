@@ -9,12 +9,6 @@ export const NotificacionSchema = new mongoose.Schema(
       required: [true, 'El destinatario es obligatorio'],
     },
 
-    remitente: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Usuario',
-      required: [true, 'El remitente es obligatorio'],
-    },
-
     mensaje: {
       type: String,
       required: [true, 'El contenido del mensaje es obligatorio'],

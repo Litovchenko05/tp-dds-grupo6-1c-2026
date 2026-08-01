@@ -1,8 +1,6 @@
-import mongoose from "mongoose";
 import { PracticaModel } from '../schemasBD/practicaSchema.js'
 
 export class PracticaRepository {
-
   constructor() {
     this.PracticaModel = PracticaModel
   }
@@ -15,7 +13,6 @@ export class PracticaRepository {
     return await this.PracticaModel.find(filtros)
   }
 
-
   async findById(id) {
     return await this.PracticaModel.findById(id)
   }
@@ -25,23 +22,18 @@ export class PracticaRepository {
   }
 
   async save(practica) {
-    //Si tiene id es update, si no es create
-    const query = practica.id ? { _id: practica.id } : { _id: new this.PracticaModel()._id }
+    if (!practica._id && !practica.id) {
+      return await this.PracticaModel.create(practica)
+    }
 
-    return await this.PracticaModel.findOneAndUpdate(
-      query,
-      practica,
-      {
-        returnDocument: 'after',
-        runValidators: true,
-        upsert: true
-      }
-    )
+    const id = practica._id || practica.id
+    return await this.PracticaModel.findOneAndUpdate({ _id: id }, practica, {
+      returnDocument: 'after',
+      runValidators: true,
+    })
   }
-
 
   async delete(id) {
     return await this.PracticaModel.findByIdAndDelete(id)
   }
-
 }

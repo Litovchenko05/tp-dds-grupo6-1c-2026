@@ -7,4 +7,5 @@ export const agregarServicioSchema = z.object({
   }),
   costo: z.number().min(1, 'El costo debe ser mayor a 0'),
   duracion: z.number().min(10, 'La duracion debe ser de minimo 10 minutos'),
+  sede: z.string().min(1, 'El ID la sede es requerido'),
 })

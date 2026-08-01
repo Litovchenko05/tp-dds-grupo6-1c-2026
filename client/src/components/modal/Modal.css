@@ -1,6 +1,7 @@
 .titulo-modal {
   font-size: 36px;
-  color: var(--color-primary);
+  font-weight: 10px;
+  color: var(--color-success);
   letter-spacing: -0.01em;
   max-width: 640px;
   margin-bottom: 14px;
@@ -105,4 +106,62 @@ h2.advertencia {
   justify-content: center;
   gap: 12px;
   margin-top: 20px;
+}
+
+@media (max-width: 582px) {
+  .titulo-modal {
+    font-size: 26px;
+    max-width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .modal-turnos {
+    width: 92vw;
+    max-height: 85vh;
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  .modal-close {
+    right: 12px;
+    top: 10px;
+    font-size: 26px;
+  }
+
+  .turnos-grid {
+    margin-top: 14px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .grid-header,
+  .grid-row {
+    grid-template-columns: 1.2fr 1.2fr 1.5fr 0.8fr 0.8fr 0.6fr;
+    min-width: 600px;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .conteiner-button {
+    width: 100%;
+  }
+
+  .modal-button {
+    width: 100%;
+  }
+
+  .motivo-cancelacion {
+    min-height: 90px;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .modal-botones {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-botones .modal-button {
+    margin-top: 0;
+  }
 }

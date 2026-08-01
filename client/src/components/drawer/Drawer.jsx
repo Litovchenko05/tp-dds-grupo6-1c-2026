@@ -16,13 +16,19 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
+import EventNoteIcon from '@mui/icons-material/EventNote'
+import HistoryIcon from '@mui/icons-material/History'
+import EventAvailableIcon from '@mui/icons-material/EventAvailable'
+import SearchIcon from '@mui/icons-material/Search'
+import NotificationsIcon from '@mui/icons-material/Notifications'
 import { useNavigate } from 'react-router-dom'
 import { useUsuario } from '../../context/UsuarioContext.jsx'
 import './Drawer.css'
+import { useUsuario } from '../../context/UsuarioContext.jsx'
 
 export default function TemporaryDrawer({ role = 'paciente', options, showLogout = true }) {
   const [open, setOpen] = React.useState(false)
-  const { cerrarSesion } = useUsuario()
+  const { usuario, cargandoUsuario, cerrarSesion } = useUsuario()
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen)
@@ -31,12 +37,12 @@ export default function TemporaryDrawer({ role = 'paciente', options, showLogout
   const navigate = useNavigate()
 
   const opcionesPaciente = [
-    { texto: 'Gestión de turnos', ruta: '/mis-turnos' },
-    { texto: 'Historial de turnos', ruta: '/historial' },
-    { texto: 'Reservar turnos', ruta: '/reserva-de-turnos' },
-    { texto: 'Búsqueda de servicios', ruta: '/busqueda-de-servicios' },
-    { texto: 'Notificaciones', ruta: '/notificaciones' },
+    { texto: 'Gestión de turnos', ruta: '/mis-turnos', icono: <EventNoteIcon /> },
+    { texto: 'Historial de turnos', ruta: '/historial', icono: <HistoryIcon /> },
+    { texto: 'Reservar turnos', ruta: '/reserva-de-turnos', icono: <EventAvailableIcon /> },
+    { texto: 'Búsqueda de servicios', ruta: '/busqueda-de-servicios', icono: <SearchIcon /> },
   ]
+  if (cargandoUsuario || !usuario) return null
 
   const opcionesMedico = [
     { texto: 'Inicio', ruta: '/medico/home', icon: <AccountCircleIcon /> },
@@ -61,6 +67,15 @@ export default function TemporaryDrawer({ role = 'paciente', options, showLogout
             </ListItemButton>
           </ListItem>
         ))}
+        {usuario.rol === 'paciente' &&
+          opciones.map((opcion) => (
+            <ListItem key={opcion.texto} disablePadding>
+              <ListItemButton className="drawer-item" onClick={() => navigate(opcion.ruta)}>
+                <ListItemIcon className="drawer-icon">{opcion.icono}</ListItemIcon>
+                <ListItemText primary={opcion.texto} />
+              </ListItemButton>
+            </ListItem>
+          ))}
       </List>
       <Box sx={{ flexGrow: 1 }} />
 

@@ -33,7 +33,6 @@ import { SedeController } from '../controllers/sede.controller.js'
 import { ObraSocialController } from '../controllers/obraSocial.controller.js'
 import { PlanController } from '../controllers/plan.controller.js'
 import { RecordatorioTask } from '../tasks/recordatorio.task.js'
-import { Cobertura } from '../models/Cobertura.js'
 
 const medicoRepository = new MedicoRepository()
 const notificacionRepository = new NotificacionRepository()
@@ -68,6 +67,7 @@ const pacienteService = new PacienteService({
   turnoRepository,
   medicoRepository,
   turnoService,
+  notificacionService,
 })
 const usuarioService = new UsuarioService({ usuarioRepository })
 const medicoService = new MedicoService({

@@ -1,6 +1,18 @@
 .servicios-container {
   width: 100%;
 }
+.servicios-filtros {
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1100px;
+  margin: 30px auto;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
 
 .tabla-container {
   background: var(--color-white);
@@ -175,4 +187,86 @@
 .paginacion button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+@media (max-width: 917px) {
+  .servicios-filtros {
+    padding: 20px;
+    gap: 0.75rem;
+    margin: 15px auto;
+    border-radius: 14px;
+  }
+
+  .filtros-container {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .input-wrapper {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .filtro-label {
+    width: 100%;
+  }
+
+  .filtro-select {
+    font-size: 0.95rem;
+  }
+
+  /* La tabla scrollea horizontal en vez de romperse */
+  .tabla-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .servicios-table {
+    min-width: 600px; /* fuerza el scroll si el contenido no entra */
+  }
+
+  .servicios-table th {
+    padding: 0.6rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .servicios-table td {
+    padding: 0.75rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .tipo-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.55rem;
+  }
+
+  .acciones {
+    width: 45px;
+  }
+
+  .menu-button {
+    width: 30px;
+    height: 30px;
+    font-size: 1.4rem;
+  }
+
+  .acciones-menu {
+    right: 5px;
+    top: 40px;
+    width: 90px;
+  }
+
+  .paginacion {
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0.75rem;
+  }
+
+  .paginacion button {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
 }

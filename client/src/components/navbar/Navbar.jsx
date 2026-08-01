@@ -19,7 +19,7 @@ import { useNotificaciones } from '../../context/NotificacionesContext.jsx'
 const Navbar = () => {
   const navigate = useNavigate()
   const { carrito } = useCarrito()
-  const { usuario, cerrarSesion } = useUsuario()
+  const { usuario, cerrarSesion, cargandoUsuario } = useUsuario()
   const { noLeidas } = useNotificaciones()
   const [cantUnidades, setCantUnidades] = useState(0)
   const esMedico = usuario?.rol === 'medico'
@@ -61,6 +61,8 @@ const Navbar = () => {
     setCantUnidades(cantUnidadesEnCarrito())
   }, [carrito])
 
+  if (cargandoUsuario || !usuario) return null
+
   const inicialUsuario = usuario?.nombre ? usuario.nombre.charAt(0).toUpperCase() : 'U'
 
   return (
@@ -84,7 +86,7 @@ const Navbar = () => {
             </Badge>
           </IconButton>
 
-          {!esMedico && (
+          {usuario.rol === 'paciente' && (
             <IconButton aria-label="view cart with items" onClick={irACheckout}>
               <Badge badgeContent={cantUnidades} color="error">
                 <ShoppingCartIcon id="iconoDeCart" style={{ color: 'var(--color-primary)' }} />

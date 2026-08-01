@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Paper,
   Typography,
@@ -15,9 +15,20 @@ import {
   MenuItem,
   TextField as MuiTextField,
   Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Chip,
+  Menu,
 } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import EventIcon from '@mui/icons-material/Event'
 import { useMedicoSection } from './useMedicoSection'
 
 const DURACIONES_ESTABLECIDAS = ['15 min', '30 min', '45 min', '60 min']
@@ -52,8 +63,44 @@ export default function MedicoSection({ idMedico }) {
     handleDeleteServicio,
   } = useMedicoSection(idMedico)
 
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [servicioSeleccionadoId, setServicioSeleccionadoId] = useState(null)
+
+  const handleOpenMenu = (event, id) => {
+    setAnchorEl(event.currentTarget)
+    setServicioSeleccionadoId(id)
+  }
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null)
+    setServicioSeleccionadoId(null)
+  }
+
+  const handleEliminarItem = () => {
+    if (servicioSeleccionadoId) {
+      handleDeleteServicio(servicioSeleccionadoId)
+    }
+    handleCloseMenu()
+  }
+
+  const handleModificarServicio = () => {
+    if (servicioSeleccionadoId) {
+      const servicio = servicios.find((s) => s._id === servicioSeleccionadoId)
+      console.log('Modificar servicio:', servicio)
+    }
+    handleCloseMenu()
+  }
+
+  const handleModificarDisponibilidad = () => {
+    if (servicioSeleccionadoId) {
+      const servicio = servicios.find((s) => s._id === servicioSeleccionadoId)
+      console.log('Modificar disponibilidad:', servicio)
+    }
+    handleCloseMenu()
+  }
+
   return (
-    <Paper className="profile-card-base">
+    <Paper className="profile-card-base" elevation={1}>
       <Typography variant="h5" className="profile-section-title">
         Mis Servicios y Horarios
       </Typography>
@@ -61,7 +108,7 @@ export default function MedicoSection({ idMedico }) {
         Gestioná las prestaciones médicas que ofrecés y configurá sus agendas de atención.
       </Typography>
 
-      <Box className="mb-xl">
+      <Box className="profile-btn-container mb-xl">
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -72,37 +119,124 @@ export default function MedicoSection({ idMedico }) {
         </Button>
       </Box>
 
-      <Box className="profile-services-list">
-        {servicios.length === 0 ? (
-          <p className="profile-empty-text">No tenés servicios registrados actualmente.</p>
-        ) : (
-          servicios.map((servicio) => (
-            <div key={servicio._id} className="profile-service-item">
-              <Box>
-                <Typography variant="subtitle1" className="profile-service-name">
-                  {servicio.nombre}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {servicio.sede} • {servicio.duracion} • ${servicio.precio}
-                </Typography>
-              </Box>
-              <IconButton
-                onClick={() => handleDeleteServicio(servicio._id)}
-                className="profile-delete-btn"
-                title="Eliminar prestación"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </div>
-          ))
-        )}
-      </Box>
+      {servicios.length === 0 ? (
+        <Typography variant="body2" className="profile-empty-text" align="center">
+          No tenés servicios registrados actualmente.
+        </Typography>
+      ) : (
+        <TableContainer component={Paper} variant="outlined" className="profile-table-container">
+          <Table className="profile-table" aria-label="tabla de servicios del medico">
+            <TableHead className="profile-table-head">
+              <TableRow>
+                <TableCell>
+                  <strong>Servicio / Tipo</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Sede</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Día y Horario</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Duración</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Costo</strong>
+                </TableCell>
+                <TableCell align="right">
+                  <strong>Acciones</strong>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {servicios.map((servicio) => (
+                <TableRow key={servicio._id} hover>
+                  <TableCell>
+                    <Typography variant="subtitle2" className="profile-text-bold">
+                      {servicio.nombre || servicio.servicio?.nombre}
+                    </Typography>
+                    {servicio.tipo && (
+                      <Chip
+                        label={servicio.tipo}
+                        size="small"
+                        color={servicio.tipo.toLowerCase() === 'practica' ? 'secondary' : 'primary'}
+                        variant="outlined"
+                        className="profile-chip"
+                      />
+                    )}
+                  </TableCell>
+
+                  <TableCell>
+                    {servicio.sede || servicio.sedeObjeto?.nombre || 'Sede no especificada'}
+                  </TableCell>
+
+                  <TableCell>
+                    {servicio.diaSemana ? (
+                      <Box>
+                        <Typography variant="body2" className="profile-text-medium">
+                          {servicio.diaSemana}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {servicio.horaDesde} hs - {servicio.horaHasta} hs
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <Typography variant="caption" color="text.secondary">
+                        Sin horario asignado
+                      </Typography>
+                    )}
+                  </TableCell>
+
+                  <TableCell>{servicio.duracion}</TableCell>
+
+                  <TableCell>
+                    <strong>
+                      ${Number(servicio.precio || servicio.costo || 0).toLocaleString('es-AR')}
+                    </strong>
+                  </TableCell>
+
+                  <TableCell align="right">
+                    <IconButton onClick={(e) => handleOpenMenu(e, servicio._id)}>
+                      <MoreVertIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={handleModificarServicio}>
+          <EditIcon fontSize="small" className="menu-icon-secondary" />
+          Modificar Servicio
+        </MenuItem>
+
+        <MenuItem onClick={handleModificarDisponibilidad}>
+          <EventIcon fontSize="small" className="menu-icon-secondary" />
+          Modificar Disponibilidad
+        </MenuItem>
+
+        <Divider className="menu-divider" />
+
+        <MenuItem onClick={handleEliminarItem} className="menu-item-error">
+          <DeleteIcon fontSize="small" className="menu-icon-error" />
+          Eliminar
+        </MenuItem>
+      </Menu>
 
       <Dialog open={openPopup} onClose={handleCerrarPopup} fullWidth maxWidth="xs">
         <DialogTitle>Agregar Servicio y Disponibilidad</DialogTitle>
         <Box component="form" onSubmit={handleAddServicioYDisponibilidad}>
           <DialogContent className="popup-form-container">
-            <FormControl fullWidth required>
+            <FormControl fullWidth required margin="dense">
               <InputLabel id="select-tipo-label">Tipo de Servicio</InputLabel>
               <Select
                 labelId="select-tipo-label"
@@ -118,7 +252,7 @@ export default function MedicoSection({ idMedico }) {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth required disabled={!tipoSeleccionado}>
+            <FormControl fullWidth required disabled={!tipoSeleccionado} margin="dense">
               <InputLabel id="select-servicio-label">Seleccionar Servicio</InputLabel>
               <Select
                 labelId="select-servicio-label"
@@ -137,7 +271,7 @@ export default function MedicoSection({ idMedico }) {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth required>
+            <FormControl fullWidth required margin="dense">
               <InputLabel id="select-duracion-label">Duración del Turno</InputLabel>
               <Select
                 labelId="select-duracion-label"
@@ -160,9 +294,10 @@ export default function MedicoSection({ idMedico }) {
               onChange={(e) => setPrecioInput(e.target.value)}
               required
               fullWidth
+              margin="dense"
             />
 
-            <FormControl fullWidth required>
+            <FormControl fullWidth required margin="dense">
               <InputLabel id="select-sede-label">Sede de Atención</InputLabel>
               <Select
                 labelId="select-sede-label"
@@ -181,13 +316,13 @@ export default function MedicoSection({ idMedico }) {
               </Select>
             </FormControl>
 
-            <Divider className="my-md" />
+            <Divider className="popup-divider" />
 
-            <Typography variant="subtitle2" color="primary">
+            <Typography variant="subtitle2" color="primary" className="popup-section-subtitle">
               Horario de Atención
             </Typography>
 
-            <FormControl fullWidth required>
+            <FormControl fullWidth required margin="dense">
               <InputLabel id="select-dia-label">Día de la Semana</InputLabel>
               <Select
                 labelId="select-dia-label"
@@ -203,7 +338,7 @@ export default function MedicoSection({ idMedico }) {
               </Select>
             </FormControl>
 
-            <Box display="flex" gap="var(--spacing-md)">
+            <Box className="popup-time-container">
               <MuiTextField
                 label="Hora Desde"
                 type="time"

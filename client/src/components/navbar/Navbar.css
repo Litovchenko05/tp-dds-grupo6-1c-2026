@@ -123,3 +123,12 @@
     gap: var(--spacing-xs);
   }
 }
+
+@media (max-width: 376px) {
+  .brand-text {
+    display: none;
+  }
+  .nav-pulse-icon {
+    display: none;
+  }
+}

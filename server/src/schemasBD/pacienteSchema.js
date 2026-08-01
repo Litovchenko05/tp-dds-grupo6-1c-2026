@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 import { Paciente } from '../models/paciente.js'
-import { ObraSchema } from './obraSocialSchema.js'
 
 export const PacienteSchema = new mongoose.Schema(
   {
@@ -29,7 +28,7 @@ export const PacienteSchema = new mongoose.Schema(
       ref: 'Plan',
       default: null,
     },
-    turnos:{
+    turnos: {
       type: [
         {
           type: mongoose.Schema.Types.ObjectId,
@@ -38,7 +37,7 @@ export const PacienteSchema = new mongoose.Schema(
       ],
       default: [],
     },
-    historialDeTurnos: { 
+    historialDeTurnos: {
       type: [
         {
           type: mongoose.Schema.Types.ObjectId,

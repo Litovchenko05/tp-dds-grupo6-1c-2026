@@ -8,6 +8,7 @@ export const nuevaDisponibilidadSchema = z
     horaDesde: horaSchema.optional().nullable(),
     horaHasta: horaSchema.optional().nullable(),
     duracion: z.number().int().positive().optional().nullable(),
+    costo: z.number().positive().optional().nullable(),
     sedeId: mongoIdSchema.optional().nullable(),
     servicioId: mongoIdSchema.optional().nullable(),
     tipoDeServicio: z.enum(['Especialidad', 'Practica']).optional().nullable(),

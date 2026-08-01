@@ -65,11 +65,10 @@ export class NotificacionController {
         return res.status(400).json({ status: 'error', data: resultado.error.message })
       }
 
-      const { destinatarioId, remitenteId, mensaje } = resultado.data
+      const { destinatarioId, mensaje } = resultado.data
 
       const notificacion = await this.notificacionService.crearNotificacion({
         destinatarioId: destinatarioId,
-        remitenteId: remitenteId,
         mensaje: mensaje,
       })
 

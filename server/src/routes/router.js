@@ -28,7 +28,7 @@ router.use('/pacientes', pacienteRouter)
 router.use('/auth', authRouter)
 router.use('/sedes', sedeRouter)
 router.use('/servicios', servicioRouter)
-router.use('/plan', planRouter)
-router.use('/obraSocial', obraSocialRouter)
+router.use('/planes', planRouter)
+router.use('/obrasSociales', obraSocialRouter)
 
 export default router

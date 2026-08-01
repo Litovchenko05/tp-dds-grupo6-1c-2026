@@ -15,7 +15,6 @@ export const medicoService = {
   obtenerServicios: async (idMedico) => {
     const response = await axios.get(`${API_URL}/medicos/${idMedico}/servicios`, getAuthHeaders())
     return response.data?.data || response.data || []
-    // TODO
   },
 
   obtenerCatalogoServicios: async () => {

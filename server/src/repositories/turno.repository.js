@@ -1,9 +1,7 @@
-import mongoose from 'mongoose'
 import { TurnoModel } from '../schemasBD/turnoSchema.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
-import { ServicioRepository } from '../repositories/servicios.repository.js'
-import { Cobertura } from '../models/Cobertura.js'
 import { NivelDeCobertura } from '../models/nivelDeCobertura.js'
+import { Types } from 'mongoose'
 export class TurnoRepository {
   constructor(medicoRepository, pacienteRepository, planRepository, coberturaRepository) {
     this.TurnoModel = TurnoModel
@@ -26,7 +24,7 @@ export class TurnoRepository {
 
   async findById(id) {
     return await this.TurnoModel.findById(id)
-      .populate('medico', 'nombre')
+      .populate('medico')
       .populate('servicio', 'nombre')
       .populate('sede', 'nombre')
   }
@@ -91,12 +89,10 @@ export class TurnoRepository {
     })
   }
   async actualizarHistoral(turno, idUsuario) {
-    console.log('id usuario', idUsuario)
     const paciente = await this.pacienteRepository.findByUsuario(idUsuario)
     if (paciente == null) {
-      console.log('pacientee es null')
     }
-    console.log(paciente)
+
     paciente.historialDeTurnos.push(turno)
 
     const indice = paciente.turnos.findIndex((t) => t._id.toString() === turno._id.toString())
@@ -114,6 +110,15 @@ export class TurnoRepository {
 
   async delete(id) {
     return await this.TurnoModel.findByIdAndDelete(id)
+  }
+
+  async eliminarTurnosDeServicioPorMedico(idMedico, idServicio) {
+    const resultado = await TurnoModel.deleteMany({
+      medico: idMedico,
+      servicio: idServicio,
+      estado: 'disponible',
+    })
+    return resultado
   }
 
   async update(id, turnoModificado) {
@@ -141,6 +146,10 @@ export class TurnoRepository {
       },
       estado: EstadoTurno.RESERVADO,
     })
+      .populate('medico', 'nombre usuario')
+      .populate('paciente', 'nombre usuario')
+      .populate('servicio', 'nombre')
+      .populate('sede')
   }
 
   async findAllFilteredPaginated({
@@ -165,7 +174,6 @@ export class TurnoRepository {
     const skip = (page - 1) * limit
     const sortOrder = order === 'asc' ? 1 : -1
 
-    // Construir filtro dinámico
     const filtro = {
       estado: EstadoTurno.DISPONIBLE,
     }
@@ -219,7 +227,6 @@ export class TurnoRepository {
     }
     const campoSort = sortFields[sortBy] || 'fechaHora'
 
-    // Ejecutar búsqueda
     const turnos = await this.TurnoModel.find(filtro)
       .populate('medico', 'nombre')
       .populate('sede', 'nombre')
@@ -275,8 +282,7 @@ export class TurnoRepository {
       totalPages: Math.ceil(total / limit),
     }
   }
-  //paginado
-  //GET ALL PAGINADO
+
   async findAllPaginated(idUsuario, page = 1, limit = 5, sortBy = 'fecha', order = 'asc') {
     const skip = (page - 1) * limit
     const sortOrder = order === 'asc' ? 1 : -1
@@ -356,5 +362,66 @@ export class TurnoRepository {
     } else if (nivel == NivelDeCobertura.NO_CUBIERTA) {
       return costoInicial
     }
+  }
+
+  async buscarServiciosPaginados(
+    page = 1,
+    limit = 5,
+    especialidadId = 'todas',
+    practicaId = 'todas'
+  ) {
+    const skip = (page - 1) * limit
+
+    const condiciones = []
+
+    if (especialidadId === 'ninguna') {
+    } else if (especialidadId === 'todas') {
+      condiciones.push({ 'servicioInfo.tipo': 'especialidad' })
+    } else {
+      condiciones.push({ servicio: new Types.ObjectId(especialidadId) })
+    }
+
+    if (practicaId === 'ninguna') {
+    } else if (practicaId === 'todas') {
+      condiciones.push({ 'servicioInfo.tipo': 'practica' })
+    } else {
+      condiciones.push({ servicio: new Types.ObjectId(practicaId) })
+    }
+
+    const matchFinal = condiciones.length ? { $or: condiciones } : { _id: null }
+
+    const pipeline = [
+      {
+        $lookup: {
+          from: 'servicios',
+          localField: 'servicio',
+          foreignField: '_id',
+          as: 'servicioInfo',
+        },
+      },
+      { $unwind: '$servicioInfo' },
+      { $match: matchFinal },
+      { $sort: { createdAt: 1 } },
+      {
+        $group: {
+          _id: { medico: '$medico', servicio: '$servicio' },
+          turnoId: { $first: '$_id' },
+        },
+      },
+    ]
+
+    const primerosTurnos = await this.TurnoModel.aggregate(pipeline)
+    const ids = primerosTurnos.map((t) => t.turnoId)
+    const total = ids.length
+
+    const turnos = await this.TurnoModel.find({ _id: { $in: ids } })
+      .populate('medico', 'nombre')
+      .populate('sede', 'nombre')
+      .populate('servicio', 'nombre tipo')
+      .sort({ costo: 1 })
+      .skip(skip)
+      .limit(limit)
+
+    return { turnos, total, page, totalPages: Math.ceil(total / limit) }
   }
 }

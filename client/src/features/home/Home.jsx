@@ -1,14 +1,15 @@
 import './Home.css'
 import { useUsuario } from '../../context/UsuarioContext.jsx'
-import BannerPage from "../../components/banner/banner.jsx";
-import BodyHome from "../../components/bodyHome/BodyHome.jsx";
+import BannerPage from '../../components/banner/banner.jsx'
+import BodyHome from '../../components/bodyHome/BodyHome.jsx'
 
 const Home = () => {
-  const { usuario } = useUsuario()
+  const { usuario, cargandoUsuario } = useUsuario()
+  if (cargandoUsuario || !usuario) return null
   return (
     <>
-    <BannerPage/>
-    <BodyHome/>
+      {usuario.rol === 'paciente' && <BannerPage />}
+      {usuario.rol === 'paciente' && <BodyHome />}
     </>
   )
 }

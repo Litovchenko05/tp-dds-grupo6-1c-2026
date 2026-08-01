@@ -16,7 +16,7 @@ export const getTurns = async (page, idUsuario, { sortBy, order } = {}) => {
       params: {
         idUsuario,
         page,
-        limit: 8,
+        limit: 15,
         sortBy,
         order,
       },

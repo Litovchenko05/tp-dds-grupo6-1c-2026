@@ -63,7 +63,8 @@ export class PacienteController {
 
       return res.status(200).json({ status: 'success', data: turnoReservado })
     } catch (error) {
-      return res.status(404).json({ data: error.message })
+      const status = error.message.includes('no encontrado') ? 404 : 409
+      return res.status(status).json({ data: error.message })
     }
   }
 
@@ -105,6 +106,46 @@ export class PacienteController {
       return res.status(200).json({
         status: 'success',
         data: resultado,
+      })
+    } catch (error) {
+      return res.status(400).json({
+        status: 'error',
+        message: error.message,
+      })
+    }
+  }
+
+  async obtenerCoberturaMedica(req, res) {
+    try {
+      const { id } = req.params
+      const resultado = await this.pacienteService.obtenerCoberturaMedica(id)
+      return res.status(200).json({
+        status: 'success',
+        data: resultado,
+      })
+    } catch (error) {
+      return res.status(400).json({
+        status: 'error',
+        message: error.message,
+      })
+    }
+  }
+
+  async definirCoberturaMedica(req, res) {
+    try {
+      const { id } = req.params
+      const { obraSocialId, planId } = req.body
+
+      const pacienteActualizado = await this.pacienteService.definirCoberturaMedica(
+        id,
+        obraSocialId,
+        planId
+      )
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'Cobertura médica actualizada correctamente',
+        data: pacienteActualizado,
       })
     } catch (error) {
       return res.status(400).json({

@@ -24,8 +24,9 @@
 }
 
 .turn-categoria {
-  font-size: 14px;
-  color: #666;
+  font-family: 'Franklin Gothic Medium';
+  font-size: larger;
+  color: #5c5c63;
   margin-bottom: 8px;
   font-weight: 400;
 }
@@ -35,11 +36,9 @@
   padding: 0;
 }
 
-.turn-image-section {
-  flex: 0 0 300px;
-  position: relative;
+.mayuscula {
+  text-transform: uppercase;
 }
-
 .turn-info-section {
   flex: 1;
   padding: 20px 24px;
@@ -151,16 +150,12 @@
 }
 
 @media (max-width: 768px) {
+  .turn-detail-container {
+    margin: auto;
+    width: 100%;
+  }
   .turn-content {
     flex-direction: column;
-  }
-
-  .turn-image-section {
-    flex: none;
-  }
-
-  .turn-imagen {
-    height: 180px;
   }
 
   .turn-detail-container {
@@ -168,7 +163,6 @@
     border-radius: 8px;
   }
 
-  .turn-header,
   .turn-info-section {
     padding: 16px 20px;
   }

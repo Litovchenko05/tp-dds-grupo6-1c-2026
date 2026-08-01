@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 import { Medico } from '../models/Medico.js'
 import { DisponibilidadSchema } from '../schemasBD/disponibilidadSchema.js'
-import { UsuarioSchema } from  '../schemasBD/usuarioSchema.js'
 
 export const MedicoSchema = new mongoose.Schema(
   {
@@ -38,7 +37,7 @@ export const MedicoSchema = new mongoose.Schema(
     disponibilidades: {
       type: [DisponibilidadSchema],
       default: [],
-    }
+    },
   },
   {
     timestamps: true,

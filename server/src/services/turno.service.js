@@ -1,9 +1,10 @@
+import { formatearFechaHora } from '../config/utils.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 
 export class TurnoService {
   constructor({ turnoRepository, notificacionService }) {
     this.turnoRepository = turnoRepository
-    this.servicioNotificacion = notificacionService
+    this.notificacionService = notificacionService
   }
 
   async obtenerTurnosReservados(id) {
@@ -83,12 +84,6 @@ export class TurnoService {
       throw new Error('El turno ya está cancelado')
     }
 
-    // const cancelador = turno.quienModifica(id_usuario)
-
-    // if (!cancelador) {
-    //   throw new Error('No tiene permiso para cancelar este turno.')
-    // }
-
     const unaHoraEnMs = 60 * 60 * 1000
     const tiempoRestante = new Date(turno.fechaHora).getTime() - Date.now()
 
@@ -101,9 +96,9 @@ export class TurnoService {
     await this.turnoRepository.save(turno)
 
     if (turno.paciente) {
-      const pacienteId = turno.paciente._id || turno.paciente
+      const pacienteId = turno.paciente._id
       const paciente = await this.turnoRepository.pacienteRepository.findById(pacienteId)
-      const destinatarioId = paciente?.usuario?._id || paciente?.usuario
+      const destinatarioId = paciente?.usuario?._id
       if (destinatarioId) {
         await this.servicioNotificacion.crearNotificacion({
           destinatarioId,
@@ -111,7 +106,14 @@ export class TurnoService {
           mensaje: `El médico canceló el turno del ${new Date(turno.fechaHora).toLocaleDateString('es-AR')}. Motivo: ${motivo}`,
         })
       }
+      paciente.guardarTurnoEnHistorial(turno)
     }
+    const { fecha, hora } = formatearFechaHora(turno.fechaHora)
+
+    await this.notificacionService.crearNotificacion({
+      destinatarioId: turno.medico.usuario,
+      mensaje: `Ha sido cancelado su turno para la ${turno.tipoDeServicio}: ${turno.servicio.nombre} del día ${fecha} a las ${hora} hs`,
+    })
 
     return turno
   }
@@ -162,8 +164,6 @@ export class TurnoService {
     sortBy,
     order,
   }) {
-    // Validaciones opcionales
-
     if (page && page < 1) {
       throw new Error('El número de página debe ser mayor que 0')
     }
@@ -190,112 +190,17 @@ export class TurnoService {
       order,
     })
   }
-  async buscarTurnos({
-    nombreMedico,
-    nombreServicio,
-    especialidad,
-    practica,
-    sede,
-    fechaDesde,
-    fechaHasta,
-    estadoTurno = 'DISPONIBLE',
-    page = 1,
-    limit = 5,
-    sortBy = 'fecha',
-    order = 'asc',
-  }) {
-    const servicioBuscado = nombreServicio || especialidad || practica
 
-    const resultado = await this.turnoRepository.buscarTurnosPaginated({
-      nombreMedico,
-      nombreServicio: servicioBuscado,
-      sede,
-      fechaDesde,
-      fechaHasta,
-      estadoTurno,
+  async obtenerTodosLosServicios(page, limit, especialidadId, practicaId) {
+    return await this.turnoRepository.buscarServiciosPaginados(
       page,
       limit,
-      sortBy,
-      order,
-    })
-
-    return {
-      data: resultado,
-
-      pagination: {
-        total: resultado.total,
-        page: resultado.page,
-        limit: resultado.limit,
-        totalPages: resultado.totalPages,
-        hasNextPage: resultado.page < resultado.totalPages,
-        hasPreviousPage: resultado.page > 1,
-      },
-
-      sort: {
-        sortBy,
-        order,
-      },
-    }
+      especialidadId,
+      practicaId
+    )
   }
-  async buscarTurnos({
-    nombreMedico,
-    nombreServicio,
-    especialidad,
-    practica,
-    sede,
-    fechaDesde,
-    fechaHasta,
-    estadoTurno = 'DISPONIBLE',
-    page = 1,
-    limit = 5,
-    sortBy = 'fechaHora',
-    order = 'asc',
-  }) {
-    try {
-      const servicioBuscado = nombreServicio || especialidad || practica
 
-      const resultado = await this.turnoRepository.buscarTurnosPaginated({
-        nombreMedico,
-        nombreServicio: servicioBuscado,
-        sede,
-        fechaDesde,
-        fechaHasta,
-        estadoTurno,
-        page,
-        limit,
-        sortBy,
-        order,
-      })
-
-      // Mapear respuesta con información de cobertura
-      const turnosConCobertura = resultado.turnos.map((turno) => ({
-        ...turno,
-        // Placeholder para cálculo de cobertura - se integra con CoberturasService
-        cobertura: {
-          estado: 'PENDIENTE_CALCULO', // Se calculará con la obra social del paciente
-          montoAbonarPaciente: null,
-          porcentajeCobertura: null,
-          esUrgencia: false,
-        },
-      }))
-
-      return {
-        data: turnosConCobertura,
-        pagination: {
-          total: resultado.total,
-          page: resultado.page,
-          limit: resultado.limit,
-          totalPages: resultado.totalPages,
-          hasNextPage: resultado.page < resultado.totalPages,
-          hasPreviousPage: resultado.page > 1,
-        },
-        sort: {
-          sortBy,
-          order,
-        },
-      }
-    } catch (error) {
-      throw error
-    }
+  async eliminarTurnosDeServicioPorMedico(idMedico, idServicio) {
+    await this.turnoRepository.eliminarTurnosDeServicioPorMedico(idMedico, idServicio)
   }
 }

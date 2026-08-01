@@ -1,8 +1,6 @@
-import mongoose from "mongoose";
 import { EspecialidadModel } from '../schemasBD/especialidadSchema.js'
 
 export class EspecialidadRepository {
-
   constructor() {
     this.EspecialidadModel = EspecialidadModel
   }
@@ -15,7 +13,6 @@ export class EspecialidadRepository {
     return await this.EspecialidadModel.find(filtros)
   }
 
-
   async findById(id) {
     return await this.EspecialidadModel.findById(id)
   }
@@ -26,23 +23,18 @@ export class EspecialidadRepository {
 
   async save(especialidad) {
     //Si tiene id es update, si no es create
-    const query = especialidad.id ? { _id: especialidad.id } : { _id: new this.EspecialidadModel()._id }
+    const query = especialidad.id
+      ? { _id: especialidad.id }
+      : { _id: new this.EspecialidadModel()._id }
 
-
-    return await this.EspecialidadModel.findOneAndUpdate(
-      query,
-      especialidad,
-      {
-        returnDocument: 'after',
-        runValidators: true,
-        upsert: true
-      }
-    )
+    return await this.EspecialidadModel.findOneAndUpdate(query, especialidad, {
+      returnDocument: 'after',
+      runValidators: true,
+      upsert: true,
+    })
   }
-
 
   async delete(id) {
     return await this.EspecialidadModel.findByIdAndDelete(id)
   }
-
 }

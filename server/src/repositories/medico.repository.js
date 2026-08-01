@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import { MedicoModel } from '../schemasBD/medicoSchema.js'
 
 export class MedicoRepository {
@@ -17,10 +16,7 @@ export class MedicoRepository {
   }
 
   async findById(id) {
-    return await this.MedicoModel.findById(id)
-      .populate('especialidades')
-      .populate('practicas')
-      .populate('sedes')
+    return await this.MedicoModel.findById(id).populate('especialidades').populate('practicas')
   }
 
   async findByNombre(nombreMedico) {
@@ -71,5 +67,17 @@ export class MedicoRepository {
       // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
       totalPages: Math.ceil(total / limit),
     }
+  }
+
+  async findWithDetallesById(id) {
+    return await this.MedicoModel.findById(id)
+      .populate({
+        path: 'especialidades',
+        populate: [{ path: 'servicio' }, { path: 'sede' }],
+      })
+      .populate({
+        path: 'practicas',
+        populate: [{ path: 'servicio' }, { path: 'sede' }],
+      })
   }
 }

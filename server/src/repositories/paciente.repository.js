@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import { PacienteModel } from '../schemasBD/pacienteSchema.js'
 
 export class PacienteRepository {
@@ -77,5 +76,9 @@ export class PacienteRepository {
       // por ejemplo para 23 con x por pagina -> 4.6 necesito 5 paginas la ultima no completa
       totalPages: Math.ceil(total / limit),
     }
+  }
+
+  async findByIdWithCobertura(id) {
+    return await this.PacienteModel.findById(id).populate('obraSocial').populate('plan')
   }
 }

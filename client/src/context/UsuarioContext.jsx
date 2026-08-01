@@ -42,7 +42,7 @@ export const UsuarioProvider = ({ children }) => {
     const token = localStorage.getItem('token')
 
     if (!token) {
-      setCargandoUsuario(false) // no hay token, no hay nada que esperar
+      setCargandoUsuario(false)
       return
     }
 
@@ -62,6 +62,14 @@ export const UsuarioProvider = ({ children }) => {
         setUsuario({
           idKeycloak: decoded.sub,
           _id: datosMongo.usuarioMongoId || datosMongo._id || decoded.sub,
+          medicoId:
+            datosMongo.medicoId ||
+            datosMongo.medico?._id ||
+            (rol === 'medico' ? datosMongo._id : null),
+          pacienteId:
+            datosMongo.pacienteId ||
+            datosMongo.paciente?._id ||
+            (rol === 'paciente' ? datosMongo._id : null),
           nombre,
           username,
           rol,
