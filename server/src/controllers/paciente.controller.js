@@ -63,7 +63,8 @@ export class PacienteController {
 
       return res.status(200).json({ status: 'success', data: turnoReservado })
     } catch (error) {
-      return res.status(404).json({ data: error.message })
+      const status = error.message.includes('no encontrado') ? 404 : 409
+      return res.status(status).json({ data: error.message })
     }
   }
 

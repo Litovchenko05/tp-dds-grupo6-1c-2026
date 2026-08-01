@@ -18,7 +18,7 @@ describe('Paginado', () => {
     cy.visit('http://localhost:3000/reserva-de-turnos')
     cy.wait('@getTurnos')
 
-    cy.get('.turnos-container .tabla-container .servicios-table').should('exist')
+    cy.get('.servicios-container .tabla-container .servicios-table').should('exist')
     cy.get('.servicios-table tbody tr').should('have.length', 15)
   })
 
@@ -35,6 +35,6 @@ describe('Paginado', () => {
       .first()
       .find('td')
       .first()
-      .should('have.text', 'Ecografía Abdominal')
+      .should('have.text', 'Electrocardiograma')
   })
 })
