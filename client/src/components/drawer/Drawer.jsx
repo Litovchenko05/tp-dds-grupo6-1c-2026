@@ -65,6 +65,15 @@ export default function TemporaryDrawer({ role = 'paciente', options, showLogout
             </ListItemButton>
           </ListItem>
         ))}
+        {usuario.rol === 'paciente' &&
+          opcionesPaciente.map((opcion) => (
+            <ListItem key={opcion.texto} disablePadding>
+              <ListItemButton className="drawer-item" onClick={() => navigate(opcion.ruta)}>
+                <ListItemIcon className="drawer-icon">{opcion.icono}</ListItemIcon>
+                <ListItemText primary={opcion.texto} />
+              </ListItemButton>
+            </ListItem>
+          ))}
       </List>
       <Box sx={{ flexGrow: 1 }} />
 
