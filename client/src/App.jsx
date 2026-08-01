@@ -23,13 +23,8 @@ import BusquedaServiciosPage from './features/busquedaDeServicios/BusquedaServic
 // Componentes / Features médico
 import MedicoAgenda from './features/medico/agenda/MedicoAgenda'
 
-function isDevBypassEnabled() {
-  const raw = (process.env.REACT_APP_DEV_BYPASS_AUTH || '').trim().toLowerCase()
-  return ['true', '1', 'yes', 'y'].includes(raw)
-}
-
 function ProtectedRoute() {
-  const isAuthenticated = isDevBypassEnabled() || !!localStorage.getItem('token')
+  const isAuthenticated = !!localStorage.getItem('token')
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />
 }
 

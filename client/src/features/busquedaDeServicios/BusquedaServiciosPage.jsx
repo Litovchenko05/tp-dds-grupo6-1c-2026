@@ -5,6 +5,7 @@ import '../../styles/sharedTables.css'
 
 import ActionMenu from '../../components/common/ActionMenu'
 import { Link } from 'react-router-dom'
+import { turnos as serviciosMock } from '../../mockData/turnosMock'
 
 const BusquedaServiciosPage = () => {
   const [menuAbierto, setMenuAbierto] = useState(null)
@@ -32,6 +33,17 @@ const BusquedaServiciosPage = () => {
       document.removeEventListener('mousedown', cerrarMenu)
     }
   }, [])
+
+  const especialidades = [
+    ...new Set(
+      serviciosMock.filter((servicio) => servicio.tipo === 'Especialidad').map((s) => s.servicio)
+    ),
+  ]
+  const practicas = [
+    ...new Set(
+      serviciosMock.filter((servicio) => servicio.tipo === 'Práctica').map((s) => s.servicio)
+    ),
+  ]
 
   const serviciosFiltrados = serviciosMock.filter((servicio) => {
     const coincideEspecialidad =

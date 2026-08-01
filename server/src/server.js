@@ -11,7 +11,6 @@ const PORT = process.env.PUERTO || 3000
 const start = async () => {
   try {
     await MongoDBClient.connect()
-    await cargarDatosIniciales()
 
     recordatorioTask.iniciar()
 

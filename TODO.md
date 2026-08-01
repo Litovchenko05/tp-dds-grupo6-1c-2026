@@ -25,4 +25,12 @@
   - [ ] Unificar Footer con variante por rol.
   - [ ] Ajustar rutas/layout para que médico use layout común.
   - [x] Eliminar uso de MedicoFooter dentro de páginas médicas.
-  - [ ] Validar responsive en vistas médico y paciente.
+- [ ] Validar responsive en vistas médico y paciente.
+
+## TODO - Quitar hardcode de usuarios dev + arreglar build client
+
+- [x] Eliminar bypass dev y usuarios hardcodeados en `client/src/context/UsuarioContext.jsx`.
+- [x] Eliminar bypass dev en `client/src/App.jsx` y dejar auth basada en token.
+- [x] Corregir imports duplicados y lógica redundante en `client/src/components/drawer/Drawer.jsx`.
+- [x] Corregir variables no definidas en `client/src/features/busquedaDeServicios/BusquedaServiciosPage.jsx`.
+- [ ] Validar compilación del cliente sin errores.
