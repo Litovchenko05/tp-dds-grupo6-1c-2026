@@ -55,6 +55,25 @@ export class TurnoService {
     }
   }
 
+  async reactivarTurno(turnoId, medicoId) {
+    const turno = await this.turnoRepository.findById(turnoId)
+    if (!turno) {
+      throw new Error('Turno no encontrado')
+    }
+
+    const turnoMedicoId = turno.medico?._id || turno.medico
+    if (turnoMedicoId.toString() !== medicoId.toString()) {
+      throw new Error('Este turno no pertenece al médico')
+    }
+    if (turno.estado !== EstadoTurno.CANCELADO) {
+      throw new Error(`No se puede reactivar un turno en estado ${turno.estado}`)
+    }
+
+    turno.paciente = null
+    turno.actualizarEstado(EstadoTurno.DISPONIBLE, medicoId, 'Turno reactivado por el médico')
+    return await this.turnoRepository.save(turno)
+  }
+
   async cancelar(id_turno, id_usuario, motivo) {
     const turno = await this.turnoRepository.findById(id_turno)
     if (!turno) {
@@ -80,21 +99,28 @@ export class TurnoService {
     turno.actualizarEstado(EstadoTurno.CANCELADO, id_usuario, motivo)
 
     await this.turnoRepository.save(turno)
-    await this.turnoRepository.actualizarHistoral(turno, id_usuario)
 
-    // this.servicioNotificacion.generarNotificacion(
-    //   turno.getContraparte(id_usuario),
-    //   id_usuario,
-    //   'El turno : ' + turno._id + 'ha sido cancelado. Motivo: ' + motivo
-    // )
+    if (turno.paciente) {
+      const pacienteId = turno.paciente._id || turno.paciente
+      const paciente = await this.turnoRepository.pacienteRepository.findById(pacienteId)
+      const destinatarioId = paciente?.usuario?._id || paciente?.usuario
+      if (destinatarioId) {
+        await this.servicioNotificacion.crearNotificacion({
+          destinatarioId,
+          remitenteId: id_usuario,
+          mensaje: `El médico canceló el turno del ${new Date(turno.fechaHora).toLocaleDateString('es-AR')}. Motivo: ${motivo}`,
+        })
+      }
+    }
+
     return turno
   }
 
   marcarComoRealizado(id_turno, id_usuario) {
-    if (turno.estado === 'realizado') {
+    const turno = this.turnoRepository.findBYiD(id_turno)
+    if (turno.estado === EstadoTurno.REALIZADO) {
       return turno
     }
-    const turno = this.turnoRepository.findBYiD(id_turno)
     if (!turno) {
       throw new Error('Turno no encontrado')
     }
@@ -103,7 +129,7 @@ export class TurnoService {
       throw new Error('Solo el médico puede marcar el turno como realizado')
     }
 
-    if (turno.estado !== 'confirmado') {
+    if (turno.estado !== EstadoTurno.CONFIRMADO) {
       throw new Error('Solo se puede marcar como realizado un turno confirmado')
     }
 

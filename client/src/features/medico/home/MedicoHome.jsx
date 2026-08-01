@@ -3,15 +3,24 @@ import '../../../components/banner/banner.css'
 import { FaHeartbeat } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { useUsuario } from '../../../context/UsuarioContext.jsx'
+import useMedicoDashboardData from '../hooks/useMedicoDashboardData'
 
-const turnosProximos = [
-  { id: 1, paciente: 'María López', hora: '09:00', servicio: 'Cardiología', sede: 'Sede Centro' },
-]
+const formatearProximoTurno = (turno) => {
+  if (!turno) return null
+  const fechaHora = new Date(turno.fechaHora)
+  return {
+    paciente: turno.paciente?.usuario?.nombre || turno.paciente?.nombre || 'Sin paciente',
+    hora: fechaHora.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+    servicio: turno.servicio?.nombre || 'Servicio no disponible',
+    sede: turno.sede?.nombre || 'Sede no disponible',
+  }
+}
 
 const MedicoHome = () => {
   const { usuario } = useUsuario()
   const nombreUsuario = usuario?.nombre || 'Profesional'
-  const proximoTurno = turnosProximos[0]
+  const { data, loading, error } = useMedicoDashboardData(usuario?._id)
+  const proximoTurno = formatearProximoTurno(data?.proximosTurnos?.[0])
 
   return (
     <main className="medico-home">
@@ -37,6 +46,9 @@ const MedicoHome = () => {
 
             <div className="hero-proximo-turno-box">
               <span className="hero-proximo-label">Próximo turno</span>
+              {loading && <p>Cargando próximo turno...</p>}
+              {error && <p>No se pudo cargar el próximo turno.</p>}
+              {!loading && !error && !proximoTurno && <p>No hay próximos turnos programados.</p>}
               {proximoTurno && (
                 <div className="hero-proximo-card">
                   <div>
@@ -65,17 +77,17 @@ const MedicoHome = () => {
 
         <div className="medico-home__info-grid">
           <div className="info-card-stat">
-            <h3>8</h3>
+            <h3>{loading ? '—' : data?.turnosHoy ?? 0}</h3>
             <span>Turnos de hoy</span>
           </div>
 
           <div className="info-card-stat">
-            <h3>2</h3>
+            <h3>{loading ? '—' : data?.cancelacionesHoy ?? 0}</h3>
             <span>Cancelaciones</span>
           </div>
 
           <div className="info-card-stat">
-            <h3>5</h3>
+            <h3>{loading ? '—' : data?.notificacionesCount ?? 0}</h3>
             <span>Notificaciones</span>
           </div>
         </div>

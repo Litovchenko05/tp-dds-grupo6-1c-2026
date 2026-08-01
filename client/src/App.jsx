@@ -9,7 +9,7 @@ import { NotificacionesProvider } from './context/NotificacionesContext.jsx'
 
 // Componentes / Features paciente
 import Layout from './features/layout/Layout.jsx'
-import Home from './features/home/Home.jsx'
+import HomeSwitcher from './features/home/HomeSwitcher.jsx'
 import TurnDetailPage from './features/turn/turnDetailPage.jsx'
 import Checkout from './features/checkout/Checkout.jsx'
 import ReservarTurnosPage from './features/reservarTurnosPage/reservarTurnosPage.jsx'
@@ -22,7 +22,6 @@ import BusquedaServiciosPage from './features/busquedaDeServicios/BusquedaServic
 
 // Componentes / Features médico
 import MedicoAgenda from './features/medico/agenda/MedicoAgenda'
-import MedicoHome from './features/medico/home/MedicoHome'
 
 function isDevBypassEnabled() {
   const raw = (process.env.REACT_APP_DEV_BYPASS_AUTH || '').trim().toLowerCase()
@@ -49,7 +48,8 @@ function App() {
 
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Layout />}>
-                <Route index element={<Home />} />
+                <Route index element={<HomeSwitcher />} />
+                <Route path="home" element={<HomeSwitcher />} />
                 <Route path="turnos/:id" element={<TurnDetailPage />} />
                 <Route path="reserva-de-turnos" element={<ReservarTurnosPage />} />
                 <Route path="busqueda-de-servicios" element={<BusquedaServiciosPage />} />
@@ -60,9 +60,7 @@ function App() {
                 <Route path="perfil" element={<PerfilScreen />} />
               </Route>
 
-              <Route path="/medico/home" element={<Layout />}>
-                <Route index element={<MedicoHome />} />
-              </Route>
+              <Route path="/medico/home" element={<Navigate to="/home" replace />} />
 
               <Route path="/medico/agenda" element={<Layout />}>
                 <Route index element={<MedicoAgenda />} />

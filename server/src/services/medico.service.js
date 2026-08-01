@@ -8,6 +8,7 @@ export class MedicoService {
     medicoRepository,
     agendaService,
     turnoService,
+    notificacionService,
     especialidadRepository,
     practicaRepository,
     sedeRepository,
@@ -15,6 +16,7 @@ export class MedicoService {
   }) {
     this.medicoRepository = medicoRepository
     this.turnoService = turnoService
+    this.notificacionService = notificacionService
     this.agendaService = agendaService
     this.especialidadRepository = especialidadRepository
     this.practicaRepository = practicaRepository
@@ -293,6 +295,127 @@ export class MedicoService {
       return todosLosServicios
     } catch (error) {
       throw error
+    }
+  }
+
+  async obtenerTurnosMedico(medicoId, filtros = {}) {
+    const medico = await this.medicoRepository.findById(medicoId)
+    if (!medico) {
+      throw new Error('Médico no encontrado')
+    }
+
+    const {
+      estadoTurno,
+      estado,
+      nombreServicio,
+      paciente,
+      fechaDesde,
+      fechaHasta,
+      page = 1,
+      limit = 10,
+    } = filtros
+
+    const filterObj = { medico: medicoId }
+
+    const estadoFiltro = estado || estadoTurno
+    if (estadoFiltro) {
+      filterObj.estado = estadoFiltro.toUpperCase()
+    }
+
+    if (fechaDesde || fechaHasta) {
+      filterObj.fechaHora = {}
+      if (fechaDesde) filterObj.fechaHora.$gte = new Date(fechaDesde)
+      if (fechaHasta) {
+        const hasta = new Date(fechaHasta)
+        hasta.setHours(23, 59, 59, 999)
+        filterObj.fechaHora.$lte = hasta
+      }
+    }
+
+    if (paciente?.trim()) {
+      const pacientes = await this.turnoService.turnoRepository.pacienteRepository.findByNombre(
+        paciente
+      )
+      filterObj.paciente = { $in: pacientes.map((pacienteEncontrado) => pacienteEncontrado._id) }
+    }
+
+    const pageNum = parseInt(page) || 1
+    const limitNum = parseInt(limit) || 10
+    const skip = (pageNum - 1) * limitNum
+
+    const turnos = await this.turnoService.turnoRepository.TurnoModel.find(filterObj)
+      .populate({
+        path: 'paciente',
+        populate: { path: 'usuario', select: 'nombre email' },
+      })
+      .populate('servicio', 'nombre')
+      .populate('sede', 'nombre')
+      .sort({ fechaHora: 1 })
+      .skip(skip)
+      .limit(limitNum)
+
+    const total = await this.turnoService.turnoRepository.TurnoModel.countDocuments(filterObj)
+
+    return {
+      turnos,
+      total,
+      page: pageNum,
+      totalPages: Math.ceil(total / limitNum) || 1,
+    }
+  }
+
+  async obtenerEstadisticas(medicoId) {
+    const medico = await this.medicoRepository.findById(medicoId)
+    if (!medico) {
+      throw new Error('Médico no encontrado')
+    }
+
+    const hoyInicio = new Date()
+    hoyInicio.setHours(0, 0, 0, 0)
+    const hoyFin = new Date()
+    hoyFin.setHours(23, 59, 59, 999)
+
+    const turnosHoy = await this.turnoService.turnoRepository.TurnoModel.countDocuments({
+      medico: medicoId,
+      fechaHora: { $gte: hoyInicio, $lte: hoyFin },
+    })
+
+    const cancelacionesHoy = await this.turnoService.turnoRepository.TurnoModel.countDocuments({
+      medico: medicoId,
+      estado: 'CANCELADO',
+      fechaHora: { $gte: hoyInicio, $lte: hoyFin },
+    })
+
+    const turnosProximos = await this.turnoService.turnoRepository.TurnoModel.find({
+      medico: medicoId,
+      fechaHora: { $gte: new Date() },
+      estado: { $in: ['RESERVADO', 'CONFIRMADO', 'DISPONIBLE'] },
+    })
+      .populate({
+        path: 'paciente',
+        populate: { path: 'usuario', select: 'nombre email' },
+      })
+      .populate('servicio', 'nombre')
+      .populate('sede', 'nombre')
+      .sort({ fechaHora: 1 })
+      .limit(5)
+
+    let notificacionesCount = 0
+    if (this.notificacionService && medico.usuario) {
+      try {
+        const idUsuario = medico.usuario._id || medico.usuario
+        const noLeidas = await this.notificacionService.notificacionRepository.obtenerNoLeidasDeUsuario(idUsuario)
+        notificacionesCount = Array.isArray(noLeidas) ? noLeidas.length : 0
+      } catch (err) {
+        console.error('Error al obtener notificaciones del médico:', err)
+      }
+    }
+
+    return {
+      turnosHoy,
+      cancelacionesHoy,
+      notificacionesCount,
+      proximosTurnos: turnosProximos,
     }
   }
 }

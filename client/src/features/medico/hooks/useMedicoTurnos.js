@@ -1,35 +1,39 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getTurnosMedico } from '../services/medicoTurnos.api'
 
-function useMedicoTurnos(initialFilters = {}) {
+function useMedicoTurnos(medicoId) {
   const [turnos, setTurnos] = useState([])
+  const [pagination, setPagination] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  const fetchTurnos = async (filters = initialFilters) => {
-    try {
-      setLoading(true)
-      setError(null)
-      const data = await getTurnosMedico(filters)
-      setTurnos(Array.isArray(data) ? data : data?.turnos || [])
-    } catch (err) {
-      setError(err)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const fetchTurnos = useCallback(
+    async (filters = {}) => {
+      if (!medicoId) {
+        setTurnos([])
+        return
+      }
+
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await getTurnosMedico(medicoId, filters)
+        setTurnos(response?.data || [])
+        setPagination(response?.pagination || null)
+      } catch (err) {
+        setError(err)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [medicoId]
+  )
 
   useEffect(() => {
-    fetchTurnos(initialFilters)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    fetchTurnos()
+  }, [fetchTurnos])
 
-  return {
-    turnos,
-    loading,
-    error,
-    refetch: fetchTurnos,
-  }
+  return { turnos, pagination, loading, error, refetch: fetchTurnos }
 }
 
 export default useMedicoTurnos

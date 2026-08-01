@@ -30,6 +30,12 @@ export class PacienteRepository {
     return await this.PacienteModel.findOne({ usuario: usuarioId })
   }
 
+  async findByNombre(nombre) {
+    return await this.PacienteModel.find({
+      nombre: { $regex: nombre.trim(), $options: 'i' },
+    }).select('_id')
+  }
+
   async save(paciente) {
     const query = paciente.id ? { _id: paciente.id } : { _id: new this.PacienteModel()._id }
 

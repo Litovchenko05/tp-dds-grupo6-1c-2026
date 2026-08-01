@@ -1,5 +1,12 @@
 import './MedicoAgenda.css'
 import { useMemo, useState } from 'react'
+import { useUsuario } from '../../../context/UsuarioContext.jsx'
+import useMedicoTurnos from '../hooks/useMedicoTurnos'
+import useCancelarTurno from '../hooks/useCancelarTurno'
+import useMarcarRealizadoTurno from '../hooks/useMarcarRealizadoTurno'
+import useReactivarTurno from '../hooks/useReactivarTurno'
+import useObtenerHistorialPaciente from '../hooks/useObtenerHistorialPaciente'
+import CancelarTurnoModal from '../components/CancelarTurnoModal'
 import Collapse from '@mui/material/Collapse'
 import Button from '@mui/material/Button'
 import SearchIcon from '@mui/icons-material/Search'
@@ -9,7 +16,6 @@ import TurnGridSkeleton from '../../../components/common/TurnGridSkeleton'
 import AgendaFiltros from './components/AgendaFiltros'
 import AgendaTurnoCard from './components/AgendaTurnoCard'
 import AgendaTurnosTable from './components/AgendaTurnosTable'
-import turnosAgendaMock from './mock/turnosAgendaMock'
 
 const MedicoAgenda = () => {
   const filtrosIniciales = {
@@ -24,15 +30,43 @@ const MedicoAgenda = () => {
   const [filtrosDraft, setFiltrosDraft] = useState(filtrosIniciales)
   const [filtrosAplicados, setFiltrosAplicados] = useState(filtrosIniciales)
   const [mostrarBusqueda, setMostrarBusqueda] = useState(false)
-  const [turnos, setTurnos] = useState(turnosAgendaMock)
-  const [isLoading, setIsLoading] = useState(false)
+  const { usuario } = useUsuario()
+  const { turnos: turnosBackend, pagination, loading: isLoading, error: turnosError, refetch } = useMedicoTurnos(usuario?._id)
+  const { cancelar, loading: cancelando } = useCancelarTurno()
+  const { marcarRealizado } = useMarcarRealizadoTurno()
+  const { reactivar } = useReactivarTurno()
+  const {
+    historial: historialBackend,
+    loading: isHistorialLoading,
+    obtenerHistorial,
+  } = useObtenerHistorialPaciente()
   const [hasError, setHasError] = useState(false)
   const [feedbackMsg, setFeedbackMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
   const [showHistorialPanel, setShowHistorialPanel] = useState(false)
-  const [isHistorialLoading, setIsHistorialLoading] = useState(false)
+  const [turnoACancelar, setTurnoACancelar] = useState(null)
+
   const [turnoHistorialSeleccionado, setTurnoHistorialSeleccionado] = useState(null)
   const [agendaPage, setAgendaPage] = useState(1)
+  const turnos = useMemo(
+    () =>
+      turnosBackend.map((turno) => {
+        const fechaHora = new Date(turno.fechaHora)
+        const horaInicio = fechaHora.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+        const horaFin = new Date(fechaHora.getTime() + (turno.duracion || 0) * 60000).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+        return {
+          ...turno,
+          id: turno._id,
+          paciente: turno.paciente?.usuario?.nombre || turno.paciente?.nombre || '',
+          pacienteId: turno.paciente?._id || turno.paciente,
+          servicio: turno.servicio?.nombre || 'Servicio no disponible',
+          sede: turno.sede?.nombre || 'Sede no disponible',
+          fecha: fechaHora.toLocaleDateString('en-CA'),
+          hora: `${horaInicio} - ${horaFin}`,
+        }
+      }),
+    [turnosBackend]
+  )
   const [historialPage, setHistorialPage] = useState(1)
 
   const onChangeFiltro = (event) => {
@@ -67,7 +101,7 @@ const MedicoAgenda = () => {
     return diferenciaMs >= unaHoraMs
   }
 
-  const handleAccionTurno = (accion, turnoId) => {
+  const handleAccionTurno = async (accion, turnoId) => {
     const turnoActual = turnos.find((turno) => turno.id === turnoId)
     if (!turnoActual) return
 
@@ -80,45 +114,43 @@ const MedicoAgenda = () => {
         return
       }
 
-      setTurnos((prev) =>
-        prev.map((turno) => (turno.id === turnoId ? { ...turno, estado: 'CANCELADO' } : turno))
-      )
-      setFeedbackMsg(`Turno ${turnoId} cancelado correctamente.`)
+      setTurnoACancelar(turnoActual)
       return
     }
 
     if (accion === 'Marcar realizado') {
-      setTurnos((prev) =>
-        prev.map((turno) => (turno.id === turnoId ? { ...turno, estado: 'REALIZADO' } : turno))
-      )
+      await marcarRealizado(usuario._id, turnoId)
+      await refetch({ ...crearFiltrosBackend(filtrosAplicados), page: agendaPage, limit: 10 })
       setFeedbackMsg(`Turno ${turnoId} marcado como realizado.`)
       return
     }
 
     if (accion === 'Marcar como disponible') {
-      setTurnos((prev) =>
-        prev.map((turno) => (turno.id === turnoId ? { ...turno, estado: 'DISPONIBLE' } : turno))
-      )
-      setFeedbackMsg(`Turno ${turnoId} marcado como disponible.`)
+      try {
+        await reactivar(usuario._id, turnoId)
+        await refetch({ ...crearFiltrosBackend(filtrosAplicados), page: agendaPage, limit: 10 })
+        setFeedbackMsg(`Turno ${turnoId} reactivado como disponible.`)
+      } catch (error) {
+        setErrorMsg(error.response?.data?.message || 'No se pudo reactivar el turno.')
+      }
       return
     }
 
     if (accion === 'Ver historial del paciente') {
+      if (!turnoActual.pacienteId) {
+        setErrorMsg('El turno no tiene un paciente asociado.')
+        return
+      }
       setTurnoHistorialSeleccionado(turnoActual)
       setShowHistorialPanel(true)
-      setIsHistorialLoading(true)
       setHistorialPage(1)
       setFeedbackMsg('')
-
-      setTimeout(() => {
-        setIsHistorialLoading(false)
-      }, 700)
+      try {
+        await obtenerHistorial(usuario._id, turnoActual.pacienteId)
+      } catch (error) {
+        setErrorMsg(error.response?.data?.message || 'No se pudo cargar el historial del paciente.')
+      }
     }
-  }
-
-  const parseFecha = (fechaStr) => {
-    const [anio, mes, dia] = fechaStr.split('-').map(Number)
-    return new Date(anio, mes - 1, dia, 0, 0, 0, 0)
   }
 
   const inicioSemana = (fecha) => {
@@ -138,102 +170,89 @@ const MedicoAgenda = () => {
     return fin
   }
 
-  const coincideConFiltroFecha = (fechaTurnoStr) => {
-    if (!filtrosAplicados.tipoFecha) return true
 
-    const hoy = new Date()
-    const fechaTurno = parseFecha(fechaTurnoStr)
 
-    if (filtrosAplicados.tipoFecha === 'HOY') {
-      return fechaTurno.toDateString() === hoy.toDateString()
-    }
+  const turnosFiltrados = turnos
 
-    if (filtrosAplicados.tipoFecha === 'SEMANA') {
-      const inicio = inicioSemana(hoy)
-      const fin = finSemana(hoy)
-      return fechaTurno >= inicio && fechaTurno <= fin
-    }
-
-    if (filtrosAplicados.tipoFecha === 'MES') {
-      return (
-        fechaTurno.getMonth() === hoy.getMonth() && fechaTurno.getFullYear() === hoy.getFullYear()
-      )
-    }
-
-    if (filtrosAplicados.tipoFecha === 'ESPECIFICA') {
-      if (!filtrosAplicados.fecha) return true
-      return fechaTurnoStr === filtrosAplicados.fecha
-    }
-
-    if (filtrosAplicados.tipoFecha === 'RANGO') {
-      if (!filtrosAplicados.fechaDesde && !filtrosAplicados.fechaHasta) return true
-      const desde = filtrosAplicados.fechaDesde ? parseFecha(filtrosAplicados.fechaDesde) : null
-      const hasta = filtrosAplicados.fechaHasta ? parseFecha(filtrosAplicados.fechaHasta) : null
-
-      if (desde && fechaTurno < desde) return false
-      if (hasta && fechaTurno > hasta) return false
-      return true
-    }
-
-    return true
-  }
-
-  const turnosFiltrados = useMemo(() => {
-    return turnos.filter((turno) => {
-      const nombrePaciente = turno.paciente || ''
-      const coincidePaciente =
-        !filtrosAplicados.paciente ||
-        nombrePaciente.toLowerCase().includes(filtrosAplicados.paciente.toLowerCase())
-
-      const coincideFecha = coincideConFiltroFecha(turno.fecha)
-      const coincideEstado = !filtrosAplicados.estado || turno.estado === filtrosAplicados.estado
-
-      return coincidePaciente && coincideFecha && coincideEstado
-    })
-  }, [filtrosAplicados, turnos])
-
-  const agendaRowsPerPage = 4
-  const agendaTotalPages = Math.max(1, Math.ceil(turnosFiltrados.length / agendaRowsPerPage))
+  const agendaTotalPages = pagination?.totalPages || 1
   const agendaPageSafe = Math.min(agendaPage, agendaTotalPages)
-  const agendaStartIndex = (agendaPageSafe - 1) * agendaRowsPerPage
-  const turnosAgendaPaginados = turnosFiltrados.slice(
-    agendaStartIndex,
-    agendaStartIndex + agendaRowsPerPage
-  )
+  const turnosAgendaPaginados = turnosFiltrados
 
-  const limpiarFiltros = () => {
+  const limpiarFiltros = async () => {
     setFiltrosDraft(filtrosIniciales)
     setFiltrosAplicados(filtrosIniciales)
     setAgendaPage(1)
     setHasError(false)
     setErrorMsg('')
+    await refetch({ page: 1, limit: 10 })
   }
 
-  const buscarTurnos = () => {
+  const crearFiltrosBackend = (filtros) => {
+    const filtrosBackend = {
+      paciente: filtros.paciente?.trim() || undefined,
+      estado: filtros.estado || undefined,
+    }
+    const hoy = new Date()
+    const formatearFecha = (fecha) => fecha.toLocaleDateString('en-CA')
+
+    if (filtros.tipoFecha === 'HOY') {
+      filtrosBackend.fechaDesde = formatearFecha(hoy)
+      filtrosBackend.fechaHasta = formatearFecha(hoy)
+    }
+    if (filtros.tipoFecha === 'SEMANA') {
+      filtrosBackend.fechaDesde = formatearFecha(inicioSemana(hoy))
+      filtrosBackend.fechaHasta = formatearFecha(finSemana(hoy))
+    }
+    if (filtros.tipoFecha === 'MES') {
+      filtrosBackend.fechaDesde = formatearFecha(new Date(hoy.getFullYear(), hoy.getMonth(), 1))
+      filtrosBackend.fechaHasta = formatearFecha(new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0))
+    }
+    if (filtros.tipoFecha === 'ESPECIFICA' && filtros.fecha) {
+      filtrosBackend.fechaDesde = filtros.fecha
+      filtrosBackend.fechaHasta = filtros.fecha
+    }
+    if (filtros.tipoFecha === 'RANGO') {
+      filtrosBackend.fechaDesde = filtros.fechaDesde || undefined
+      filtrosBackend.fechaHasta = filtros.fechaHasta || undefined
+    }
+    return filtrosBackend
+  }
+
+  const buscarTurnos = async () => {
     setHasError(false)
-    setIsLoading(true)
-    setTimeout(() => {
-      setFiltrosAplicados(filtrosDraft)
-      setAgendaPage(1)
-      setIsLoading(false)
-    }, 700)
+    setFiltrosAplicados(filtrosDraft)
+    setAgendaPage(1)
+    await refetch({ ...crearFiltrosBackend(filtrosDraft), page: 1, limit: 10 })
+  }
+
+  const confirmarCancelacion = async (motivo) => {
+    if (!turnoACancelar) return
+    try {
+      await cancelar(usuario._id, turnoACancelar.id, motivo)
+      await refetch({ ...crearFiltrosBackend(filtrosAplicados), page: agendaPage, limit: 10 })
+      setFeedbackMsg(`Turno ${turnoACancelar.id} cancelado correctamente.`)
+      setTurnoACancelar(null)
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || 'No se pudo cancelar el turno.')
+      throw error
+    }
   }
 
   const cerrarHistorialPanel = () => {
     setShowHistorialPanel(false)
-    setIsHistorialLoading(false)
     setTurnoHistorialSeleccionado(null)
   }
 
   const historialPaciente = useMemo(() => {
     if (!turnoHistorialSeleccionado) return []
-
-    return turnos.filter(
-      (turno) =>
-        turno.paciente === turnoHistorialSeleccionado.paciente &&
-        turno.id !== turnoHistorialSeleccionado.id
-    )
-  }, [turnos, turnoHistorialSeleccionado])
+    return historialBackend.map((turno) => ({
+      id: turno._id || turno.id,
+      servicio: turno.servicio?.nombre || turno.practica?.nombre || turno.especialidad?.nombre,
+      medicoNombre: turno.medico?.nombre,
+      medicoContacto: turno.medico?.usuario?.email,
+      fecha: turno.fechaHora ? new Date(turno.fechaHora).toLocaleDateString('es-AR') : '',
+    }))
+  }, [historialBackend, turnoHistorialSeleccionado])
 
   const historialRowsPerPage = 3
   const historialTotalPages = Math.max(
@@ -316,10 +335,10 @@ const MedicoAgenda = () => {
               <TurnGridSkeleton items={3} />
             </div>
           </section>
-        ) : hasError ? (
+        ) : hasError || turnosError ? (
           <div className="agenda-error" role="alert">
             <p>No se pudieron cargar los turnos.</p>
-            <button type="button" onClick={() => setHasError(false)}>
+            <button type="button" onClick={() => refetch({ ...crearFiltrosBackend(filtrosAplicados), page: agendaPage, limit: 10 })}>
               Reintentar
             </button>
           </div>
@@ -347,7 +366,11 @@ const MedicoAgenda = () => {
                 <Button
                   variant="outlined"
                   size="small"
-                  onClick={() => setAgendaPage((prev) => Math.max(1, prev - 1))}
+                  onClick={() => {
+                    const page = Math.max(1, agendaPageSafe - 1)
+                    setAgendaPage(page)
+                    refetch({ ...crearFiltrosBackend(filtrosAplicados), page, limit: 10 })
+                  }}
                   disabled={agendaPageSafe <= 1}
                 >
                   Anterior
@@ -358,7 +381,11 @@ const MedicoAgenda = () => {
                 <Button
                   variant="outlined"
                   size="small"
-                  onClick={() => setAgendaPage((prev) => Math.min(agendaTotalPages, prev + 1))}
+                  onClick={() => {
+                    const page = Math.min(agendaTotalPages, agendaPageSafe + 1)
+                    setAgendaPage(page)
+                    refetch({ ...crearFiltrosBackend(filtrosAplicados), page, limit: 10 })
+                  }}
                   disabled={agendaPageSafe >= agendaTotalPages}
                 >
                   Siguiente
@@ -368,6 +395,12 @@ const MedicoAgenda = () => {
           </>
         )}
       </main>
+      <CancelarTurnoModal
+        isOpen={Boolean(turnoACancelar)}
+        loading={cancelando}
+        onClose={() => setTurnoACancelar(null)}
+        onConfirm={confirmarCancelacion}
+      />
       {showHistorialPanel && (
         <section className="paciente-historial-overlay" role="dialog" aria-modal="true">
           <article className="paciente-historial-panel">

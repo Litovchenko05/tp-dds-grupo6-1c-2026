@@ -9,16 +9,16 @@ const AgendaTurnosTable = ({ turnos, onAction }) => {
 
   const accionesPorEstado = (turno) => {
     const acciones = []
-    if (turno.estado === 'CONFIRMADO') {
+    if (turno.estado === 'CONFIRMADO' || turno.estado === 'RESERVADO') {
       acciones.push({
         label: 'Marcar como realizado',
         onClick: () => onAction('Marcar realizado', turno.id),
       })
     }
-    if (turno.estado === 'CONFIRMADO' || turno.estado === 'DISPONIBLE') {
+    if (turno.estado === 'CONFIRMADO' || turno.estado === 'RESERVADO' || turno.estado === 'DISPONIBLE') {
       acciones.push({ label: 'Cancelar', onClick: () => onAction('Cancelar', turno.id) })
     }
-    if (turno.estado === 'CANCELADO' && turno.permiteReactivarDisponible) {
+    if (turno.estado === 'CANCELADO') {
       acciones.push({
         label: 'Marcar como disponible',
         onClick: () => onAction('Marcar como disponible', turno.id),

@@ -60,7 +60,7 @@ const AgendaTurnoCard = ({ turno, onAction }) => {
                 </button>
               )}
 
-              {turno.estado === 'CANCELADO' && turno.permiteReactivarDisponible && (
+              {turno.estado === 'CANCELADO' && (
                 <button
                   type="button"
                   role="menuitem"

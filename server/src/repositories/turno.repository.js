@@ -167,7 +167,7 @@ export class TurnoRepository {
 
     // Construir filtro dinámico
     const filtro = {
-      estado: 'disponible',
+      estado: EstadoTurno.DISPONIBLE,
     }
 
     if (nombreMedico) {
@@ -282,7 +282,7 @@ export class TurnoRepository {
     const sortOrder = order === 'asc' ? 1 : -1
 
     const filtro = {
-      estado: 'disponible',
+      estado: EstadoTurno.DISPONIBLE,
     }
 
     const sortFields = {

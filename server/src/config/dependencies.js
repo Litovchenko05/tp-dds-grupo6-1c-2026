@@ -77,6 +77,7 @@ const medicoService = new MedicoService({
   practicaRepository,
   sedeRepository,
   turnoService,
+  notificacionService,
 })
 const authService = new AuthService({
   usuarioService,

@@ -51,7 +51,7 @@ export class AgendaService {
       const turnosDelMedicoAModificar = await this.turnoRepository.findByFilters({
         medico: medico._id,
         fechaHora: { $gte: fechaActual },
-        estado: 'disponible',
+        estado: EstadoTurno.DISPONIBLE,
         $expr: {
           $eq: [
             { $dayOfWeek: '$fechaHora' },

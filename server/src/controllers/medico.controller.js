@@ -106,39 +106,33 @@ export class MedicoController {
 
   obtenerTurnos = async (req, res) => {
     try {
-      const { idMedico } = req.params
+      const { id } = req.params
+      const resultado = await this.medicoService.obtenerTurnosMedico(id, req.query)
 
-      const { nombreServicio, estadoTurno } = req.query
-      const disponibilidades = []
-      if (estadoTurno && estadoTurno == 'DISPONIBLE') {
-        disponibilidades = this.medicoService.obtenerDisponiblesSegunMedicoYServicio(
-          idMedico,
-          nombreServicio
-        )
-      }
       return res.status(200).json({
         status: 'success',
-        data: disponibilidades,
+        data: resultado.turnos,
+        pagination: {
+          total: resultado.total,
+          page: resultado.page,
+          totalPages: resultado.totalPages,
+        },
       })
     } catch (error) {
-      if (error.message === 'Médico no encontrado') {
-        return res.status(404).json({
-          status: 'error',
-          message: error.message,
-        })
-      }
+      const statusCode = error.message === 'Médico no encontrado' ? 404 : 400
+      return res.status(statusCode).json({ status: 'error', message: error.message })
+    }
+  }
 
-      if (error.message === 'El médico no atiende el servicio solicitado') {
-        return res.status(400).json({
-          status: 'error',
-          message: error.message,
-        })
-      }
+  obtenerEstadisticas = async (req, res) => {
+    try {
+      const { id } = req.params
+      const estadisticas = await this.medicoService.obtenerEstadisticas(id)
 
-      return res.status(500).json({
-        status: 'error',
-        message: 'Error interno del servidor',
-      })
+      return res.status(200).json({ status: 'success', data: estadisticas })
+    } catch (error) {
+      const statusCode = error.message === 'Médico no encontrado' ? 404 : 400
+      return res.status(statusCode).json({ status: 'error', message: error.message })
     }
   }
 
@@ -180,7 +174,7 @@ export class MedicoController {
   }
   cancelarTurno = async (req, res) => {
     try {
-      const { medicoId, turnoId } = req.params
+      const { id: medicoId, turnoId } = req.params
       const body = req.body
 
       const resultado = cancelarTurnoSchema.safeParse(body)
@@ -189,7 +183,7 @@ export class MedicoController {
         return res.status(400).json({ status: 'error', message: resultado.error.errors })
       }
 
-      const turnoActualizado = await this.turnoService.cancelarTurno(
+      const turnoActualizado = await this.turnoService.cancelar(
         turnoId,
         medicoId,
         resultado.data.motivo
@@ -214,9 +208,29 @@ export class MedicoController {
     }
   }
 
+  reactivarTurno = async (req, res) => {
+    try {
+      const { id: medicoId, turnoId } = req.params
+      const turnoActualizado = await this.turnoService.reactivarTurno(turnoId, medicoId)
+      return res.status(200).json({
+        status: 'success',
+        message: 'Turno reactivado como disponible',
+        data: turnoActualizado,
+      })
+    } catch (error) {
+      if (error.message.includes('no encontrado')) {
+        return res.status(404).json({ status: 'error', message: error.message })
+      }
+      if (error.message.includes('no pertenece')) {
+        return res.status(403).json({ status: 'error', message: error.message })
+      }
+      return res.status(400).json({ status: 'error', message: error.message })
+    }
+  }
+
   actualizarTurno = async (req, res) => {
     try {
-      const { medicoId, turnoId } = req.params
+      const { id: medicoId, turnoId } = req.params
       const body = req.body
 
       const resultado = marcarRealizadoSchema.safeParse(body)
@@ -252,7 +266,7 @@ export class MedicoController {
 
   crearCambio = async (req, res) => {
     try {
-      const { medicoId, turnoId } = req.params
+      const { id: medicoId, turnoId } = req.params
       const body = req.body
 
       const resultado = crearCambioSchema.safeParse(body)
@@ -376,7 +390,7 @@ export class MedicoController {
 
   obtenerHistorialPaciente = async (req, res) => {
     try {
-      const { pacienteId } = req.params
+      const { idPaciente } = req.params
       const { desde, hasta, estado } = req.query
 
       const filtros = {}
@@ -384,7 +398,7 @@ export class MedicoController {
       if (hasta) filtros.hasta = hasta
       if (estado) filtros.estado = estado
 
-      const historial = await this.pacienteService.consultarHistorial(pacienteId)
+      const historial = await this.pacienteService.consultarHistorial(idPaciente)
 
       return res.status(200).json({
         status: 'success',

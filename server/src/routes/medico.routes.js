@@ -20,6 +20,14 @@ router
     medicoController.createMedico(req, res)
   )
 
+router.route('/:id/estadisticas').get((req, res) =>
+  // #swagger.tags = ['Médicos', 'Estadísticas']
+  // #swagger.summary = 'Obtener estadísticas del médico'
+  // #swagger.description = 'Recupera las estadísticas de turnos y métricas del médico.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+  medicoController.obtenerEstadisticas(req, res)
+)
+
 router.route('/:id').get((req, res) =>
   // #swagger.tags = ['Médicos']
   // #swagger.summary = 'Obtener médico por ID'
@@ -64,6 +72,22 @@ router
     /* #swagger.parameters['idTurno'] = { in: 'path', description: 'ID del turno', required: true, type: 'string' } */
     medicoController.actualizarTurno(req, res)
   )
+
+router.route('/:id/turnos/:idTurno/reactivar').patch((req, res) =>
+  // #swagger.tags = ['Médicos', 'Turnos']
+  // #swagger.summary = 'Reactivar turno cancelado'
+  // #swagger.description = 'Libera un turno cancelado y lo devuelve al estado disponible.'
+  medicoController.reactivarTurno(req, res)
+)
+
+router.route('/:id/turnos/:idTurno/realizado').patch((req, res) =>
+  // #swagger.tags = ['Médicos', 'Turnos']
+  // #swagger.summary = 'Marcar turno como realizado'
+  // #swagger.description = 'El médico marca un turno como realizado.'
+  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
+  /* #swagger.parameters['idTurno'] = { in: 'path', description: 'ID del turno', required: true, type: 'string' } */
+  medicoController.marcarRealizado(req, res)
+)
 
 router.route('/:id/turnos/:idTurno/cambios').post((req, res) =>
   // #swagger.tags = ['Médicos', 'Turnos']
