@@ -20,11 +20,9 @@ import EventNoteIcon from '@mui/icons-material/EventNote'
 import HistoryIcon from '@mui/icons-material/History'
 import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 import SearchIcon from '@mui/icons-material/Search'
-import NotificationsIcon from '@mui/icons-material/Notifications'
 import { useNavigate } from 'react-router-dom'
 import { useUsuario } from '../../context/UsuarioContext.jsx'
 import './Drawer.css'
-import { useUsuario } from '../../context/UsuarioContext.jsx'
 
 export default function TemporaryDrawer({ role = 'paciente', options, showLogout = true }) {
   const [open, setOpen] = React.useState(false)
@@ -68,7 +66,7 @@ export default function TemporaryDrawer({ role = 'paciente', options, showLogout
           </ListItem>
         ))}
         {usuario.rol === 'paciente' &&
-          opciones.map((opcion) => (
+          opcionesPaciente.map((opcion) => (
             <ListItem key={opcion.texto} disablePadding>
               <ListItemButton className="drawer-item" onClick={() => navigate(opcion.ruta)}>
                 <ListItemIcon className="drawer-icon">{opcion.icono}</ListItemIcon>
