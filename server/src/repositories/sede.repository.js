@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { SedeModel } from '../schemasBD/sedeSchema.js'
 
 export class SedeRepository {

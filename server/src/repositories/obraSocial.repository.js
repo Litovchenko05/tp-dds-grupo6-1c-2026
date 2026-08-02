@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { ObraSocialModel } from '../schemasBD/obraSocialSchema.js'
 
 export class ObraSocialRepository {

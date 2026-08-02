@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { PacienteModel } from '../schemasBD/pacienteSchema.js'
 
 export class PacienteRepository {

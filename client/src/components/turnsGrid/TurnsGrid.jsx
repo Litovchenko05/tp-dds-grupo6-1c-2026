@@ -23,6 +23,7 @@ export default function TurnsGrid({ filtros }) {
     try {
       let turnosCargados
       const idUsuario = usuario?._id ?? null
+      console.log('Cargando turnos para el usuario con ID:', idUsuario)
 
       if (filtros === null) {
         turnosCargados = await getTurns(page, idUsuario, { sortBy, order })
@@ -46,7 +47,11 @@ export default function TurnsGrid({ filtros }) {
   }
   //para que cuando se monte el componente, cargue los turnos
   useEffect(() => {
-    if (cargandoUsuario) return
+    if (cargandoUsuario) {
+      console.log('Cargando usuario, no se cargan los turnos aún.')
+      return
+    }
+    console.log('Usuario cargado, procediendo a cargar los turnos.')
     cargarTurnos(1)
   }, [filtros, sortBy, order, cargandoUsuario])
 

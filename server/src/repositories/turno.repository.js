@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { TurnoModel } from '../schemasBD/turnoSchema.js'
 import { EstadoTurno } from '../models/estadoTurno.enum.js'
 import { NivelDeCobertura } from '../models/nivelDeCobertura.js'
@@ -284,6 +285,7 @@ export class TurnoRepository {
   }
 
   async findAllPaginated(idUsuario, page = 1, limit = 5, sortBy = 'fecha', order = 'asc') {
+    console.log('usuarioId:', idUsuario)
     const skip = (page - 1) * limit
     const sortOrder = order === 'asc' ? 1 : -1
 
@@ -304,10 +306,12 @@ export class TurnoRepository {
       .sort({ [campoSort]: sortOrder })
       .skip(skip)
       .limit(limit)
-
+    console.log('Turnos encontrados:', turnos.length)
     const total = await this.TurnoModel.countDocuments(filtro)
 
     const pacienteEncontrado = await this.pacienteRepository.findByUsuario(idUsuario)
+
+    console.log('Paciente encontrado:', pacienteEncontrado)
 
     let coberturas = []
 

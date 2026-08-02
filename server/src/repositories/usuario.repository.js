@@ -1,5 +1,5 @@
 import { UsuarioModel } from '../schemasBD/usuarioSchema.js'
-
+import mongoose from 'mongoose'
 export class UsuarioRepository {
   constructor() {
     this.UsuarioModel = UsuarioModel
