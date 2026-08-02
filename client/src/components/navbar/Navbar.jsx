@@ -23,7 +23,7 @@ const Navbar = () => {
   const { noLeidas } = useNotificaciones()
   const [cantUnidades, setCantUnidades] = useState(0)
   const esMedico = usuario?.rol === 'medico'
-  const rutaHome = esMedico ? '/medico/home' : '/'
+  const rutaHome = esMedico ? '/medico/home' : '/reserva-de-turnos'
 
   const [anchorEl, setAnchorEl] = useState(null)
   const menuAbierto = Boolean(anchorEl)

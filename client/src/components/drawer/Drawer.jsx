@@ -26,7 +26,7 @@ import './Drawer.css'
 
 export default function TemporaryDrawer({ role = 'paciente', options, showLogout = true }) {
   const [open, setOpen] = React.useState(false)
-  const { usuario, cargandoUsuario, cerrarSesion } = useUsuario()
+  const { usuario, cargandoUsuario } = useUsuario()
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen)
@@ -43,28 +43,15 @@ export default function TemporaryDrawer({ role = 'paciente', options, showLogout
   if (cargandoUsuario || !usuario) return null
 
   const opcionesMedico = [
-    { texto: 'Inicio', ruta: '/medico/home', icon: <AccountCircleIcon /> },
-    { texto: 'Agenda', ruta: '/medico/agenda', icon: <CalendarMonthIcon /> },
-    { texto: 'Servicios', ruta: '/medico/home', icon: <MedicalServicesIcon /> },
-    { texto: 'Notificaciones', ruta: '/notificaciones', icon: <NotificationsIcon /> },
+    { texto: 'Inicio', ruta: '/medico/home', icono: <AccountCircleIcon /> },
+    { texto: 'Agenda', ruta: '/medico/agenda', icono: <CalendarMonthIcon /> },
+    { texto: 'Servicios', ruta: '/medico/home', icono: <MedicalServicesIcon /> },
+    { texto: 'Notificaciones', ruta: '/notificaciones', icono: <NotificationsIcon /> },
   ]
-
-  const opcionesPorRol = role === 'medico' ? opcionesMedico : opcionesPaciente
-  const opcionesFinales = options || opcionesPorRol
 
   const DrawerList = (
     <Box className="drawer" role="presentation" onClick={toggleDrawer(false)}>
       <List className="drawer-list">
-        {opcionesFinales.map((opcion, index) => (
-          <ListItem key={opcion.texto} disablePadding>
-            <ListItemButton className="drawer-item" onClick={() => navigate(opcion.ruta)}>
-              <ListItemIcon className="drawer-icon">
-                {opcion.icon || (index % 2 === 0 ? <InboxIcon /> : <MailIcon />)}
-              </ListItemIcon>
-              <ListItemText primary={opcion.texto} />
-            </ListItemButton>
-          </ListItem>
-        ))}
         {usuario.rol === 'paciente' &&
           opcionesPaciente.map((opcion) => (
             <ListItem key={opcion.texto} disablePadding>
@@ -74,30 +61,18 @@ export default function TemporaryDrawer({ role = 'paciente', options, showLogout
               </ListItemButton>
             </ListItem>
           ))}
-      </List>
-      <Box sx={{ flexGrow: 1 }} />
 
-      {showLogout && (
-        <>
-          <Divider className="drawer-divider" />
-          <List className="drawer-footer">
-            <ListItem disablePadding>
-              <ListItemButton
-                className="logout-btn"
-                onClick={() => {
-                  setOpen(false)
-                  cerrarSesion()
-                }}
-              >
-                <ListItemIcon>
-                  <LogoutIcon className="logout-icon" />
-                </ListItemIcon>
-                <ListItemText primary="Cerrar sesión" className="logout-text" />
+        {usuario.rol === 'medico' &&
+          opcionesMedico.map((opcion) => (
+            <ListItem key={opcion.texto} disablePadding>
+              <ListItemButton className="drawer-item" onClick={() => navigate(opcion.ruta)}>
+                <ListItemIcon className="drawer-icon">{opcion.icono}</ListItemIcon>
+                <ListItemText primary={opcion.texto} />
               </ListItemButton>
             </ListItem>
-          </List>
-        </>
-      )}
+          ))}
+      </List>
+      <Box sx={{ flexGrow: 1 }} />
     </Box>
   )
 

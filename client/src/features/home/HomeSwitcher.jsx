@@ -1,8 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { useUsuario } from '../../context/UsuarioContext.jsx'
-import Home from './Home.jsx'
 import MedicoHome from '../medico/home/MedicoHome.jsx'
-
+import ReservarTurnosPage from '../../features/reservarTurnosPage/reservarTurnosPage.jsx'
 function HomeSwitcher() {
   const { usuario, cargandoUsuario } = useUsuario()
 
@@ -12,7 +11,7 @@ function HomeSwitcher() {
   }
 
   if (usuario?.rol === 'paciente') {
-    return <Home />
+    return <ReservarTurnosPage />
   }
 
   return <Navigate to="/login" replace />
