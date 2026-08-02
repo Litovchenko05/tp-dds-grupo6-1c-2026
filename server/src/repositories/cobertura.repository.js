@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import { CoberturaModel } from '../schemasBD/coberturaSchema.js'
 
 export class CoberturaRepository {

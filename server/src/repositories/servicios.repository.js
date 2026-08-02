@@ -1,8 +1,6 @@
-import mongoose from "mongoose";
 import { ServicioModel } from '../schemasBD/servicioSchema.js'
 
 export class ServicioRepository {
-
   constructor() {
     this.ServicioModel = ServicioModel
   }
@@ -14,7 +12,6 @@ export class ServicioRepository {
   async findByFilters(filtros = {}) {
     return await this.ServicioModel.find(filtros)
   }
-
 
   async findById(id) {
     return await this.ServicioModel.findById(id)
@@ -28,21 +25,14 @@ export class ServicioRepository {
     //Si tiene id es update, si no es create
     const query = servicio._id ? { _id: servicio._id } : { _id: new this.ServicioModel()._id }
 
-
-    return await this.ServicioModel.findOneAndUpdate(
-      query,
-      servicio,
-      {
-        returnDocument: 'after',
-        runValidators: true,
-        upsert: true
-      }
-    )
+    return await this.ServicioModel.findOneAndUpdate(query, servicio, {
+      returnDocument: 'after',
+      runValidators: true,
+      upsert: true,
+    })
   }
-
 
   async delete(id) {
     return await this.ServicioModel.findByIdAndDelete(id)
   }
-
 }

@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import { PlanModel } from '../schemasBD/planSchema.js'
 
 export class PlanRepository {

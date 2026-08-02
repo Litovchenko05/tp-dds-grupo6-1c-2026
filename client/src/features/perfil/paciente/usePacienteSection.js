@@ -60,7 +60,10 @@ export function usePacienteSection(idPaciente) {
     setGuardadoExitoso(false)
 
     try {
-      await pacienteService.actualizarCobertura(idPaciente, { obraSocial, plan })
+      await pacienteService.definirCobertura(idPaciente, {
+        obraSocialId: obraSocial,
+        planId: plan,
+      })
       setCoberturaGuardada({
         obraSocial: obraSocialSeleccionadaObj || obraSocial,
         plan: planesDisponibles.find((p) => String(p._id) === String(plan)) || plan,

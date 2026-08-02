@@ -309,8 +309,6 @@ export class MedicoService {
       const practicas = medico.practicas || []
       const disponibilidades = medico.disponibilidades || []
 
-      console.log(disponibilidades)
-
       const combinados = [
         ...especialidades.map((e) => ({ item: e, tipo: 'Especialidad' })),
         ...practicas.map((p) => ({ item: p, tipo: 'Practica' })),
@@ -376,9 +374,8 @@ export class MedicoService {
     }
 
     if (paciente?.trim()) {
-      const pacientes = await this.turnoService.turnoRepository.pacienteRepository.findByNombre(
-        paciente
-      )
+      const pacientes =
+        await this.turnoService.turnoRepository.pacienteRepository.findByNombre(paciente)
       filterObj.paciente = { $in: pacientes.map((pacienteEncontrado) => pacienteEncontrado._id) }
     }
 
@@ -447,10 +444,11 @@ export class MedicoService {
     if (this.notificacionService && medico.usuario) {
       try {
         const idUsuario = medico.usuario._id || medico.usuario
-        const noLeidas = await this.notificacionService.notificacionRepository.obtenerNoLeidasDeUsuario(idUsuario)
+        const noLeidas =
+          await this.notificacionService.notificacionRepository.obtenerNoLeidasDeUsuario(idUsuario)
         notificacionesCount = Array.isArray(noLeidas) ? noLeidas.length : 0
       } catch (err) {
-        console.error('Error al obtener notificaciones del médico:', err)
+        throw new Error('Error al obtener notificaciones del médico:', err)
       }
     }
 

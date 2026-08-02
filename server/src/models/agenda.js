@@ -1,12 +1,5 @@
-import { Especialidad } from './Especialidad.js'
-import { Practica } from './Practica.js'
 import { Turno } from './Turno.js'
-import { EstadoTurno } from './EstadoTurno.enum.js'
-import { Medico } from './medico.js'
 import { DiasSemana } from './DiaSemana.enum.js'
-import { DisponibilidadHoraria } from './DisponibilidadHoraria.js'
-import { Sede } from './Sede.js'
-import { Paciente } from './Paciente.js'
 
 export class Agenda {
   static generarTurnos(
@@ -57,8 +50,6 @@ export class Agenda {
           anteUltimaFechaDeTurno.setMinutes(anteUltimaFechaDeTurno.getMinutes() + duracion)
 
           if (anteUltimaFechaDeTurno <= fechaHoraFinal) {
-            // console.log('La fecha del siguiente turno es ' + fechaHoraInicial.toLocaleString('es-AR'));
-
             const fechaTurno = new Date(fechaHoraInicial)
             const nuevoTurno = new Turno(
               medicoId,

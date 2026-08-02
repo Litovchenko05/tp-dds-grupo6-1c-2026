@@ -2,7 +2,6 @@ import app from './app.js'
 import dotenv from 'dotenv'
 import { MongoDBClient } from './config/database.js'
 import { recordatorioTask } from './config/dependencies.js'
-import { cargarDatosIniciales } from './config/seed.js'
 
 dotenv.config()
 

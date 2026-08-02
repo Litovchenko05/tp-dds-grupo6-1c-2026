@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { UsuarioModel } from '../schemasBD/usuarioSchema.js'
 
 export class UsuarioRepository {
