@@ -19,7 +19,7 @@ const formatearProximoTurno = (turno) => {
 const MedicoHome = () => {
   const { usuario } = useUsuario()
   const nombreUsuario = usuario?.nombre || 'Profesional'
-  const { data, loading, error } = useMedicoDashboardData(usuario?._id)
+  const { data, loading, error } = useMedicoDashboardData(usuario?.medicoId)
   const proximoTurno = formatearProximoTurno(data?.proximosTurnos?.[0])
 
   return (
@@ -77,17 +77,17 @@ const MedicoHome = () => {
 
         <div className="medico-home__info-grid">
           <div className="info-card-stat">
-            <h3>{loading ? '—' : data?.turnosHoy ?? 0}</h3>
+            <h3>{loading ? '—' : (data?.turnosHoy ?? 0)}</h3>
             <span>Turnos de hoy</span>
           </div>
 
           <div className="info-card-stat">
-            <h3>{loading ? '—' : data?.cancelacionesHoy ?? 0}</h3>
+            <h3>{loading ? '—' : (data?.cancelacionesHoy ?? 0)}</h3>
             <span>Cancelaciones</span>
           </div>
 
           <div className="info-card-stat">
-            <h3>{loading ? '—' : data?.notificacionesCount ?? 0}</h3>
+            <h3>{loading ? '—' : (data?.notificacionesCount ?? 0)}</h3>
             <span>Notificaciones</span>
           </div>
         </div>
