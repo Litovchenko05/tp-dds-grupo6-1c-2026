@@ -1,39 +1,8 @@
-# TODO - Debug de auth middleware (identificarUsuario)
+# TODO - Diagnóstico 401 `/auth/identificacion` + trazabilidad end-to-end
 
-- [x] Revisar `server/src/middlewares/auth.middleware.js`
-- [x] Log al comienzo del middleware:
-  - [x] existe header Authorization
-  - [x] primeros 40 caracteres del token
-- [x] Log antes de validar JWT:
-  - [x] KEYCLOAK_BASE_URL
-  - [x] KEYCLOAK_REALM
-  - [x] issuer esperado
-  - [x] audience esperada
-  - [x] URL JWKS usada
-- [x] Log durante descarga de JWKS:
-  - [x] URL consultada
-  - [x] descarga exitosa
-  - [x] cantidad de claves obtenidas
-  - [x] kid buscado
-  - [x] clave pública encontrada/no encontrada
-- [x] Log después de validar JWT:
-  - [x] sub
-  - [x] iss
-  - [x] aud
-  - [x] preferred_username
-  - [x] realm_access.roles
-- [x] Log antes de buscar usuario en Mongo:
-  - [x] keycloakId (sub)
-- [x] Log después de buscar usuario en Mongo:
-  - [x] usuario encontrado/no encontrado
-  - [x] _id del usuario
-  - [x] keycloakId almacenado
-- [x] Log en todos los catch:
-  - [x] error.name
-  - [x] error.message
-  - [x] error.stack
-  - [x] error.response?.status
-  - [x] error.response?.data
-- [x] En cada respuesta 401:
-  - [x] log previo del motivo exacto
-- [x] Verificar consistencia final sin cambios de lógica
+- [x] Mapear ruta exacta de `GET /auth/identificacion` en backend
+- [x] Agregar logging detallado en handler/controller/service de `/auth/identificacion`
+- [x] Agregar request-id para correlación en logs backend (app + middleware + controller + service)
+- [x] Revisar frontend que dispara `/auth/identificacion` y agregar logs de depuración para detectar loop
+- [ ] Revisar posibles middlewares/global handlers que puedan responder 401 tras auth
+- [ ] Dejar checklist de pruebas (critical-path y thorough) para validación en Render
