@@ -31,7 +31,13 @@ const MedicoAgenda = () => {
   const [filtrosAplicados, setFiltrosAplicados] = useState(filtrosIniciales)
   const [mostrarBusqueda, setMostrarBusqueda] = useState(false)
   const { usuario } = useUsuario()
-  const { turnos: turnosBackend, pagination, loading: isLoading, error: turnosError, refetch } = useMedicoTurnos(usuario?._id)
+  const {
+    turnos: turnosBackend,
+    pagination,
+    loading: isLoading,
+    error: turnosError,
+    refetch,
+  } = useMedicoTurnos(usuario?.medicoId)
   const { cancelar, loading: cancelando } = useCancelarTurno()
   const { marcarRealizado } = useMarcarRealizadoTurno()
   const { reactivar } = useReactivarTurno()
@@ -52,8 +58,13 @@ const MedicoAgenda = () => {
     () =>
       turnosBackend.map((turno) => {
         const fechaHora = new Date(turno.fechaHora)
-        const horaInicio = fechaHora.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
-        const horaFin = new Date(fechaHora.getTime() + (turno.duracion || 0) * 60000).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+        const horaInicio = fechaHora.toLocaleTimeString('es-AR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+        const horaFin = new Date(
+          fechaHora.getTime() + (turno.duracion || 0) * 60000
+        ).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
         return {
           ...turno,
           id: turno._id,
@@ -169,8 +180,6 @@ const MedicoAgenda = () => {
     fin.setHours(23, 59, 59, 999)
     return fin
   }
-
-
 
   const turnosFiltrados = turnos
 
@@ -338,7 +347,12 @@ const MedicoAgenda = () => {
         ) : hasError || turnosError ? (
           <div className="agenda-error" role="alert">
             <p>No se pudieron cargar los turnos.</p>
-            <button type="button" onClick={() => refetch({ ...crearFiltrosBackend(filtrosAplicados), page: agendaPage, limit: 10 })}>
+            <button
+              type="button"
+              onClick={() =>
+                refetch({ ...crearFiltrosBackend(filtrosAplicados), page: agendaPage, limit: 10 })
+              }
+            >
               Reintentar
             </button>
           </div>
