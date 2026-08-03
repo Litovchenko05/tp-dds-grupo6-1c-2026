@@ -9,10 +9,15 @@ const swaggerSpec = require('./docs/swaggerSpec.json')
 
 const app = express()
 
+const corsOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+
 app.use(express.json())
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://sweetmedical.onrender.com'],
+    origin: corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
   })

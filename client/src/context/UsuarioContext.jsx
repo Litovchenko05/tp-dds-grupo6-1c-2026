@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
-import axios from 'axios'
+import apiClient from '../services/apiClient'
 
 const UsuarioContext = createContext()
 
@@ -34,9 +34,7 @@ export const UsuarioProvider = ({ children }) => {
         const rol = decoded.realm_access?.roles?.includes('medico') ? 'medico' : 'paciente'
         const username = decoded.preferred_username || ''
 
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/identificacion`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const response = await apiClient.get('/auth/identificacion')
 
         const datosMongo = response.data.data || response.data
 

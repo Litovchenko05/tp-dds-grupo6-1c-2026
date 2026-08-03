@@ -1,36 +1,7 @@
-# TODO - UX Loading + Feedback + Estandarización de Cards
+# Plan de arreglo de imports (case-sensitive)
 
-- [x] Analizar proyecto actual y confirmar dependencias MUI
-- [ ] Crear componentes reutilizables:
-  - [ ] LoadingSpinner.jsx
-  - [ ] TurnGridSkeleton.jsx
-  - [ ] AppSnackbar.jsx
-- [ ] Integrar loading/success/error en:
-  - [ ] TurnsGrid
-  - [ ] TurnDetailPage
-  - [ ] MisTurnosPage
-  - [ ] HistorialPage
-  - [ ] ReservarTurnosPage
-  - [ ] MedicoAgenda
-- [ ] Agregar CircularProgress en botones de acciones/búsquedas
-- [ ] Estandarizar tipografía y formato de fecha en cards
-- [ ] Alinear colores por estado en cards según criterio médico
-- [ ] Revisar consistencia de estilos sin romper estética actual
-- [ ] Validación final estática de cambios
-- [ ] Resolver conflicto de merge en `client/src/App.jsx` y dejar una única implementación consistente.
-- [ ] Validar compilación del cliente para confirmar ausencia de conflictos.
-- [ ] Unificar UI médico con base paciente usando variantes por rol.
-  - [ ] Reutilizar Drawer base para rol médico/paciente.
-  - [ ] Adaptar Navbar para ocultar carrito en médico.
-  - [ ] Unificar Footer con variante por rol.
-  - [ ] Ajustar rutas/layout para que médico use layout común.
-  - [x] Eliminar uso de MedicoFooter dentro de páginas médicas.
-- [ ] Validar responsive en vistas médico y paciente.
-
-## TODO - Quitar hardcode de usuarios dev + arreglar build client
-
-- [x] Eliminar bypass dev y usuarios hardcodeados en `client/src/context/UsuarioContext.jsx`.
-- [x] Eliminar bypass dev en `client/src/App.jsx` y dejar auth basada en token.
-- [x] Corregir imports duplicados y lógica redundante en `client/src/components/drawer/Drawer.jsx`.
-- [x] Corregir variables no definidas en `client/src/features/busquedaDeServicios/BusquedaServiciosPage.jsx`.
-- [ ] Validar compilación del cliente sin errores.
+- [x] 1. Auditar imports relativos en `server/src` y detectar inconsistencias de mayúsculas/minúsculas.
+- [x] 2. Corregir imports conflictivos para que coincidan exactamente con nombres reales de archivos.
+- [ ] 3. Verificar estáticamente que no queden rutas conflictivas.
+- [ ] 4. Ejecutar backend para validar que no aparezca `ERR_MODULE_NOT_FOUND`.
+- [ ] 5. Documentar cambios y pasos de validación para redeploy en Render.

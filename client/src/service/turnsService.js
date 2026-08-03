@@ -1,7 +1,5 @@
 import { turnos } from '../mockData/turnosMock'
-import axios from 'axios'
-
-const REACT_APP_API_URL = process.env.REACT_APP_API_URL
+import apiClient from '../services/apiClient'
 
 export const getTurnsSlowly = () =>
   new Promise((resolve) => {
@@ -12,7 +10,7 @@ export const getTurnsSlowly = () =>
 
 export const getTurns = async (page, idUsuario, { sortBy, order } = {}) => {
   try {
-    const response = await axios.get(`${REACT_APP_API_URL}/turnos`, {
+    const response = await apiClient.get('/turnos', {
       params: {
         idUsuario,
         page,
@@ -32,7 +30,7 @@ export const getTurns = async (page, idUsuario, { sortBy, order } = {}) => {
 
 export const getTurnById = async (id) => {
   try {
-    const response = await axios.get(`${REACT_APP_API_URL}/turnos/${id}`)
+    const response = await apiClient.get(`/turnos/${id}`)
     return response.data
   } catch (error) {
     console.error('Error en el fetching de turnos by id: ', error)
@@ -42,7 +40,7 @@ export const getTurnById = async (id) => {
 
 export const crearReserva = async (idUsuario, idTurno) => {
   try {
-    await axios.post(`${REACT_APP_API_URL}/pacientes/${idUsuario}/turnos/${idTurno}`, {})
+    await apiClient.post(`/pacientes/${idUsuario}/turnos/${idTurno}`, {})
     return
   } catch (error) {
     console.error('Error creando reservación: ', error)
@@ -66,7 +64,7 @@ export const getTurnsFiltered = async (
   }
 ) => {
   try {
-    const response = await axios.get(`${REACT_APP_API_URL}/turnos/filtered`, {
+    const response = await apiClient.get('/turnos/filtered', {
       params: {
         idUsuario,
         nombreMedico,
@@ -94,7 +92,7 @@ export const getTurnsFiltered = async (
 
 export const getMisTurns = async (idUsuario) => {
   try {
-    const response = await axios.get(`${REACT_APP_API_URL}/turnos/${idUsuario}/reservados`)
+    const response = await apiClient.get(`/turnos/${idUsuario}/reservados`)
 
     return response.data
   } catch (error) {
@@ -105,7 +103,7 @@ export const getMisTurns = async (idUsuario) => {
 
 export const cancelarTurno = async (idTurno, idUsuario, motivo) => {
   try {
-    const response = await axios.patch(`${REACT_APP_API_URL}/turnos/${idTurno}/cancelar`, {
+    const response = await apiClient.patch(`/turnos/${idTurno}/cancelar`, {
       idUsuario,
       motivo,
     })
@@ -124,7 +122,7 @@ export const cancelarTurno = async (idTurno, idUsuario, motivo) => {
 
 export const historial = async (id) => {
   try {
-    const response = await axios.get(`${REACT_APP_API_URL}/pacientes/${id}/historial`)
+    const response = await apiClient.get(`/pacientes/${id}/historial`)
 
     return response
   } catch (error) {

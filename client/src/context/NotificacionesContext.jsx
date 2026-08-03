@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import axios from 'axios'
+import apiClient from '../services/apiClient'
 
 const NotificacionesContext = createContext()
 
@@ -16,11 +16,11 @@ export const NotificacionesProvider = ({ children }) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } }
 
-      let url = `${process.env.REACT_APP_API_URL}/notificaciones`
+      let url = '/notificaciones'
       if (filtro === 'leidas') url += '?leida=true'
       if (filtro === 'pendientes') url += '?leida=false'
 
-      const response = await axios.get(url, config)
+      const response = await apiClient.get(url, config)
       const data = response.data.data || []
 
       setNotificaciones(data)
@@ -47,11 +47,7 @@ export const NotificacionesProvider = ({ children }) => {
       const token = localStorage.getItem('token')
       const config = { headers: { Authorization: `Bearer ${token}` } }
 
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/notificaciones/${idNotificacion}/leida`,
-        {},
-        config
-      )
+      await apiClient.put(`/notificaciones/${idNotificacion}/leida`, {}, config)
 
       setNotificaciones((prev) =>
         prev.map((n) => (n._id === idNotificacion ? { ...n, leida: true } : n))

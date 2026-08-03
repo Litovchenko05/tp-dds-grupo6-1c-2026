@@ -1,20 +1,18 @@
-import axios from 'axios'
-
-const REACT_APP_API_URL = process.env.REACT_APP_API_URL
+import apiClient from '../services/apiClient'
 
 export const getEspecialidades = async () => {
-  const response = await axios.get(`${REACT_APP_API_URL}/servicios/especialidades`)
+  const response = await apiClient.get('/servicios/especialidades')
   return response.data
 }
 
 export const getPracticas = async () => {
-  const response = await axios.get(`${REACT_APP_API_URL}/servicios/practicas`)
+  const response = await apiClient.get('/servicios/practicas')
   return response.data
 }
 
 export const getTodosLosServicios = async (page, especialidadId, practicaId) => {
   try {
-    const response = await axios.get(`${REACT_APP_API_URL}/turnos/servicios`, {
+    const response = await apiClient.get('/turnos/servicios', {
       params: { page, limit: 5, especialidadId, practicaId },
       headers: { 'Cache-Control': 'no-cache' },
     })
@@ -26,17 +24,14 @@ export const getTodosLosServicios = async (page, especialidadId, practicaId) => 
 }
 export const getServiciosEspecialidades = async (page, flagAll, idEspecialidad) => {
   try {
-    const response = await axios.get(
-      `${REACT_APP_API_URL}/medicos/especialidades/${idEspecialidad}`,
-      {
-        params: {
-          flagAll,
-          page,
-          limit: 8,
-        },
-        headers: { 'Cache-Control': 'no-cache' },
-      }
-    )
+    const response = await apiClient.get(`/medicos/especialidades/${idEspecialidad}`, {
+      params: {
+        flagAll,
+        page,
+        limit: 8,
+      },
+      headers: { 'Cache-Control': 'no-cache' },
+    })
 
     return response.data
   } catch (error) {
@@ -47,7 +42,7 @@ export const getServiciosEspecialidades = async (page, flagAll, idEspecialidad) 
 
 export const getServiciosPracticas = async (page, flagAll, idPractica) => {
   try {
-    const response = await axios.get(`${REACT_APP_API_URL}/medicos/practicas/${idPractica}`, {
+    const response = await apiClient.get(`/medicos/practicas/${idPractica}`, {
       params: {
         flagAll,
         page,

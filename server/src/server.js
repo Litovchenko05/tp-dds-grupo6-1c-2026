@@ -5,7 +5,7 @@ import { recordatorioTask } from './config/dependencies.js'
 
 dotenv.config()
 
-const PORT = process.env.PUERTO || 3000
+const PORT = process.env.PORT || process.env.PUERTO || 3000
 
 const start = async () => {
   try {
