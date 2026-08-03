@@ -1,4 +1,4 @@
-import { EstadoTurno } from '../models/estadoTurno.enum.js'
+import { EstadoTurno } from '../models/EstadoTurno.enum.js'
 import { Types } from 'mongoose'
 import { formatearFechaHora } from '../config/utils.js'
 

@@ -1,5 +1,5 @@
 import { formatearFechaHora } from '../config/utils.js'
-import { EstadoTurno } from '../models/estadoTurno.enum.js'
+import { EstadoTurno } from '../models/EstadoTurno.enum.js'
 
 export class TurnoService {
   constructor({ turnoRepository, notificacionService }) {

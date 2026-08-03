@@ -1,5 +1,5 @@
-import { Especialidad } from './especialidad.js'
-import { Practica } from './practica.js'
+import { Especialidad } from './Especialidad.js'
+import { Practica } from './Practica.js'
 
 export class Medico {
   id

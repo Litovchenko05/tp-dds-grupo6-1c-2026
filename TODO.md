@@ -1,7 +1,7 @@
-# Plan de arreglo de imports (case-sensitive)
+# TODO - Corrección masiva de imports backend (Linux case-sensitive)
 
-- [x] 1. Auditar imports relativos en `server/src` y detectar inconsistencias de mayúsculas/minúsculas.
-- [x] 2. Corregir imports conflictivos para que coincidan exactamente con nombres reales de archivos.
-- [ ] 3. Verificar estáticamente que no queden rutas conflictivas.
-- [ ] 4. Ejecutar backend para validar que no aparezca `ERR_MODULE_NOT_FOUND`.
-- [ ] 5. Documentar cambios y pasos de validación para redeploy en Render.
+- [ ] Ejecutar escaneo automático de imports relativos en `server/src`
+- [ ] Identificar imports rotos (case, ruta, extensión, faltantes)
+- [ ] Corregir automáticamente los imports incorrectos
+- [ ] Re-ejecutar validación para confirmar 0 imports rotos
+- [ ] Reportar archivos modificados, problemas encontrados y faltantes

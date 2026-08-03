@@ -1,5 +1,5 @@
 import { Agenda } from '../models/Agenda.js'
-import { EstadoTurno } from '../models/estadoTurno.enum.js'
+import { EstadoTurno } from '../models/EstadoTurno.enum.js'
 
 export class AgendaService {
   constructor({ turnoRepository }) {

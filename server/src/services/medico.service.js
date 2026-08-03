@@ -1,5 +1,5 @@
 import { Medico } from '../models/Medico.js'
-import { DisponibilidadHoraria } from '../models/disponibilidadHoraria.js'
+import { DisponibilidadHoraria } from '../models/DisponibilidadHoraria.js'
 import { Especialidad } from '../models/Especialidad.js'
 import { Practica } from '../models/Practica.js'
 

@@ -1,4 +1,4 @@
-import { Notificacion } from '../models/notificacion.model.js'
+import { Notificacion } from '../models/Notificacion.model.js'
 
 export class NotificacionService {
   constructor({ notificacionRepository }) {
