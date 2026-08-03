@@ -1,4 +1,4 @@
-import { DiasSemana } from './DiaSemana.enum.js'
+import { DiasSemana } from './diaSemana.enum.js'
 export class DisponibilidadHoraria {
   id
   diaSemana
@@ -16,8 +16,8 @@ export class DisponibilidadHoraria {
   getId() {
     return this.id
   }
-  setId(id){
-      this.id = id;
+  setId(id) {
+    this.id = id
   }
   getDiaSemana() {
     return this.diaSemana
@@ -41,7 +41,6 @@ export class DisponibilidadHoraria {
     this.horaHasta = horaHasta
     this.fueModificada = true
   }
-
 
   obtenerNombreDelDiaDeSemana(indice) {
     return Object.keys(DiasSemana).find((key) => DiasSemana[key] === indice)
