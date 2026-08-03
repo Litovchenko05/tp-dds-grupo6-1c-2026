@@ -90,6 +90,9 @@ export class MedicoService {
   }
 
   async agregarDisponibilidad(medicoId, data) {
+    console.log('ENTRANDO A AGREGAR DISPONIBILIDAD')
+    console.log('ID MEDICO: ', medicoId)
+    console.log('DATA', data)
     try {
       const medico = await this.medicoRepository.findById(medicoId)
 
@@ -102,10 +105,13 @@ export class MedicoService {
         data.horaDesde,
         data.horaHasta
       )
+      console.log('NUEVA DISPO OBJ', nuevaDisponibilidad)
       medico.agregarDisponibilidad(nuevaDisponibilidad)
       await this.medicoRepository.save(medico)
 
       const nuevaDisponibilidadObj = medico.disponibilidades[medico.disponibilidades.length - 1]
+
+      console.log('NUEVA DISPO OBJ SCADA DE LA LSITA', nuevaDisponibilidadObj)
 
       this.agregarDisponibilidadEnServicio(medico, data, nuevaDisponibilidadObj)
 
@@ -136,14 +142,16 @@ export class MedicoService {
 
   agregarDisponibilidadEnServicio(medico, data, nuevaDisponibilidadObj) {
     if (data.tipoDeServicio == 'Practica') {
-      const practica = medico.practicas.find(
-        (p) => p.servicio.toString() == data.servicioId.toString()
-      )
+      const practica = medico.practicas.find((p) => p._id.toString() == data.servicioId.toString())
+      console.log('Practica a agregar dispo:', practica)
+      console.log('Practica disponibilidad anterior:', practica.disponibilidad)
+
       practica.disponibilidad = nuevaDisponibilidadObj
+      console.log('Practica disponibilidad ahora:', practica.disponibilidad)
       this.practicaRepository.save(practica)
     } else if (data.tipoDeServicio == 'Especialidad') {
       const especialidad = medico.especialidades.find(
-        (e) => e.servicio.toString() == data.servicioId.toString()
+        (e) => e._id.toString() == data.servicioId.toString()
       )
 
       especialidad.disponibilidad = nuevaDisponibilidadObj
