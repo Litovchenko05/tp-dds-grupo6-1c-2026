@@ -31,9 +31,9 @@ export const medicoService = {
     return response.data.data
   },
 
-  eliminarServicio: async (idMedico, idServicio) => {
+  eliminarServicio: async (idMedico, idServicio, tipo) => {
     const response = await axios.delete(
-      `${API_URL}/medicos/${idMedico}/servicios/${idServicio}`,
+      `${API_URL}/medicos/${idMedico}/servicios/${idServicio}?tipo=${tipo}`,
       getAuthHeaders()
     )
     return response.data
@@ -50,6 +50,24 @@ export const medicoService = {
 
   obtenerSedes: async () => {
     const response = await axios.get(`${API_URL}/sedes`, getAuthHeaders())
+    return response.data.data || response.data
+  },
+
+  actualizarDisponibilidad: async (idMedico, servicioId, servicioData) => {
+    const response = await axios.patch(
+      `${API_URL}/medicos/${idMedico}/disponibilidades/${servicioId}`,
+      servicioData,
+      getAuthHeaders()
+    )
+    return response.data.data || response.data
+  },
+  actualizarServicio: async (idMedico, idServicio, servicioData) => {
+    console.log('id de servicio enviado desde el front:', idServicio)
+    const response = await axios.put(
+      `${API_URL}/medicos/${idMedico}/servicios/${idServicio}`,
+      servicioData,
+      getAuthHeaders()
+    )
     return response.data.data || response.data
   },
 }

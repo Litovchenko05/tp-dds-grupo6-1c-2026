@@ -13,6 +13,13 @@ export const nuevaDisponibilidadSchema = z
     servicioId: mongoIdSchema.optional().nullable(),
     tipoDeServicio: z.enum(['Especialidad', 'Practica']).optional().nullable(),
   })
-  .refine((data) => data.horaDesde < data.horaHasta, {
-    message: 'HoraDesde debe ser menor que HoraHasta',
-  })
+  .refine(
+    (data) => {
+      if (data.horaDesde == null || data.horaHasta == null) return true
+      return data.horaDesde < data.horaHasta
+    },
+    {
+      message: 'HoraDesde debe ser menor que HoraHasta',
+      path: ['horaHasta'],
+    }
+  )

@@ -2,7 +2,8 @@ import { Medico } from '../models/Medico.js'
 import { DisponibilidadHoraria } from '../models/disponibilidadHoraria.js'
 import { Especialidad } from '../models/Especialidad.js'
 import { Practica } from '../models/Practica.js'
-
+import mongoose from 'mongoose'
+import { Types } from 'mongoose'
 export class MedicoService {
   constructor({
     medicoRepository,
@@ -66,7 +67,10 @@ export class MedicoService {
           data.data.sede
         )
         const practicaGuardada = await this.practicaRepository.save(nuevaPractica)
+        console.log('Practica guardada:', practicaGuardada)
         medico.darDeAltaPractica(practicaGuardada)
+        await this.medicoRepository.save(medico)
+        return practicaGuardada
       } else {
         const nuevaEspecialidad = new Especialidad(
           data.data.servicioId,
@@ -75,9 +79,11 @@ export class MedicoService {
           data.data.sede
         )
         const especialidadGuardada = await this.especialidadRepository.save(nuevaEspecialidad)
+        console.log('Especialidad guardada:', especialidadGuardada)
         medico.darDeAltaEspecialidad(especialidadGuardada)
+        await this.medicoRepository.save(medico)
+        return especialidadGuardada
       }
-      await this.medicoRepository.save(medico)
     } catch (error) {
       throw error
     }
@@ -100,6 +106,9 @@ export class MedicoService {
       await this.medicoRepository.save(medico)
 
       const nuevaDisponibilidadObj = medico.disponibilidades[medico.disponibilidades.length - 1]
+
+      this.agregarDisponibilidadEnServicio(medico, data, nuevaDisponibilidadObj)
+
       const tipoDeServicio = data.tipoDeServicio
       const tipoDeServicioNormalizado = tipoDeServicio
         .normalize('NFD')
@@ -122,6 +131,23 @@ export class MedicoService {
       return medico
     } catch (error) {
       throw new Error(error.message)
+    }
+  }
+
+  agregarDisponibilidadEnServicio(medico, data, nuevaDisponibilidadObj) {
+    if (data.tipoDeServicio == 'Practica') {
+      const practica = medico.practicas.find(
+        (p) => p.servicio.toString() == data.servicioId.toString()
+      )
+      practica.disponibilidad = nuevaDisponibilidadObj
+      this.practicaRepository.save(practica)
+    } else if (data.tipoDeServicio == 'Especialidad') {
+      const especialidad = medico.especialidades.find(
+        (e) => e.servicio.toString() == data.servicioId.toString()
+      )
+
+      especialidad.disponibilidad = nuevaDisponibilidadObj
+      this.especialidadRepository.save(especialidad)
     }
   }
 
@@ -149,43 +175,98 @@ export class MedicoService {
     }
   }
 
-  async modificarDisponibilidad(medicoId, disponibilidadId, nuevaDisponibilidad) {
+  async modificarDisponibilidad(medicoId, servicioId, nuevaDisponibilidad) {
     try {
+      console.log('Datos recibidos para modificar disponibilidad:', {
+        medicoId,
+        servicioId,
+        nuevaDisponibilidad,
+      })
       const medico = await this.medicoRepository.findById(medicoId)
 
       if (!medico) {
         throw new Error('Médico no encontrado')
       }
 
-      const disponibilidad = medico.disponibilidades.id(disponibilidadId)
+      // const disponibilidad = medico.disponibilidades.id(disponibilidadId)
 
-      if (!disponibilidad) {
-        throw new Error('Disponibilidad no encontrada')
+      let disponibilidadVieja = null
+
+      let disponibilidadAnteriorObj = null
+
+      if (nuevaDisponibilidad.tipoDeServicio == 'Especialidad') {
+        const especialidad = medico.especialidades.find(
+          (medicoEspecialidad) => medicoEspecialidad.servicio.toString() === servicioId.toString()
+        )
+        if (!especialidad) {
+          console.log('Especialidad no encontrada')
+          throw new Error('Especialidad no encontrada')
+        }
+        disponibilidadVieja = especialidad.disponibilidad
+
+        disponibilidadAnteriorObj = new DisponibilidadHoraria(
+          disponibilidadVieja.diaSemana,
+          disponibilidadVieja.horaDesde,
+          disponibilidadVieja.horaHasta
+        )
+
+        console.log('Disponibilidad vieja de la especialidad encontrada:', disponibilidadVieja)
+
+        especialidad.disponibilidad.diaSemana = nuevaDisponibilidad.diaSemana
+        especialidad.disponibilidad.horaDesde = nuevaDisponibilidad.horaDesde
+        especialidad.disponibilidad.horaHasta = nuevaDisponibilidad.horaHasta
+
+        this.especialidadRepository.save(especialidad)
+      } else {
+        const practica = medico.practicas.find(
+          (medicoPractica) => medicoPractica.servicio.toString() === servicioId.toString()
+        )
+        if (!practica) {
+          console.log('Práctica no encontrada')
+          throw new Error('Práctica no encontrada')
+        }
+        disponibilidadVieja = practica.disponibilidad
+
+        disponibilidadAnteriorObj = new DisponibilidadHoraria(
+          disponibilidadVieja.diaSemana,
+          disponibilidadVieja.horaDesde,
+          disponibilidadVieja.horaHasta
+        )
+
+        console.log('Disponibilidad vieja de la práctica encontrada:', disponibilidadVieja)
+
+        practica.disponibilidad.diaSemana = nuevaDisponibilidad.diaSemana
+        practica.disponibilidad.horaDesde = nuevaDisponibilidad.horaDesde
+        practica.disponibilidad.horaHasta = nuevaDisponibilidad.horaHasta
+        this.practicaRepository.save(practica)
       }
 
-      const disponibilidadAnteriorObj = new DisponibilidadHoraria(
-        disponibilidad.diaSemana,
-        disponibilidad.horaDesde,
-        disponibilidad.horaHasta
-      )
+      console.log('Disponibilidad anterior:', disponibilidadAnteriorObj)
+
       const nuevaDisponibilidadObj = new DisponibilidadHoraria(
         nuevaDisponibilidad.diaSemana,
         nuevaDisponibilidad.horaDesde,
         nuevaDisponibilidad.horaHasta
       )
 
+      console.log('Disponibilidad modificada:', nuevaDisponibilidadObj)
       if (nuevaDisponibilidad.diaSemana != undefined) {
-        disponibilidad.diaSemana = nuevaDisponibilidad.diaSemana
+        disponibilidadVieja.diaSemana = nuevaDisponibilidad.diaSemana
       }
       if (nuevaDisponibilidad.horaDesde != undefined) {
-        disponibilidad.horaDesde = nuevaDisponibilidad.horaDesde
+        disponibilidadVieja.horaDesde = nuevaDisponibilidad.horaDesde
       }
       if (nuevaDisponibilidad.horaHasta != undefined) {
-        disponibilidad.horaHasta = nuevaDisponibilidad.horaHasta
+        disponibilidadVieja.horaHasta = nuevaDisponibilidad.horaHasta
       }
+
+      const disponibilidadEnMedico = medico.disponibilidades.id(disponibilidadVieja._id)
+      disponibilidadEnMedico.diaSemana = disponibilidadVieja.diaSemana
+      disponibilidadEnMedico.horaDesde = disponibilidadVieja.horaDesde
+      disponibilidadEnMedico.horaHasta = disponibilidadVieja.horaHasta
       await medico.save()
 
-      const tipoDeServicioNormalizado = null
+      let tipoDeServicioNormalizado = null
 
       if (nuevaDisponibilidad.tipoDeServicio != undefined) {
         tipoDeServicioNormalizado = nuevaDisponibilidad.tipoDeServicio
@@ -213,65 +294,99 @@ export class MedicoService {
       throw error
     }
   }
-  async modificarServicio(medicoId, servicioNombre, nuevoServicio) {
+  async modificarServicio(medicoId, idServicio, nuevoServicio) {
     try {
       const medico = await this.medicoRepository.findById(medicoId)
 
       if (!medico) {
         throw new Error('Médico no encontrado')
       }
-      let index
-      if ('codigo' in nuevoServicio) {
-        const practicaAnterior = medico.practicas.find((n) => n.nombre == servicioNombre)
+      const idSer = new Types.ObjectId(idServicio)
 
-        const servicioNuevo = new Practica(
-          nuevoServicio.nombre,
-          nuevoServicio.duracionTurnoEnMins,
-          nuevoServicio.costo
+      const servicio = await this.servicioRepository.findById(idSer)
+
+      if (!servicio) {
+        throw new Error('Servicio no encontrado')
+      }
+      if (servicio.tipo == 'especialidad') {
+        const especialidadAModificar = medico.especialidades.find(
+          (e) => e.servicio.toString() == idServicio.toString()
         )
 
-        index = medico.practicas.findIndex((p) => p.nombre === practicaAnterior.nombre)
+        if (nuevoServicio.costo != undefined) {
+          especialidadAModificar.costoConsulta = nuevoServicio.costo
+        }
+        if (nuevoServicio.duracion != undefined) {
+          especialidadAModificar.duracionTurnoEnMins = nuevoServicio.duracion
+        }
 
-        medico.practicas[index].codigo = nuevoServicio.codigo
-        medico.practicas[index].nombre = nuevoServicio.nombre
-        medico.practicas[index].duracionTurnoEnMins = nuevoServicio.duracionTurnoEnMins
-        medico.practicas[index].costo = nuevoServicio.costo
+        this.especialidadRepository.save(especialidadAModificar)
 
-        await medico.save()
+        return especialidadAModificar
       } else {
-        const especialidadAnterior = medico.especialidades.find((n) => n.nombre == servicioNombre)
-
-        const servicioNuevo = new Especialidad(
-          nuevoServicio.nombre,
-          nuevoServicio.duracionTurnoEnMins,
-          nuevoServicio.costoConsulta
+        const practicaAModificar = medico.practicas.find(
+          (e) => e.servicio.toString() == idServicio.toString()
         )
 
-        index = medico.especialidades.findIndex((p) => p.nombre === especialidadAnterior.nombre)
-        medico.especialidades[index].nombre = nuevoServicio.nombre
-        medico.especialidades[index].duracionTurnoEnMins = nuevoServicio.duracionTurnoEnMins
-        medico.especialidades[index].costoConsulta = nuevoServicio.costoConsulta
-        await medico.save()
+        if (nuevoServicio.costo != undefined) {
+          practicaAModificar.costo = nuevoServicio.costo
+        }
+        if (nuevoServicio.duracion != undefined) {
+          practicaAModificar.duracionTurnoEnMins = nuevoServicio.duracion
+        }
+
+        this.practicaRepository.save(practicaAModificar)
+
+        return practicaAModificar
       }
     } catch (error) {
+      console.error('Error al modificar servicio:', error)
       throw error
     }
   }
 
-  async eliminarServicio(medicoId, nombreServicio, tipoDeServicio) {
+  //idServicio es el id del servicio (especialidad o practica) que se quiere eliminar
+  async eliminarServicio(medicoId, idServicio, tipo) {
+    console.log('ID MEDICO:', medicoId)
+    console.log('ID SERVICIO', idServicio)
+    console.log('TIPO', tipo)
     try {
-      const medico = await this.medicoRepository.findById(medicoId)
-      let servicio
-      if (tipoDeServicio == 'practica') {
-        servicio = medico.practicas.find((n) => n.nombre == nombreServicio)
-      } else if (tipoDeServicio == 'especialidad') {
-        servicio = medico.especialidades.find((n) => n.nombre == nombreServicio)
+      if (tipo == 'Especialidad') {
+        const especialidad = await this.especialidadRepository.findById(idServicio)
+        await this.turnoService.eliminarTurnosDeServicioPorMedico(medicoId, especialidad.servicio)
+      } else {
+        const practica = await this.practicaRepository.findById(idServicio)
+        await this.turnoService.eliminarTurnosDeServicioPorMedico(medicoId, practica.servicio)
       }
 
-      medico.darDeBajaServicio(servicio)
-      await medico.save()
+      const medico = await this.medicoRepository.findById(medicoId)
+
+      if (medico == null) {
+        throw new Error('Médico no encontrado')
+      }
+      if (tipo == 'Especialidad') {
+        const especialidad = await this.especialidadRepository.findById(idServicio)
+        console.log('especialidad a eliminar:', especialidad)
+        const idDisponibilidad = especialidad.disponibilidad?._id
+
+        console.log('id disponibilidad:', idDisponibilidad)
+        medico.darDeBajaEspecialidad(idServicio, idDisponibilidad)
+        await medico.save()
+        const servicioEliminado = await this.especialidadRepository.delete(idServicio)
+        return servicioEliminado
+      } else {
+        const practica = await this.practicaRepository.findById(idServicio)
+        console.log('practica a eliminar:', practica)
+        const idDisponibilidad = practica.disponibilidad?._id
+        medico.darDeBajaPractica(idServicio, idDisponibilidad)
+        await medico.save()
+        const servicioEliminado = await this.practicaRepository.delete(idServicio)
+        return servicioEliminado
+      }
+
+      return null
     } catch (error) {
-      throw error
+      throw new Error(`Error al eliminar el servicio: ${error.message}`)
     }
   }
 
@@ -309,29 +424,29 @@ export class MedicoService {
       const practicas = medico.practicas || []
       const disponibilidades = medico.disponibilidades || []
 
+      console.log('Especialidades:', especialidades)
+      console.log('Prácticas:', practicas)
+
       const combinados = [
         ...especialidades.map((e) => ({ item: e, tipo: 'Especialidad' })),
         ...practicas.map((p) => ({ item: p, tipo: 'Practica' })),
       ]
 
       const respuestaEnriquecida = combinados.map(({ item, tipo }) => {
-        const disp = disponibilidades.find(
-          (d) =>
-            d.servicioId?.toString() === item._id?.toString() ||
-            d.servicioId?.toString() === item.servicio?._id?.toString()
-        )
         return {
           _id: item._id,
+          idServicio: item.servicio?._id || null,
           nombre: item.servicio?.nombre || 'Servicio Sin Nombre',
           tipo: tipo,
           sede: item.sede?.nombre || 'Sede sin asignar',
           duracion: `${item.duracionTurnoEnMins || item.duracionEnMins || 30} min`,
           precio: item.costoConsulta || item.costo || 0,
-          diaSemana: disp?.diaSemana || null,
-          horaDesde: disp?.horaDesde || null,
-          horaHasta: disp?.horaHasta || null,
+          diaSemana: item.disponibilidad.diaSemana || null,
+          horaDesde: item.disponibilidad.horaDesde || null,
+          horaHasta: item.disponibilidad.horaHasta || null,
         }
       })
+      console.log('Respuesta enriquecida de servicios:', respuestaEnriquecida)
 
       return respuestaEnriquecida
     } catch (error) {

@@ -24,8 +24,9 @@ export class EspecialidadRepository {
 
   async save(especialidad) {
     //Si tiene id es update, si no es create
-    const query = especialidad.id
-      ? { _id: especialidad.id }
+
+    const query = especialidad._id
+      ? { _id: especialidad._id }
       : { _id: new this.EspecialidadModel()._id }
 
     return await this.EspecialidadModel.findOneAndUpdate(query, especialidad, {

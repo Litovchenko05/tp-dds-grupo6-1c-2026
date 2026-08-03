@@ -6,10 +6,10 @@ export class Medico {
   usuario
   matricula
   nombre
-  servicios
+  especialidades
+  practicas
   sedes
   disponibilidades
-  solicitudesDeCambioDeFecha
 
   constructor(
     usuarioMedico,
@@ -22,10 +22,10 @@ export class Medico {
     this.usuario = usuarioMedico
     this.matricula = matriculaMedica
     this.nombre = nombreMedico
-    this.servicios = serviciosMedico ?? []
     this.sedes = sedesMedico
     this.disponibilidades = disponibilidadesMedico ?? []
-    this.solicitudesDeCambioDeFecha = []
+    this.especialidades = []
+    this.practicas = []
   }
 
   getId() {
@@ -47,16 +47,12 @@ export class Medico {
     return this.nombre
   }
 
-  getServicios() {
-    return this.servicios
-  }
-
   getEspecialidades() {
-    return this.servicios.filter((servicio) => servicio.especialidad != null)
+    return this.especialidades
   }
 
   getPracticas() {
-    return this.servicios.filter((servicio) => servicio.practica != null)
+    return this.practicas
   }
 
   getSedes() {
@@ -103,55 +99,6 @@ export class Medico {
     return this.disponibilidades[idDisponibilidad]
   }
 
-  aceptarCambioDeFecha(turno) {
-    const solicitud = this.solicitudesDeCambioDeFecha.find((solicitud) => solicitud.turno === turno)
-
-    if (!solicitud) {
-      throw new Error('Solicitud no encontrada')
-    }
-    turno.cambiarFechaHora(solicitud.nuevaFechaHora)
-
-    this.solicitudesDeCambioDeFecha = this.solicitudesDeCambioDeFecha.filter(
-      (solicitud) => solicitud.turno !== turno
-    )
-  }
-
-  rechazarCambioDeFecha(turno) {
-    this.solicitudesDeCambioDeFecha = this.solicitudesDeCambioDeFecha.filter(
-      (solicitud) => solicitud.turno !== turno
-    )
-  }
-  /*modificarServicio(servicioAModificar, nuevoServicio){
-
-      if ("codigo" in nuevoServicio) {
-
-   const index = this.practicas.findIndex(
-     p => String(p._id) === String(servicioAModificar._id)
-   );
-
-   if (index === -1) {
-     throw new Error("Práctica no encontrada");
-   }
-
-   this.practicas[index].codigo = nuevoServicio.codigo;
-   this.practicas[index].nombre = nuevoServicio.nombre;
-   this.practicas[index].duracionTurnoEnMins = nuevoServicio.duracionTurnoEnMins;
-   this.practicas[index].costo = nuevoServicio.costo;
-
- } else {
-
-   const index = this.especialidades.findIndex(
-     e => String(e._id) === String(servicioAModificar._id)
-   );
-
-   if (index === -1) {
-     throw new Error("Especialidad no encontrada");
-   }
-
-   this.especialidades[index].nombre = nuevoServicio.nombre;
-   this.especialidades[index].duracionTurnoEnMins = nuevoServicio.duracionTurnoEnMins;
-   this.especialidades[index].costoConsulta = nuevoServicio.costoConsulta;
- }}*/
   darDeAltaPractica(practica) {
     this.practicas = this.darDeAlta(practica, this.practicas)
   }
@@ -160,33 +107,26 @@ export class Medico {
     this.especialidades = this.darDeAlta(especialidad, this.especialidades)
   }
 
-  darDeBajaServicio(servicio) {
-    if ('codigo' in servicio) {
-      this.practicas = this.darDeBaja(servicio, this.practicas)
-    } else if (!('codigo' in servicio)) {
-      this.especialidades = this.darDeBaja(servicio, this.especialidades)
-    } else {
-      throw new Error('servicio no esta en formato indicado')
-    }
+  darDeBajaPractica(idPractica, idDisponibilidad) {
+    this.eliminarDisponibilidadPorId(idDisponibilidad)
+    this.practicas = this.darDeBaja(idPractica, this.practicas)
+  }
+  darDeBajaEspecialidad(idEspecialidad, idDisponibilidad) {
+    this.eliminarDisponibilidadPorId(idDisponibilidad)
+    this.especialidades = this.darDeBaja(idEspecialidad, this.especialidades)
   }
 
-  darDeBaja(servicio, listaServicios) {
-    if (!this.servicioExiste(servicio, listaServicios)) {
-      throw new Error('Este servicio no es brindado por el medico')
-    }
+  darDeBaja(idServicio, listaServicios) {
+    console.log('idServicio a dar de baja:', idServicio)
+    console.log('lista', listaServicios)
+    return listaServicios.filter((s) => s.toString() !== idServicio.toString())
+  }
 
-    const indice = listaServicios.findIndex((p) => {
-      if (p.id != null && servicio.id != null) {
-        return p.id === servicio.id
-      }
-      return p.nombre === servicio.nombre
-    })
-
-    if (indice !== -1) {
-      listaServicios.splice(indice, 1)
-    }
-
-    return listaServicios
+  eliminarDisponibilidadPorId(idDisponibilidad) {
+    if (!idDisponibilidad) return
+    this.disponibilidades = this.disponibilidades.filter(
+      (d) => d._id.toString() !== idDisponibilidad.toString()
+    )
   }
 
   servicioExiste(servicio, listaServicios) {

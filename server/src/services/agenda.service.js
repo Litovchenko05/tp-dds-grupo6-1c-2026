@@ -61,15 +61,13 @@ export class AgendaService {
           ],
         },
       })
-      // console.log("Turnos encontrados:", turnosDelMedicoAModificar.length);
-      // console.log("medico buscado:", medico._id);
-      // console.log("día buscado:", disponibilidadAnterior.getDiaSemana());
-      // console.log(
-      //   "índice día:",
-      //   disponibilidadAnterior.obtenerIndiceDelDiaDeSemana(
-      //     disponibilidadAnterior.getDiaSemana()
-      //   )
-      // );
+      console.log('Turnos encontrados:', turnosDelMedicoAModificar.length)
+      console.log('medico buscado:', medico._id)
+      console.log('día buscado:', disponibilidadAnterior.getDiaSemana())
+      console.log(
+        'índice día:',
+        disponibilidadAnterior.obtenerIndiceDelDiaDeSemana(disponibilidadAnterior.getDiaSemana())
+      )
 
       if (
         duracion == undefined &&
@@ -126,7 +124,7 @@ export class AgendaService {
         }
       }
     } catch (error) {
-      // console.error(error);
+      console.error(error)
       throw error
     }
   }

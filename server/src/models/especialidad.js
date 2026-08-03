@@ -4,12 +4,14 @@ export class Especialidad {
   duracionTurnoEnMins
   costoConsulta
   sede
+  disponibilidad
 
   constructor(servicio, duracionTurnoEnMins, costoConsulta, sede) {
     this.servicio = servicio
     this.duracionTurnoEnMins = duracionTurnoEnMins
     this.costoConsulta = costoConsulta
     this.sede = sede
+    this.disponibilidad = null
   }
   modificarEspecialidad(id, servicio, duracionTurnoEnMins, costoConsulta) {
     this.id = id
