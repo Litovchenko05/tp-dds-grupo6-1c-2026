@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
-import apiClient from '../services/apiClient'
+import axios from 'axios'
 
 const UsuarioContext = createContext()
 
@@ -12,10 +12,13 @@ export const UsuarioProvider = ({ children }) => {
   const [cargandoUsuario, setCargandoUsuario] = useState(true)
   const navigate = useNavigate()
 
+  const cargandoRef = useRef(false)
+
   const cerrarSesion = useCallback(() => {
     localStorage.removeItem('token')
     localStorage.removeItem('refresh_token')
     setUsuario(null)
+    cargandoRef.current = false
     navigate('/login', { replace: true })
   }, [navigate])
 
@@ -27,27 +30,22 @@ export const UsuarioProvider = ({ children }) => {
       return
     }
 
+    if (usuario || cargandoRef.current) {
+      setCargandoUsuario(false)
+      return
+    }
+
     const cargarUsuario = async () => {
-      const requestId = `fe-auth-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      cargandoRef.current = true
+
       try {
-        console.info('[UsuarioContext] Inicio cargarUsuario', {
-          requestId,
-          hasToken: Boolean(token),
-        })
         const decoded = jwtDecode(token)
         const nombre = decoded.given_name || decoded.name || decoded.preferred_username
         const rol = decoded.realm_access?.roles?.includes('medico') ? 'medico' : 'paciente'
         const username = decoded.preferred_username || ''
 
-        console.info('[UsuarioContext] GET /auth/identificacion - request', { requestId })
-        const response = await apiClient.get('/auth/identificacion', {
-          headers: {
-            'x-request-id': requestId,
-          },
-        })
-        console.info('[UsuarioContext] GET /auth/identificacion - response', {
-          requestId,
-          status: response?.status,
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/identificacion`, {
+          headers: { Authorization: `Bearer ${token}` },
         })
 
         const datosMongo = response.data.data || response.data
@@ -69,24 +67,18 @@ export const UsuarioProvider = ({ children }) => {
           matricula: datosMongo.matricula || null,
           dni: datosMongo.dni || null,
         })
-        return
       } catch (error) {
-        console.error('========== ERROR COMPLETO ==========')
-        console.error(error)
-        console.error('message:', error.message)
-        console.error('stack:', error.stack)
-        console.error('response:', error.response)
-        console.error('response.data:', error.response?.data)
-
-        cerrarSesion()
+        console.error('Error al cargar el usuario', error)
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          cerrarSesion()
+        }
       } finally {
-        console.info('[UsuarioContext] Fin cargarUsuario', { requestId })
         setCargandoUsuario(false)
       }
     }
 
     cargarUsuario()
-  }, [cerrarSesion])
+  }, [cerrarSesion, usuario])
 
   return (
     <UsuarioContext.Provider value={{ usuario, cerrarSesion, cargandoUsuario }}>
