@@ -130,7 +130,7 @@ const MedicoAgenda = () => {
     }
 
     if (accion === 'Marcar realizado') {
-      await marcarRealizado(usuario._id, turnoId)
+      await marcarRealizado(usuario.medicoId, turnoId)
       await refetch({ ...crearFiltrosBackend(filtrosAplicados), page: agendaPage, limit: 10 })
       setFeedbackMsg(`Turno ${turnoId} marcado como realizado.`)
       return
@@ -138,7 +138,7 @@ const MedicoAgenda = () => {
 
     if (accion === 'Marcar como disponible') {
       try {
-        await reactivar(usuario._id, turnoId)
+        await reactivar(usuario.medicoId, turnoId)
         await refetch({ ...crearFiltrosBackend(filtrosAplicados), page: agendaPage, limit: 10 })
         setFeedbackMsg(`Turno ${turnoId} reactivado como disponible.`)
       } catch (error) {
@@ -157,7 +157,7 @@ const MedicoAgenda = () => {
       setHistorialPage(1)
       setFeedbackMsg('')
       try {
-        await obtenerHistorial(usuario._id, turnoActual.pacienteId)
+        await obtenerHistorial(usuario.medicoId, turnoActual.pacienteId)
       } catch (error) {
         setErrorMsg(error.response?.data?.message || 'No se pudo cargar el historial del paciente.')
       }
@@ -237,7 +237,7 @@ const MedicoAgenda = () => {
   const confirmarCancelacion = async (motivo) => {
     if (!turnoACancelar) return
     try {
-      await cancelar(usuario._id, turnoACancelar.id, motivo)
+      await cancelar(usuario.medicoId, turnoACancelar.id, motivo)
       await refetch({ ...crearFiltrosBackend(filtrosAplicados), page: agendaPage, limit: 10 })
       setFeedbackMsg(`Turno ${turnoACancelar.id} cancelado correctamente.`)
       setTurnoACancelar(null)
