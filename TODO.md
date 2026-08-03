@@ -1,17 +1,39 @@
-# TODO - Logging detallado de registro auth / Keycloak
+# TODO - Debug de auth middleware (identificarUsuario)
 
-- [x] Revisar `server/src/services/auth.service.js` y `server/src/controllers/auth.controller.js`
-- [x] Agregar logs antes/después de cada llamada a Keycloak:
-  - [x] getAdminToken
-  - [x] creación de usuario
-  - [x] obtención de rol
-  - [x] asignación de rol
-- [x] Agregar logs detallados en todos los catch:
+- [x] Revisar `server/src/middlewares/auth.middleware.js`
+- [x] Log al comienzo del middleware:
+  - [x] existe header Authorization
+  - [x] primeros 40 caracteres del token
+- [x] Log antes de validar JWT:
+  - [x] KEYCLOAK_BASE_URL
+  - [x] KEYCLOAK_REALM
+  - [x] issuer esperado
+  - [x] audience esperada
+  - [x] URL JWKS usada
+- [x] Log durante descarga de JWKS:
+  - [x] URL consultada
+  - [x] descarga exitosa
+  - [x] cantidad de claves obtenidas
+  - [x] kid buscado
+  - [x] clave pública encontrada/no encontrada
+- [x] Log después de validar JWT:
+  - [x] sub
+  - [x] iss
+  - [x] aud
+  - [x] preferred_username
+  - [x] realm_access.roles
+- [x] Log antes de buscar usuario en Mongo:
+  - [x] keycloakId (sub)
+- [x] Log después de buscar usuario en Mongo:
+  - [x] usuario encontrado/no encontrado
+  - [x] _id del usuario
+  - [x] keycloakId almacenado
+- [x] Log en todos los catch:
+  - [x] error.name
   - [x] error.message
   - [x] error.stack
   - [x] error.response?.status
   - [x] error.response?.data
-- [x] Validar `response.headers.location` antes de `split('/')` y loguear error claro si falta
-- [x] Agregar logs en `AuthController` para catch de `registrarUsuario` y `obtenerPerfil`
-- [x] Verificar consistencia final sin cambios de lógica de negocio
-- [x] Reportar archivos modificados y resumen de cambios
+- [x] En cada respuesta 401:
+  - [x] log previo del motivo exacto
+- [x] Verificar consistencia final sin cambios de lógica
