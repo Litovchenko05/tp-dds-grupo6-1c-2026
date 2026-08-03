@@ -5,16 +5,14 @@ import ReservarTurnosPage from '../../features/reservarTurnosPage/reservarTurnos
 function HomeSwitcher() {
   const { usuario, cargandoUsuario } = useUsuario()
 
-  if (cargandoUsuario) return null
-  if (usuario?.rol === 'medico') {
-    return <MedicoHome />
-  }
+  console.log('HomeSwitcher', { usuario, cargandoUsuario })
 
-  if (usuario?.rol === 'paciente') {
-    return <ReservarTurnosPage />
-  }
-
-  return <Navigate to="/login" replace />
+  return (
+    <div style={{ padding: 40 }}>
+      <h1>HOME SWITCHER</h1>
+      <pre>{JSON.stringify({ usuario, cargandoUsuario }, null, 2)}</pre>
+    </div>
+  )
 }
 
 export default HomeSwitcher
