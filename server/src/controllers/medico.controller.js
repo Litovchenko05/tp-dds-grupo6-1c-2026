@@ -172,7 +172,7 @@ export class MedicoController {
   }
   cancelarTurno = async (req, res) => {
     try {
-      const { id: medicoId, turnoId } = req.params
+      const { id: medicoId, idTurno: turnoId } = req.params
       const body = req.body
 
       const resultado = cancelarTurnoSchema.safeParse(body)
@@ -208,7 +208,7 @@ export class MedicoController {
 
   reactivarTurno = async (req, res) => {
     try {
-      const { id: medicoId, turnoId } = req.params
+      const { id: medicoId, idTurno: turnoId } = req.params
       const turnoActualizado = await this.turnoService.reactivarTurno(turnoId, medicoId)
       return res.status(200).json({
         status: 'success',
@@ -228,7 +228,7 @@ export class MedicoController {
 
   actualizarTurno = async (req, res) => {
     try {
-      const { id: medicoId, turnoId } = req.params
+      const { id: medicoId, idTurno: turnoId } = req.params
       const body = req.body
 
       const resultado = marcarRealizadoSchema.safeParse(body)
@@ -264,7 +264,7 @@ export class MedicoController {
 
   crearCambio = async (req, res) => {
     try {
-      const { id: medicoId, turnoId } = req.params
+      const { id: medicoId, idTurno: turnoId } = req.params
       const body = req.body
 
       const resultado = crearCambioSchema.safeParse(body)
