@@ -29,7 +29,7 @@ const AgendaTurnoCard = ({ turno, onAction }) => {
   }
 
   return (
-    <article className={`agenda-card estado-${turno.estado.toLowerCase()}`}>
+    <article className={`agenda-card estado-${turno.estado.toUpperCase()}`}>
       <header className="agenda-card__header">
         <h3>{turno.estado === 'DISPONIBLE' ? 'Sin Paciente' : turno.paciente}</h3>
         <div className="agenda-card__menu-container">

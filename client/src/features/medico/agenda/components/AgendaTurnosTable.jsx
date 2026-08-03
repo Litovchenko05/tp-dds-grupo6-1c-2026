@@ -15,7 +15,11 @@ const AgendaTurnosTable = ({ turnos, onAction }) => {
         onClick: () => onAction('Marcar realizado', turno.id),
       })
     }
-    if (turno.estado === 'CONFIRMADO' || turno.estado === 'RESERVADO' || turno.estado === 'DISPONIBLE') {
+    if (
+      turno.estado === 'CONFIRMADO' ||
+      turno.estado === 'RESERVADO' ||
+      turno.estado === 'DISPONIBLE'
+    ) {
       acciones.push({ label: 'Cancelar', onClick: () => onAction('Cancelar', turno.id) })
     }
     if (turno.estado === 'CANCELADO') {
@@ -49,7 +53,7 @@ const AgendaTurnosTable = ({ turnos, onAction }) => {
         </thead>
         <tbody>
           {turnos.map((turno) => (
-            <tr key={turno.id} className={`estado-${turno.estado.toLowerCase()}`}>
+            <tr key={turno.id} className={`estado-${turno.estado.toUpperCase()}`}>
               <td>{turno.fecha}</td>
               <td>{turno.hora}</td>
               <td>{turno.estado === 'DISPONIBLE' ? 'Sin Paciente' : turno.paciente}</td>

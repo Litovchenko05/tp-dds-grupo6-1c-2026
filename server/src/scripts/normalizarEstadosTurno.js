@@ -10,7 +10,7 @@ async function normalizarEstadosTurno() {
 
   await mongoose.connect(mongoUri)
   const resultado = await TurnoModel.updateMany(
-    { estado: { $in: estados.map((estado) => estado.toLowerCase()) } },
+    { estado: { $in: estados.map((estado) => estado.toUpperCase()) } },
     [{ $set: { estado: { $toUpper: '$estado' } } }]
   )
   console.log(`Turnos normalizados: ${resultado.modifiedCount}`)
