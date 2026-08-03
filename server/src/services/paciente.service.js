@@ -114,6 +114,22 @@ export class PacienteService {
     return turnosDeHistorial
   }
 
+  async consultarHistorialPaciente(pacienteId) {
+    const paciente = await this.pacienteRepository.findById(pacienteId)
+
+    if (!paciente) {
+      throw new Error('Paciente no encontrado')
+    }
+
+    const historial = paciente.historialDeTurnos || []
+
+    const turnosDeHistorial = await Promise.all(
+      historial.map((t) => this.turnoRepository.findById(t._id))
+    )
+
+    return turnosDeHistorial
+  }
+
   async findAllPaginated(page, limit) {
     return await this.pacienteRepository.findAllPaginated(page, limit)
   }

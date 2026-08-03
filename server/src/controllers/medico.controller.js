@@ -395,7 +395,7 @@ export class MedicoController {
       if (hasta) filtros.hasta = hasta
       if (estado) filtros.estado = estado
 
-      const historial = await this.pacienteService.consultarHistorial(idPaciente)
+      const historial = await this.pacienteService.consultarHistorialPaciente(idPaciente)
 
       return res.status(200).json({
         status: 'success',
