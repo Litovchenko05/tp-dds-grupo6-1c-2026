@@ -423,9 +423,6 @@ export class MedicoController {
       const medicoId = req.params.id
       const servicioId = req.params.servicioId
 
-      const medicoId = req.params.id
-      const servicioId = req.params.servicioId
-
       await this.medicoService.modificarServicio(medicoId, servicioId, resultado.data)
       return res.status(200).json({ status: 'success', data: resultado.data })
     } catch (error) {
