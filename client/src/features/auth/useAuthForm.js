@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { authService } from './authService.js'
+import { useNavigate } from 'react-router-dom'
 
 export function useAuthForm() {
   const [mode, setMode] = useState('login')
@@ -20,6 +21,7 @@ export function useAuthForm() {
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
   const liveRegionRef = useRef(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!liveRegionRef.current) return
@@ -190,7 +192,7 @@ export function useAuthForm() {
 
       setStatus('success')
       setTimeout(() => {
-        window.location.href = '/dashboard'
+        navigate('/')
       }, 1500)
     } catch (error) {
       handleAuthError(error)
