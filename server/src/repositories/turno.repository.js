@@ -117,7 +117,7 @@ export class TurnoRepository {
     const resultado = await TurnoModel.deleteMany({
       medico: idMedico,
       servicio: idServicio,
-      estado: 'disponible',
+      estado: 'DISPONIBLE',
     })
     return resultado
   }

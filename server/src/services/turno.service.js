@@ -100,7 +100,7 @@ export class TurnoService {
       const paciente = await this.turnoRepository.pacienteRepository.findById(pacienteId)
       const destinatarioId = paciente?.usuario?._id
       if (destinatarioId) {
-        await this.servicioNotificacion.crearNotificacion({
+        await this.notificacionService.crearNotificacion({
           destinatarioId,
           remitenteId: id_usuario,
           mensaje: `El médico canceló el turno del ${new Date(turno.fechaHora).toLocaleDateString('es-AR')}. Motivo: ${motivo}`,

@@ -141,7 +141,7 @@ router
     medicoController.agregarServicio(req, res)
   )
 
-router.route('/:id/servicios/:nombreServicio').put((req, res) =>
+router.route('/:id/servicios/:servicioId').put((req, res) =>
   // #swagger.tags = ['Médicos', 'Servicios']
   // #swagger.summary = 'Modificar servicio del médico'
   // #swagger.description = 'Edita las características de un servicio específico brindado por el médico.'
@@ -150,13 +150,7 @@ router.route('/:id/servicios/:nombreServicio').put((req, res) =>
   medicoController.modificarServicio(req, res)
 )
 
-router.route('/:id/servicios/:tipoServicio/:servicioNombre').delete((req, res) => {
-  // #swagger.tags = ['Médicos', 'Servicios']
-  // #swagger.summary = 'Eliminar servicio del médico'
-  // #swagger.description = 'Desvincula un servicio médico del perfil del profesional.'
-  /* #swagger.parameters['id'] = { in: 'path', description: 'ID del médico', required: true, type: 'string' } */
-  /* #swagger.parameters['tipoServicio'] = { in: 'path', description: 'Tipo o categoría del servicio', required: true, type: 'string' } */
-  /* #swagger.parameters['servicioNombre'] = { in: 'path', description: 'Nombre exacto del servicio a eliminar', required: true, type: 'string' } */
+router.route('/:id/servicios/:servicioId').delete((req, res) => {
   return medicoController.deleteServicio(req, res)
 })
 

@@ -343,15 +343,15 @@ export class MedicoController {
     }
   }
 
-  removerServicio = async (req, res) => {
+  Servicio = async (req, res) => {
     try {
       const { medicoId, servicioId } = req.params
 
-      const medicoActualizado = await this.medicoService.removerServicio(medicoId, servicioId)
+      const medicoActualizado = await this.medicoService.eliminarServicio(medicoId, servicioId)
 
       return res.status(200).json({
         status: 'success',
-        message: 'Servicio removido exitosamente',
+        message: 'Servicio remoremovervido exitosamente',
         data: medicoActualizado,
       })
     } catch (error) {
@@ -421,9 +421,12 @@ export class MedicoController {
       }
 
       const medicoId = req.params.id
-      const servicioNombre = req.params.nombreServicio
+      const servicioId = req.params.servicioId
 
-      await this.medicoService.modificarServicio(medicoId, servicioNombre, resultado.data)
+      const medicoId = req.params.id
+      const servicioId = req.params.servicioId
+
+      await this.medicoService.modificarServicio(medicoId, servicioId, resultado.data)
       return res.status(200).json({ status: 'success', data: resultado.data })
     } catch (error) {
       return res.status(500).json({ data: error.message })
@@ -433,13 +436,19 @@ export class MedicoController {
   deleteServicio = async (req, res) => {
     try {
       const medicoId = req.params.id
-      const tipoDeServicio = req.params.tipoServicio
-      const nombreServicio = req.params.servicioNombre
-      await this.medicoService.eliminarServicio(nombreServicio, tipoDeServicio, medicoId)
+      const servicioId = req.params.servicioId
 
-      return res.status(200).json({ status: 'success', data: 'servicio eliminado' })
+      await this.medicoService.eliminarServicio(medicoId, servicioId)
+
+      return res.status(200).json({
+        status: 'success',
+        data: 'Servicio eliminado correctamente',
+      })
     } catch (error) {
-      return res.status(500).json({ data: error.message })
+      return res.status(500).json({
+        status: 'error',
+        data: error.message,
+      })
     }
   }
 }

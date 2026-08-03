@@ -54,8 +54,8 @@ const HistorialTurnosPage = () => {
 
   const claseYTextoEstado = (estado) => {
     const mapa = {
-      cancelado: { clase: 'cancelado', etiqueta: 'etiqueta-cancelado', texto: 'Cancelado' },
-      realizado: { clase: 'realizado', etiqueta: 'etiqueta-completado', texto: 'Realizado' },
+      cancelado: { clase: 'CANCELADO', etiqueta: 'etiqueta-cancelado', texto: 'CANCELADO' },
+      realizado: { clase: 'REALIZADO', etiqueta: 'etiqueta-completado', texto: 'REALIZADO' },
     }
     return mapa[estado] || { clase: '', etiqueta: '', texto: estado }
   }

@@ -213,66 +213,57 @@ export class MedicoService {
       throw error
     }
   }
-  async modificarServicio(medicoId, servicioNombre, nuevoServicio) {
+  async modificarServicio(medicoId, servicioId, nuevoServicio) {
     try {
       const medico = await this.medicoRepository.findById(medicoId)
 
       if (!medico) {
         throw new Error('Médico no encontrado')
       }
-      let index
+
       if ('codigo' in nuevoServicio) {
-        const practicaAnterior = medico.practicas.find((n) => n.nombre == servicioNombre)
+        const index = medico.practicas.findIndex((p) => p._id.toString() === servicioId)
 
-        const servicioNuevo = new Practica(
-          nuevoServicio.nombre,
-          nuevoServicio.duracionTurnoEnMins,
-          nuevoServicio.costo
-        )
-
-        index = medico.practicas.findIndex((p) => p.nombre === practicaAnterior.nombre)
+        if (index === -1) {
+          throw new Error('Práctica no encontrada')
+        }
 
         medico.practicas[index].codigo = nuevoServicio.codigo
         medico.practicas[index].nombre = nuevoServicio.nombre
         medico.practicas[index].duracionTurnoEnMins = nuevoServicio.duracionTurnoEnMins
         medico.practicas[index].costo = nuevoServicio.costo
-
-        await medico.save()
       } else {
-        const especialidadAnterior = medico.especialidades.find((n) => n.nombre == servicioNombre)
+        const index = medico.especialidades.findIndex((e) => e._id.toString() === servicioId)
 
-        const servicioNuevo = new Especialidad(
-          nuevoServicio.nombre,
-          nuevoServicio.duracionTurnoEnMins,
-          nuevoServicio.costoConsulta
-        )
+        if (index === -1) {
+          throw new Error('Especialidad no encontrada')
+        }
 
-        index = medico.especialidades.findIndex((p) => p.nombre === especialidadAnterior.nombre)
         medico.especialidades[index].nombre = nuevoServicio.nombre
         medico.especialidades[index].duracionTurnoEnMins = nuevoServicio.duracionTurnoEnMins
         medico.especialidades[index].costoConsulta = nuevoServicio.costoConsulta
-        await medico.save()
       }
+
+      await medico.save()
+      return medico
     } catch (error) {
       throw error
     }
   }
 
   async eliminarServicio(medicoId, nombreServicio, tipoDeServicio) {
-    try {
-      const medico = await this.medicoRepository.findById(medicoId)
-      let servicio
-      if (tipoDeServicio == 'practica') {
-        servicio = medico.practicas.find((n) => n.nombre == nombreServicio)
-      } else if (tipoDeServicio == 'especialidad') {
-        servicio = medico.especialidades.find((n) => n.nombre == nombreServicio)
-      }
+    const medico = await this.medicoRepository.findById(medicoId)
 
-      medico.darDeBajaServicio(servicio)
-      await medico.save()
-    } catch (error) {
-      throw error
+    let servicio
+
+    if (tipoDeServicio == 'practica') {
+      servicio = medico.practicas.find((n) => n.nombre == nombreServicio)
+    } else if (tipoDeServicio == 'especialidad') {
+      servicio = medico.especialidades.find((n) => n.nombre == nombreServicio)
     }
+
+    medico.darDeBajaServicio(servicio)
+    await medico.save()
   }
 
   generarTurnosPorAnioParaDisponibilidadModificada(
