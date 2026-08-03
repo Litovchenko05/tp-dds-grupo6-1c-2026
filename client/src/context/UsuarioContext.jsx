@@ -71,12 +71,13 @@ export const UsuarioProvider = ({ children }) => {
         })
         return
       } catch (error) {
-        console.error('[UsuarioContext] Error al cargar el usuario', {
-          requestId,
-          message: error?.message,
-          status: error?.response?.status,
-          data: error?.response?.data,
-        })
+        console.error('========== ERROR COMPLETO ==========')
+        console.error(error)
+        console.error('message:', error.message)
+        console.error('stack:', error.stack)
+        console.error('response:', error.response)
+        console.error('response.data:', error.response?.data)
+
         cerrarSesion()
       } finally {
         console.info('[UsuarioContext] Fin cargarUsuario', { requestId })
