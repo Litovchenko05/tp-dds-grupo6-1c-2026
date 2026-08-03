@@ -16,40 +16,71 @@ export class AuthService {
   }
 
   async #getAdminToken() {
-    const params = new URLSearchParams()
-    params.append('client_id', process.env.KEYCLOAK_ADMIN_CLIENT_ID)
-    params.append('username', process.env.KEYCLOAK_ADMIN_USERNAME)
-    params.append('password', process.env.KEYCLOAK_ADMIN_PASSWORD)
-    params.append('grant_type', 'password')
+    try {
+      console.info('[AuthService][Keycloak] Iniciando getAdminToken')
+      const params = new URLSearchParams()
+      params.append('client_id', process.env.KEYCLOAK_ADMIN_CLIENT_ID)
+      params.append('username', process.env.KEYCLOAK_ADMIN_USERNAME)
+      params.append('password', process.env.KEYCLOAK_ADMIN_PASSWORD)
+      params.append('grant_type', 'password')
 
-    const response = await axios.post(
-      `${process.env.KEYCLOAK_BASE_URL}/realms/master/protocol/openid-connect/token`,
-      params,
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-    )
+      const response = await axios.post(
+        `${process.env.KEYCLOAK_BASE_URL}/realms/master/protocol/openid-connect/token`,
+        params,
+        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+      )
 
-    return response.data.access_token
+      console.info('[AuthService][Keycloak] getAdminToken exitoso')
+      return response.data.access_token
+    } catch (error) {
+      console.error('[AuthService][Keycloak] Error en getAdminToken', {
+        message: error?.message,
+        stack: error?.stack,
+        responseStatus: error?.response?.status,
+        responseData: error?.response?.data,
+      })
+      throw error
+    }
   }
 
   async #asignarRolKeycloak(keycloakId, roleName, adminToken) {
     const realm = process.env.KEYCLOAK_REALM
     const baseUrl = process.env.KEYCLOAK_BASE_URL
 
-    const roleResponse = await axios.get(`${baseUrl}/admin/realms/${realm}/roles/${roleName}`, {
-      headers: { Authorization: `Bearer ${adminToken}` },
-    })
-    const roleConfig = roleResponse.data
+    try {
+      console.info('[AuthService][Keycloak] Iniciando obtención de rol', { roleName })
+      const roleResponse = await axios.get(`${baseUrl}/admin/realms/${realm}/roles/${roleName}`, {
+        headers: { Authorization: `Bearer ${adminToken}` },
+      })
+      const roleConfig = roleResponse.data
+      console.info('[AuthService][Keycloak] Obtención de rol exitosa', { roleName })
 
-    await axios.post(
-      `${baseUrl}/admin/realms/${realm}/users/${keycloakId}/role-mappings/realm`,
-      [roleConfig],
-      {
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    )
+      console.info('[AuthService][Keycloak] Iniciando asignación de rol', {
+        keycloakId,
+        roleName,
+      })
+      await axios.post(
+        `${baseUrl}/admin/realms/${realm}/users/${keycloakId}/role-mappings/realm`,
+        [roleConfig],
+        {
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      console.info('[AuthService][Keycloak] Asignación de rol exitosa', { keycloakId, roleName })
+    } catch (error) {
+      console.error('[AuthService][Keycloak] Error en obtención/asignación de rol', {
+        keycloakId,
+        roleName,
+        message: error?.message,
+        stack: error?.stack,
+        responseStatus: error?.response?.status,
+        responseData: error?.response?.data,
+      })
+      throw error
+    }
   }
 
   async registrarUsuario(datosValidados) {
@@ -86,21 +117,53 @@ export class AuthService {
       ],
     }
 
-    const response = await axios.post(
-      `${process.env.KEYCLOAK_BASE_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users`,
-      userPayload,
-      {
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-          'Content-Type': 'application/json',
-        },
+    let keycloakId
+    try {
+      console.info('[AuthService][Keycloak] Iniciando creación de usuario', { username, role })
+      const response = await axios.post(
+        `${process.env.KEYCLOAK_BASE_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users`,
+        userPayload,
+        {
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      console.info('[AuthService][Keycloak] Creación de usuario exitosa', { username })
+
+      const locationHeader = response?.headers?.location
+      if (!locationHeader) {
+        const locationError = new Error(
+          'Keycloak respondió sin header "location" al crear usuario.'
+        )
+        console.error('[AuthService][Keycloak] Header location ausente', {
+          username,
+          role,
+          message: locationError.message,
+          stack: locationError.stack,
+          responseStatus: response?.status,
+          responseData: response?.data,
+        })
+        throw locationError
       }
-    )
 
-    const locationHeader = response.headers['location']
-    const keycloakId = locationHeader.split('/').pop()
+      keycloakId = locationHeader.split('/').pop()
+      console.info('[AuthService][Keycloak] keycloakId obtenido', { keycloakId, username })
 
-    await this.#asignarRolKeycloak(keycloakId, role, adminToken)
+      await this.#asignarRolKeycloak(keycloakId, role, adminToken)
+    } catch (error) {
+      console.error('[AuthService][Keycloak] Error durante alta y/o rol de usuario', {
+        username,
+        role,
+        keycloakId,
+        message: error?.message,
+        stack: error?.stack,
+        responseStatus: error?.response?.status,
+        responseData: error?.response?.data,
+      })
+      throw error
+    }
 
     try {
       const nuevoUsuario = await this.usuarioService.crearUsuario({
@@ -124,10 +187,39 @@ export class AuthService {
 
       return nuevoUsuario
     } catch (error) {
-      await axios.delete(
-        `${process.env.KEYCLOAK_BASE_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${keycloakId}`,
-        { headers: { Authorization: `Bearer ${adminToken}` } }
-      )
+      try {
+        if (keycloakId) {
+          console.info('[AuthService][Keycloak] Iniciando rollback de usuario en Keycloak', {
+            keycloakId,
+          })
+          await axios.delete(
+            `${process.env.KEYCLOAK_BASE_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${keycloakId}`,
+            { headers: { Authorization: `Bearer ${adminToken}` } }
+          )
+          console.info('[AuthService][Keycloak] Rollback de usuario en Keycloak exitoso', {
+            keycloakId,
+          })
+        } else {
+          console.warn(
+            '[AuthService][Keycloak] No se ejecuta rollback porque keycloakId no está disponible'
+          )
+        }
+      } catch (rollbackError) {
+        console.error('[AuthService][Keycloak] Error en rollback de usuario en Keycloak', {
+          keycloakId,
+          message: rollbackError?.message,
+          stack: rollbackError?.stack,
+          responseStatus: rollbackError?.response?.status,
+          responseData: rollbackError?.response?.data,
+        })
+      }
+
+      console.error('[AuthService] Error en persistencia local de usuario', {
+        message: error?.message,
+        stack: error?.stack,
+        responseStatus: error?.response?.status,
+        responseData: error?.response?.data,
+      })
 
       throw new Error(error)
     }

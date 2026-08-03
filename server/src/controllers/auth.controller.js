@@ -18,6 +18,13 @@ export class AuthController {
 
       return res.status(201).json({ message: 'Usuario registrado con éxito en el sistema.' })
     } catch (e) {
+      console.error('[AuthController] Error en registrarUsuario', {
+        message: e?.message,
+        stack: e?.stack,
+        responseStatus: e?.response?.status,
+        responseData: e?.response?.data,
+      })
+
       if (e.response && e.response.status === 409) {
         return res.status(409).json({
           message: 'Error de validación',
@@ -45,7 +52,14 @@ export class AuthController {
         status: 'success',
         data: perfil,
       })
-    } catch {
+    } catch (error) {
+      console.error('[AuthController] Error en obtenerPerfil', {
+        message: error?.message,
+        stack: error?.stack,
+        responseStatus: error?.response?.status,
+        responseData: error?.response?.data,
+      })
+
       return res.status(500).json({
         status: 'error',
         message: 'Error interno al obtener el perfil del usuario.',
