@@ -225,12 +225,20 @@ export class AuthService {
     }
   }
 
-  async obtenerPerfilDelUsuario(usuarioMongoId, usuarioRol) {
+  async obtenerPerfilDelUsuario(usuarioMongoId, usuarioRol, requestId = 'no-request-id') {
+    console.info(`[AuthService][${requestId}] Inicio obtenerPerfilDelUsuario`, {
+      usuarioMongoId,
+      usuarioRol,
+    })
+
     if (!usuarioMongoId || !usuarioRol) {
       throw new Error('No se pudo determinar el usuario autenticado o su rol.')
     }
 
     if (usuarioRol === 'paciente') {
+      console.info(`[AuthService][${requestId}] Buscando perfil paciente por usuario`, {
+        usuarioMongoId,
+      })
       const paciente = await this.pacienteRepository.findByUsuario(usuarioMongoId)
 
       if (!paciente) {
@@ -245,6 +253,9 @@ export class AuthService {
     }
 
     if (usuarioRol === 'medico') {
+      console.info(`[AuthService][${requestId}] Buscando perfil médico por usuario`, {
+        usuarioMongoId,
+      })
       const medico = await this.medicoRepository.findByUsuario(usuarioMongoId)
 
       if (!medico) {

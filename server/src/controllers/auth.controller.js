@@ -42,18 +42,30 @@ export class AuthController {
   }
 
   obtenerPerfil = async (req, res) => {
+    const requestId = req.requestId || 'no-request-id'
+
     try {
+      console.info(`[AuthController][${requestId}] Inicio obtenerPerfil`, {
+        usuarioMongoId: req.usuarioMongoId,
+        usuarioRol: req.usuarioRol,
+      })
+
       const perfil = await this.authService.obtenerPerfilDelUsuario(
         req.usuarioMongoId,
-        req.usuarioRol
+        req.usuarioRol,
+        requestId
       )
+
+      console.info(`[AuthController][${requestId}] Perfil obtenido correctamente`, {
+        perfilKeys: perfil ? Object.keys(perfil) : [],
+      })
 
       return res.status(200).json({
         status: 'success',
         data: perfil,
       })
     } catch (error) {
-      console.error('[AuthController] Error en obtenerPerfil', {
+      console.error(`[AuthController][${requestId}] Error en obtenerPerfil`, {
         message: error?.message,
         stack: error?.stack,
         responseStatus: error?.response?.status,

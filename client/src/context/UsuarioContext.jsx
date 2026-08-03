@@ -28,13 +28,27 @@ export const UsuarioProvider = ({ children }) => {
     }
 
     const cargarUsuario = async () => {
+      const requestId = `fe-auth-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
       try {
+        console.info('[UsuarioContext] Inicio cargarUsuario', {
+          requestId,
+          hasToken: Boolean(token),
+        })
         const decoded = jwtDecode(token)
         const nombre = decoded.given_name || decoded.name || decoded.preferred_username
         const rol = decoded.realm_access?.roles?.includes('medico') ? 'medico' : 'paciente'
         const username = decoded.preferred_username || ''
 
-        const response = await apiClient.get('/auth/identificacion')
+        console.info('[UsuarioContext] GET /auth/identificacion - request', { requestId })
+        const response = await apiClient.get('/auth/identificacion', {
+          headers: {
+            'x-request-id': requestId,
+          },
+        })
+        console.info('[UsuarioContext] GET /auth/identificacion - response', {
+          requestId,
+          status: response?.status,
+        })
 
         const datosMongo = response.data.data || response.data
 
@@ -57,9 +71,15 @@ export const UsuarioProvider = ({ children }) => {
         })
         return
       } catch (error) {
-        console.error('Error al cargar el usuario', error)
+        console.error('[UsuarioContext] Error al cargar el usuario', {
+          requestId,
+          message: error?.message,
+          status: error?.response?.status,
+          data: error?.response?.data,
+        })
         cerrarSesion()
       } finally {
+        console.info('[UsuarioContext] Fin cargarUsuario', { requestId })
         setCargandoUsuario(false)
       }
     }

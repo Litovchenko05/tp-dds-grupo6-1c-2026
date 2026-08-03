@@ -127,44 +127,60 @@ const verifyToken = async (token) => {
 
 export const identificarUsuario = async (req, res, next) => {
   try {
-    console.log('[AuthMiddleware] Inicio identificarUsuario')
+    const requestId = req.requestId || 'no-request-id'
+    console.log(`[AuthMiddleware][${requestId}] Inicio identificarUsuario`)
     const authHeader = req.headers.authorization
-    console.log('[AuthMiddleware] Authorization header presente:', Boolean(authHeader))
+    console.log(
+      `[AuthMiddleware][${requestId}] Authorization header presente:`,
+      Boolean(authHeader)
+    )
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       console.error(
-        '[AuthMiddleware] 401: Header Authorization ausente o no comienza con "Bearer "'
+        `[AuthMiddleware][${requestId}] 401: Header Authorization ausente o no comienza con "Bearer "`
       )
       return res.status(401).json({ status: 'error', message: 'Acceso denegado: Token requerido' })
     }
 
     const token = authHeader.split(' ')[1]
-    console.log('[AuthMiddleware] Token (primeros 40 chars):', token?.slice(0, 40))
+    console.log(`[AuthMiddleware][${requestId}] Token (primeros 40 chars):`, token?.slice(0, 40))
 
     const decodedPayload = await verifyToken(token)
-    console.log('[AuthMiddleware] JWT validado correctamente')
-    console.log('[AuthMiddleware] JWT sub:', decodedPayload?.sub)
-    console.log('[AuthMiddleware] JWT iss:', decodedPayload?.iss)
-    console.log('[AuthMiddleware] JWT aud:', decodedPayload?.aud)
-    console.log('[AuthMiddleware] JWT preferred_username:', decodedPayload?.preferred_username)
-    console.log('[AuthMiddleware] JWT realm_access.roles:', decodedPayload?.realm_access?.roles)
+    console.log(`[AuthMiddleware][${requestId}] JWT validado correctamente`)
+    console.log(`[AuthMiddleware][${requestId}] JWT sub:`, decodedPayload?.sub)
+    console.log(`[AuthMiddleware][${requestId}] JWT iss:`, decodedPayload?.iss)
+    console.log(`[AuthMiddleware][${requestId}] JWT aud:`, decodedPayload?.aud)
+    console.log(
+      `[AuthMiddleware][${requestId}] JWT preferred_username:`,
+      decodedPayload?.preferred_username
+    )
+    console.log(
+      `[AuthMiddleware][${requestId}] JWT realm_access.roles:`,
+      decodedPayload?.realm_access?.roles
+    )
 
     const keycloakId = decodedPayload?.sub
     const roles = decodedPayload?.realm_access?.roles ?? []
     const usuarioRol = roles.find((role) => role === 'medico' || role === 'paciente')
 
     if (!keycloakId) {
-      console.error('[AuthMiddleware] 401: Token sin claim sub')
+      console.error(`[AuthMiddleware][${requestId}] 401: Token sin claim sub`)
       return res
         .status(401)
         .json({ status: 'error', message: 'Token inválido: No contiene ID de usuario (sub)' })
     }
 
-    console.log('[AuthMiddleware] Buscando usuario Mongo por keycloakId:', keycloakId)
+    console.log(`[AuthMiddleware][${requestId}] Buscando usuario Mongo por keycloakId:`, keycloakId)
     const usuario = await UsuarioModel.findOne({ keycloakId })
-    console.log('[AuthMiddleware] Resultado búsqueda Mongo - encontrado:', Boolean(usuario))
-    console.log('[AuthMiddleware] Usuario _id:', usuario?._id)
-    console.log('[AuthMiddleware] Usuario keycloakId almacenado:', usuario?.keycloakId)
+    console.log(
+      `[AuthMiddleware][${requestId}] Resultado búsqueda Mongo - encontrado:`,
+      Boolean(usuario)
+    )
+    console.log(`[AuthMiddleware][${requestId}] Usuario _id:`, usuario?._id)
+    console.log(
+      `[AuthMiddleware][${requestId}] Usuario keycloakId almacenado:`,
+      usuario?.keycloakId
+    )
 
     if (!usuario) {
       return res
@@ -176,7 +192,8 @@ export const identificarUsuario = async (req, res, next) => {
     req.usuarioRol = usuarioRol
     next()
   } catch (error) {
-    console.error('[AuthMiddleware] 401: Error en identificarUsuario', {
+    const requestId = req.requestId || 'no-request-id'
+    console.error(`[AuthMiddleware][${requestId}] 401: Error en identificarUsuario`, {
       name: error?.name,
       message: error?.message,
       stack: error?.stack,

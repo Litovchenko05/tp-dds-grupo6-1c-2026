@@ -9,6 +9,16 @@ const swaggerSpec = require('./docs/swaggerSpec.json')
 
 const app = express()
 
+app.use((req, _res, next) => {
+  const incomingRequestId = req.headers['x-request-id']
+  const requestId =
+    (typeof incomingRequestId === 'string' && incomingRequestId.trim()) ||
+    `req-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+
+  req.requestId = requestId
+  next()
+})
+
 const corsOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3000')
   .split(',')
   .map((origin) => origin.trim())
