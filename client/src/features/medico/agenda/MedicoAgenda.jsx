@@ -113,7 +113,7 @@ const MedicoAgenda = () => {
   }
 
   const handleAccionTurno = async (accion, turnoId) => {
-    const turnoActual = turnos.find((turno) => turno.id === turnoId)
+    const turnoActual = turnos.find((turno) => turno._id === turnoId)
     if (!turnoActual) return
 
     setFeedbackMsg('')
@@ -365,7 +365,7 @@ const MedicoAgenda = () => {
             <section className="agenda-mobile">
               {turnosAgendaPaginados.length ? (
                 turnosAgendaPaginados.map((turno) => (
-                  <AgendaTurnoCard key={turno.id} turno={turno} onAction={handleAccionTurno} />
+                  <AgendaTurnoCard key={turno._id} turno={turno} onAction={handleAccionTurno} />
                 ))
               ) : (
                 <p className="agenda-empty">
@@ -441,7 +441,7 @@ const MedicoAgenda = () => {
                 </div>
               ) : historialPaciente.length ? (
                 historialPacientePaginado.map((turno) => (
-                  <article key={`historial-${turno.id}`} className="paciente-historial-card">
+                  <article key={`historial-${turno._id}`} className="paciente-historial-card">
                     <p>
                       <strong>Tipo de servicio:</strong> {turno.servicio || 'No disponible'}
                     </p>
@@ -453,7 +453,7 @@ const MedicoAgenda = () => {
                       {turno.medicoContacto || 'No disponible'}
                     </p>
                     <p>
-                      <strong>Fecha de atención:</strong> {turno.fecha || 'No disponible'}
+                      <strong>Fecha de atención:</strong> {turno.fechaHora || 'No disponible'}
                     </p>
                   </article>
                 ))

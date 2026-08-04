@@ -15,12 +15,12 @@ const AgendaTurnoCard = ({ turno, onAction }) => {
       return
     }
 
-    if (onAction) onAction(accion, turno.id)
+    if (onAction) onAction(accion, turno._id)
     setMenuOpen(false)
   }
 
   const confirmarCancelacion = () => {
-    if (onAction) onAction('Cancelar', turno.id)
+    if (onAction) onAction('Cancelar', turno._id)
     setShowCancelarConfirm(false)
   }
 

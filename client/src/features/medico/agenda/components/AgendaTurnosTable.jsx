@@ -12,7 +12,7 @@ const AgendaTurnosTable = ({ turnos, onAction }) => {
     if (turno.estado === 'CONFIRMADO' || turno.estado === 'RESERVADO') {
       acciones.push({
         label: 'Marcar como realizado',
-        onClick: () => onAction('Marcar realizado', turno.id),
+        onClick: () => onAction('Marcar realizado', turno._id),
       })
     }
     if (
@@ -20,18 +20,18 @@ const AgendaTurnosTable = ({ turnos, onAction }) => {
       turno.estado === 'RESERVADO' ||
       turno.estado === 'DISPONIBLE'
     ) {
-      acciones.push({ label: 'Cancelar', onClick: () => onAction('Cancelar', turno.id) })
+      acciones.push({ label: 'Cancelar', onClick: () => onAction('Cancelar', turno._id) })
     }
     if (turno.estado === 'CANCELADO') {
       acciones.push({
         label: 'Marcar como disponible',
-        onClick: () => onAction('Marcar como disponible', turno.id),
+        onClick: () => onAction('Marcar como disponible', turno._id),
       })
     }
     if (turno.estado !== 'DISPONIBLE') {
       acciones.push({
         label: 'Ver historial del paciente',
-        onClick: () => onAction('Ver historial del paciente', turno.id),
+        onClick: () => onAction('Ver historial del paciente', turno._id),
       })
     }
     return acciones
@@ -53,7 +53,7 @@ const AgendaTurnosTable = ({ turnos, onAction }) => {
         </thead>
         <tbody>
           {turnos.map((turno) => (
-            <tr key={turno.id} className={`estado-${turno.estado.toUpperCase()}`}>
+            <tr key={turno._id} className={`estado-${turno.estado.toUpperCase()}`}>
               <td>{turno.fecha}</td>
               <td>{turno.hora}</td>
               <td>{turno.estado === 'DISPONIBLE' ? 'Sin Paciente' : turno.paciente}</td>
