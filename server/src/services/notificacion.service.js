@@ -1,4 +1,4 @@
-import { Notificacion } from '../models/notificacion.model.js'
+import { Notificacion } from '../models/notificacion.js'
 
 export class NotificacionService {
   constructor({ notificacionRepository }) {
@@ -59,6 +59,6 @@ export class NotificacionService {
       fechaHoraCreacion: new Date(),
       leida: false,
     }
-  this.notificacionRepository.crear(nuevaNotificacion)
+    this.notificacionRepository.crear(nuevaNotificacion)
   }
 }

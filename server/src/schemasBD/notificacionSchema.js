@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { Notificacion } from '../models/notificacion.model.js'
+import { Notificacion } from '../models/notificacion.js'
 
 export const NotificacionSchema = new mongoose.Schema(
   {
