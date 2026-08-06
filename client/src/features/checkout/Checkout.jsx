@@ -211,7 +211,7 @@ const Checkout = () => {
                       </p>
                     </div>
                     <div className="precio-checkout">
-                      <span>${turno.data.costo}</span>
+                      <span>${turno.data.costoConCobertura}</span>
                     </div>
                   </div>
                 )
