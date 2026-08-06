@@ -161,11 +161,14 @@
 }
 
 .paginacion {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.75rem;
   border-top: 1px solid var(--color-border);
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 1rem;
 }
 
 .paginacion button {
@@ -189,7 +192,7 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 917px) {
+@media (max-width: 2000px) {
   .servicios-filtros {
     padding: 20px;
     gap: 0.75rem;
