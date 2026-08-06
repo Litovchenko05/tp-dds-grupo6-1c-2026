@@ -86,7 +86,7 @@ export default function MedicoSection({ idMedico }) {
     if (servicioSeleccionadoId) {
       const servicio = servicios.find((s) => s._id === servicioSeleccionadoId)
       if (servicio) {
-        handleDeleteServicio(servicioSeleccionadoId, servicio.tipo)
+        handleDeleteServicio(servicioSeleccionadoId, servicio.servicio, servicio.tipo)
       }
     }
     handleCloseMenu()

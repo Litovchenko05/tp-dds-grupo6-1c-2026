@@ -8,6 +8,7 @@ export function useMedicoSection(idMedico) {
   const [openPopup, setOpenPopup] = useState(false)
   const [cargando, setCargando] = useState(false)
 
+  const [servicioIdPosta, setServicioIdPosta] = useState(null)
   const [tipoSeleccionado, setTipoSeleccionado] = useState('')
   const [servicioObjeto, setServicioObjeto] = useState(null)
   const [duracionSeleccionada, setDuracionSeleccionada] = useState('')
@@ -73,7 +74,7 @@ export function useMedicoSection(idMedico) {
     setDiaSemana(servicio.diaSemana || '')
     setHoraDesde(servicio.horaDesde || '')
     setHoraHasta(servicio.horaHasta || '')
-
+    setServicioIdPosta(servicio.servicio)
     setOpenPopup(true)
   }
 
@@ -161,7 +162,7 @@ export function useMedicoSection(idMedico) {
           duracion: duracionMinutos,
           costo: Number(precioInput),
           sedeId: sedeObjeto._id,
-          servicioId: servicioEditando.idServicio,
+          servicioId: servicioIdPosta,
           tipoDeServicio: tipoDisponibilidadEnum,
         }
 
@@ -241,11 +242,11 @@ export function useMedicoSection(idMedico) {
     }
   }
 
-  const handleDeleteServicio = async (idServicio, tipo) => {
+  const handleDeleteServicio = async (idEspPract, idServicio, tipo) => {
     try {
       console.log('Eliminando servicio con ID:', idServicio, 'Tipo:', tipo)
       await medicoService.eliminarServicio(idMedico, idServicio, tipo)
-      setServicios((prev) => prev.filter((s) => s._id !== idServicio))
+      setServicios((prev) => prev.filter((s) => s._id !== idEspPract))
     } catch (error) {
       console.error('Error al eliminar servicio:', error)
     }
