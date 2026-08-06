@@ -90,7 +90,7 @@ export default function TurnsGrid({ filtros }) {
                 Costo {iconoOrden('costo')}
               </th>
               <th>Cobertura</th>
-              <th>Estado</th>
+
               <th></th>
             </tr>
           </thead>

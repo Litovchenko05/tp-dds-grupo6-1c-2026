@@ -57,9 +57,6 @@ const TurnItem = ({ turno }) => {
       <td>{horaDeFecha}</td>
       <td>{formatearCosto(turno.costoConCobertura)}</td>
       <td>{textoNivel[turno.nivelCobertura]}</td>
-      <td>
-        <span className="tipo-badge">{textoEstado[turno.estado]}</span>
-      </td>
       <td className="acciones">
         <div ref={menuRef}>
           <button className="menu-button" onClick={abrirMenu}>
