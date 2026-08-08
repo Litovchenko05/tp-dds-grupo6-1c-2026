@@ -6,10 +6,10 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const sedes = await ServicioModel.find().lean()
-    return res.status(200).json(sedes)
+    const servicios = await ServicioModel.find().lean()
+    return res.status(200).json(servicios)
   } catch (error) {
-    return res.status(500).json({ message: 'Error al obtener las sedes', error: error.message })
+    return res.status(500).json({ message: 'Error al obtener los servicios', error: error.message })
   }
 })
 

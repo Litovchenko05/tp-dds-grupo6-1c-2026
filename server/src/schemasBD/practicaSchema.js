@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { Practica } from '../models/Practica.js'
+import { DisponibilidadSchema } from '../schemasBD/disponibilidadSchema.js'
 
 export const PracticaSchema = new mongoose.Schema(
   {
@@ -21,6 +22,10 @@ export const PracticaSchema = new mongoose.Schema(
       ref: 'Sede',
       required: true,
       trim: true,
+    },
+    disponibilidad: {
+      type: DisponibilidadSchema,
+      default: null,
     },
   },
   { timestamps: true, collection: 'practicas' }

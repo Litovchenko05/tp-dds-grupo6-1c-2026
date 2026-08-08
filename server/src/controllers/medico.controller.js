@@ -85,14 +85,15 @@ export class MedicoController {
       const resultado = nuevaDisponibilidadSchema.safeParse(body)
 
       if (!resultado.success) {
-        return res.status(400).json({ status: 'error', message: resultado.error.errors })
+        console.log('Error de validación:', resultado.error.errors)
+        return res.status(400).json({ status: 'error', message: resultado.error })
       }
       const medicoId = req.params.id
-      const disponibilidadId = req.params.idDisponibilidad
+      const servicioId = req.params.servicioId
 
       const medico = await this.medicoService.modificarDisponibilidad(
         medicoId,
-        disponibilidadId,
+        servicioId,
         resultado.data
       )
 
@@ -325,12 +326,12 @@ export class MedicoController {
         return res.status(400).json({ status: 'error', message: resultado.error.errors })
       }
 
-      const medicoActualizado = await this.medicoService.agregarServicio(medicoId, resultado)
+      const servicioAgregado = await this.medicoService.agregarServicio(medicoId, resultado)
 
       return res.status(201).json({
         status: 'success',
         message: 'Servicio agregado exitosamente',
-        data: medicoActualizado,
+        data: servicioAgregado,
       })
     } catch (error) {
       if (error.message.includes('no encontrado')) {
@@ -411,20 +412,13 @@ export class MedicoController {
   modificarServicio = async (req, res) => {
     try {
       const body = req.body
-      let resultado = practicaSchema.safeParse(body)
-
-      if (!resultado.success) {
-        resultado = especialidadSchema.safeParse(body)
-        if (!resultado.success) {
-          return res.status(400).json({ status: 'error', message: resultado.error.errors })
-        }
-      }
 
       const medicoId = req.params.id
       const servicioId = req.params.servicioId
 
-      await this.medicoService.modificarServicio(medicoId, servicioId, resultado.data)
-      return res.status(200).json({ status: 'success', data: resultado.data })
+      console.log('id servicio recibido en el controller:', servicioId)
+      const resultado = await this.medicoService.modificarServicio(medicoId, servicioId, body)
+      return res.status(200).json({ status: 'success', data: resultado })
     } catch (error) {
       return res.status(500).json({ data: error.message })
     }
@@ -433,7 +427,10 @@ export class MedicoController {
   deleteServicio = async (req, res) => {
     try {
       const medicoId = req.params.id
-      const servicioId = req.params.servicioId
+      const servicioId = req.params.idServicio //especialidad o practica que se quiere eliminar
+      const tipo = req.query.tipo
+
+      await this.medicoService.eliminarServicio(medicoId, servicioId, tipo)
 
       await this.medicoService.eliminarServicio(medicoId, servicioId)
 

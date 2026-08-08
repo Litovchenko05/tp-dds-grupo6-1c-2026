@@ -29,7 +29,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import EventIcon from '@mui/icons-material/Event'
-import { useMedicoSection } from './useMedicoSection'
+import { useMedicoSection } from './useMedicoSection.js'
 
 const DURACIONES_ESTABLECIDAS = ['15 min', '30 min', '45 min', '60 min']
 const DIAS_SEMANA = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
@@ -61,10 +61,16 @@ export default function MedicoSection({ idMedico }) {
     handleCerrarPopup,
     handleAddServicioYDisponibilidad,
     handleDeleteServicio,
+    accionPopup,
+    handleAbrirPopupEdicion,
   } = useMedicoSection(idMedico)
 
   const [anchorEl, setAnchorEl] = useState(null)
   const [servicioSeleccionadoId, setServicioSeleccionadoId] = useState(null)
+
+  const esNuevo = accionPopup === 'nuevo'
+  const esEditarServicio = accionPopup === 'editarServicio'
+  const esEditarDisponibilidad = accionPopup === 'editarDisponibilidad'
 
   const handleOpenMenu = (event, id) => {
     setAnchorEl(event.currentTarget)
@@ -78,7 +84,10 @@ export default function MedicoSection({ idMedico }) {
 
   const handleEliminarItem = () => {
     if (servicioSeleccionadoId) {
-      handleDeleteServicio(servicioSeleccionadoId)
+      const servicio = servicios.find((s) => s._id === servicioSeleccionadoId)
+      if (servicio) {
+        handleDeleteServicio(servicioSeleccionadoId, servicio.servicio, servicio.tipo)
+      }
     }
     handleCloseMenu()
   }
@@ -86,7 +95,7 @@ export default function MedicoSection({ idMedico }) {
   const handleModificarServicio = () => {
     if (servicioSeleccionadoId) {
       const servicio = servicios.find((s) => s._id === servicioSeleccionadoId)
-      console.log('Modificar servicio:', servicio)
+      if (servicio) handleAbrirPopupEdicion(servicio, 'servicio')
     }
     handleCloseMenu()
   }
@@ -94,7 +103,7 @@ export default function MedicoSection({ idMedico }) {
   const handleModificarDisponibilidad = () => {
     if (servicioSeleccionadoId) {
       const servicio = servicios.find((s) => s._id === servicioSeleccionadoId)
-      console.log('Modificar disponibilidad:', servicio)
+      if (servicio) handleAbrirPopupEdicion(servicio, 'disponibilidad')
     }
     handleCloseMenu()
   }
@@ -233,137 +242,167 @@ export default function MedicoSection({ idMedico }) {
       </Menu>
 
       <Dialog open={openPopup} onClose={handleCerrarPopup} fullWidth maxWidth="xs">
-        <DialogTitle>Agregar Servicio y Disponibilidad</DialogTitle>
+        <DialogTitle>
+          {esEditarServicio && 'Modificar Servicio'}
+          {esEditarDisponibilidad && 'Modificar Disponibilidad'}
+          {esNuevo && 'Agregar Servicio y Disponibilidad'}
+        </DialogTitle>
         <Box component="form" onSubmit={handleAddServicioYDisponibilidad}>
           <DialogContent className="popup-form-container">
-            <FormControl fullWidth required margin="dense">
-              <InputLabel id="select-tipo-label">Tipo de Servicio</InputLabel>
-              <Select
-                labelId="select-tipo-label"
-                value={tipoSeleccionado}
-                label="Tipo de Servicio"
-                onChange={(e) => {
-                  setTipoSeleccionado(e.target.value)
-                  setServicioObjeto(null)
-                }}
-              >
-                <MenuItem value="Especialidad">Especialidad</MenuItem>
-                <MenuItem value="Practica">Práctica</MenuItem>
-              </Select>
-            </FormControl>
+            {(esNuevo || esEditarServicio) && (
+              <>
+                {esNuevo && (
+                  <>
+                    <FormControl fullWidth required margin="dense">
+                      <InputLabel id="select-tipo-label">Tipo de Servicio</InputLabel>
+                      <Select
+                        labelId="select-tipo-label"
+                        value={tipoSeleccionado}
+                        label="Tipo de Servicio"
+                        onChange={(e) => {
+                          setTipoSeleccionado(e.target.value)
+                          setServicioObjeto(null)
+                        }}
+                      >
+                        <MenuItem value="Especialidad">Especialidad</MenuItem>
+                        <MenuItem value="Practica">Práctica</MenuItem>
+                      </Select>
+                    </FormControl>
 
-            <FormControl fullWidth required disabled={!tipoSeleccionado} margin="dense">
-              <InputLabel id="select-servicio-label">Seleccionar Servicio</InputLabel>
-              <Select
-                labelId="select-servicio-label"
-                value={servicioObjeto ? servicioObjeto._id : ''}
-                label="Seleccionar Servicio"
-                onChange={(e) => {
-                  const seleccionado = serviciosFiltrados.find((s) => s._id === e.target.value)
-                  setServicioObjeto(seleccionado)
-                }}
-              >
-                {serviciosFiltrados.map((s) => (
-                  <MenuItem key={s._id} value={s._id}>
-                    {s.nombre}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                    <FormControl fullWidth required disabled={!tipoSeleccionado} margin="dense">
+                      <InputLabel id="select-servicio-label">Seleccionar Servicio</InputLabel>
+                      <Select
+                        labelId="select-servicio-label"
+                        value={servicioObjeto ? servicioObjeto._id : ''}
+                        label="Seleccionar Servicio"
+                        onChange={(e) => {
+                          const seleccionado = serviciosFiltrados.find(
+                            (s) => s._id === e.target.value
+                          )
+                          setServicioObjeto(seleccionado)
+                        }}
+                      >
+                        {serviciosFiltrados.map((s) => (
+                          <MenuItem key={s._id} value={s._id}>
+                            {s.nombre}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </>
+                )}
 
-            <FormControl fullWidth required margin="dense">
-              <InputLabel id="select-duracion-label">Duración del Turno</InputLabel>
-              <Select
-                labelId="select-duracion-label"
-                value={duracionSeleccionada}
-                label="Duración del Turno"
-                onChange={(e) => setDuracionSeleccionada(e.target.value)}
-              >
-                {DURACIONES_ESTABLECIDAS.map((d) => (
-                  <MenuItem key={d} value={d}>
-                    {d}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                {esEditarServicio && servicioObjeto && (
+                  <MuiTextField
+                    label="Servicio"
+                    value={servicioObjeto.nombre}
+                    disabled
+                    fullWidth
+                    margin="dense"
+                  />
+                )}
 
-            <MuiTextField
-              label="Precio de la Consulta ($)"
-              type="number"
-              value={precioInput}
-              onChange={(e) => setPrecioInput(e.target.value)}
-              required
-              fullWidth
-              margin="dense"
-            />
+                <FormControl fullWidth required margin="dense">
+                  <InputLabel id="select-duracion-label">Duración del Turno</InputLabel>
+                  <Select
+                    labelId="select-duracion-label"
+                    value={duracionSeleccionada}
+                    label="Duración del Turno"
+                    onChange={(e) => setDuracionSeleccionada(e.target.value)}
+                  >
+                    {DURACIONES_ESTABLECIDAS.map((d) => (
+                      <MenuItem key={d} value={d}>
+                        {d}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-            <FormControl fullWidth required margin="dense">
-              <InputLabel id="select-sede-label">Sede de Atención</InputLabel>
-              <Select
-                labelId="select-sede-label"
-                value={sedeObjeto ? sedeObjeto._id : ''}
-                label="Sede de Atención"
-                onChange={(e) => {
-                  const encontrada = sedes.find((s) => s._id === e.target.value)
-                  setSedeObjeto(encontrada)
-                }}
-              >
-                {sedes.map((s) => (
-                  <MenuItem key={s._id} value={s._id}>
-                    {s.nombre} - {s.direccion}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                <MuiTextField
+                  label="Precio de la Consulta ($)"
+                  type="number"
+                  value={precioInput}
+                  onChange={(e) => setPrecioInput(e.target.value)}
+                  required
+                  fullWidth
+                  margin="dense"
+                />
 
-            <Divider className="popup-divider" />
+                {esNuevo && (
+                  <FormControl fullWidth required margin="dense">
+                    <InputLabel id="select-sede-label">Sede de Atención</InputLabel>
+                    <Select
+                      labelId="select-sede-label"
+                      value={sedeObjeto ? sedeObjeto._id : ''}
+                      label="Sede de Atención"
+                      onChange={(e) => {
+                        const encontrada = sedes.find((s) => s._id === e.target.value)
+                        setSedeObjeto(encontrada)
+                      }}
+                    >
+                      {sedes.map((s) => (
+                        <MenuItem key={s._id} value={s._id}>
+                          {s.nombre} - {s.direccion}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+              </>
+            )}
 
-            <Typography variant="subtitle2" color="primary" className="popup-section-subtitle">
-              Horario de Atención
-            </Typography>
+            {esNuevo && <Divider className="popup-divider" />}
 
-            <FormControl fullWidth required margin="dense">
-              <InputLabel id="select-dia-label">Día de la Semana</InputLabel>
-              <Select
-                labelId="select-dia-label"
-                value={diaSemana}
-                label="Día de la Semana"
-                onChange={(e) => setDiaSemana(e.target.value)}
-              >
-                {DIAS_SEMANA.map((dia) => (
-                  <MenuItem key={dia} value={dia}>
-                    {dia}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            {(esNuevo || esEditarDisponibilidad) && (
+              <>
+                <Typography variant="subtitle2" color="primary" className="popup-section-subtitle">
+                  Horario de Atención
+                </Typography>
 
-            <Box className="popup-time-container">
-              <MuiTextField
-                label="Hora Desde"
-                type="time"
-                value={horaDesde}
-                onChange={(e) => setHoraDesde(e.target.value)}
-                InputLabelProps={{ shrink: true }}
-                inputProps={{ step: 300 }}
-                required
-                fullWidth
-              />
-              <MuiTextField
-                label="Hora Hasta"
-                type="time"
-                value={horaHasta}
-                onChange={(e) => setHoraHasta(e.target.value)}
-                InputLabelProps={{ shrink: true }}
-                inputProps={{ step: 300 }}
-                required
-                fullWidth
-              />
-            </Box>
+                <FormControl fullWidth required margin="dense">
+                  <InputLabel id="select-dia-label">Día de la Semana</InputLabel>
+                  <Select
+                    labelId="select-dia-label"
+                    value={diaSemana}
+                    label="Día de la Semana"
+                    onChange={(e) => setDiaSemana(e.target.value)}
+                  >
+                    {DIAS_SEMANA.map((dia) => (
+                      <MenuItem key={dia} value={dia}>
+                        {dia}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <Box className="popup-time-container">
+                  <MuiTextField
+                    label="Hora Desde"
+                    type="time"
+                    value={horaDesde}
+                    onChange={(e) => setHoraDesde(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    inputProps={{ step: 300 }}
+                    required
+                    fullWidth
+                  />
+                  <MuiTextField
+                    label="Hora Hasta"
+                    type="time"
+                    value={horaHasta}
+                    onChange={(e) => setHoraHasta(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    inputProps={{ step: 300 }}
+                    required
+                    fullWidth
+                  />
+                </Box>
+              </>
+            )}
           </DialogContent>
 
           <DialogActions>
-            <Button onClick={handleCerrarPopup} color="inherit">
+            <Button type="button" onClick={handleCerrarPopup} color="inherit">
               Cancelar
             </Button>
             <Button
@@ -372,7 +411,7 @@ export default function MedicoSection({ idMedico }) {
               disabled={cargando}
               className="profile-btn-primary"
             >
-              Guardar
+              {esNuevo ? 'Guardar' : 'Actualizar'}
             </Button>
           </DialogActions>
         </Box>

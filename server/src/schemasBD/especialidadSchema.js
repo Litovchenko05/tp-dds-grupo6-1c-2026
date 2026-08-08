@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { Especialidad } from '../models/Especialidad.js'
+import { DisponibilidadSchema } from '../schemasBD/disponibilidadSchema.js'
 
 export const EspecialidadSchema = new mongoose.Schema(
   {
@@ -22,6 +23,10 @@ export const EspecialidadSchema = new mongoose.Schema(
       ref: 'Sede',
       required: true,
       trim: true,
+    },
+    disponibilidad: {
+      type: DisponibilidadSchema,
+      default: null,
     },
   },
   {

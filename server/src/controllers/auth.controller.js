@@ -37,7 +37,9 @@ export class AuthController {
           fields: { [e.field]: e.message },
         })
       }
-      return res.status(500).json({ message: 'Ocurrió un error interno al procesar el registro.' })
+      return res
+        .status(500)
+        .json({ message: 'Ocurrió un error interno al procesar el registro que fue :' + e.message })
     }
   }
 

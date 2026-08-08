@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { ServicioModel } from '../schemasBD/servicioSchema.js'
-
+import { Types } from 'mongoose'
 export class ServicioRepository {
   constructor() {
     this.ServicioModel = ServicioModel
