@@ -120,6 +120,7 @@ export class TurnoService {
 
   //paginado
   async findAllPaginated(idUsuario, page, limit, sortBy, order) {
+    console.log('id usuario:', idUsuario)
     return await this.turnoRepository.findAllPaginated(idUsuario, page, limit, sortBy, order)
   }
 

@@ -74,7 +74,7 @@ const TurnDetailPage = () => {
           </div>
 
           <div className="turn-price-section">
-            <div className="turn-precio">Costo: $ {turno.data.costoConCobertura}</div>
+            <div className="turn-precio">Costo: $ {turno.data.costo}</div>
           </div>
         </div>
       </div>

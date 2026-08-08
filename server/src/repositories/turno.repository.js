@@ -308,7 +308,7 @@ export class TurnoRepository {
     const total = await this.TurnoModel.countDocuments(filtro)
 
     const pacienteEncontrado = await this.pacienteRepository.findByUsuario(idUsuario)
-
+    console.log(pacienteEncontrado)
     let coberturas = []
 
     if (pacienteEncontrado?.plan) {
